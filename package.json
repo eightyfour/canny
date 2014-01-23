@@ -1,0 +1,24 @@
+{
+    "name": "canny",
+    "auth": "eightyfour",
+    "email": "eightyfour@thinkuseful.de",
+    "description": "Simple dom module manager with basic view support.",
+    "version": "0.0.1",
+    "browserify": "canny.js",
+    "engines": {
+        "node": ">= v0.10.0"
+    },
+    "dependencies": {},
+    "readmeFilename": "README.md",
+    "main": "canny.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": "",
+    "keywords": [
+        "dom",
+        "html",
+        "module"
+    ],
+    "license": "MIT"
+}
