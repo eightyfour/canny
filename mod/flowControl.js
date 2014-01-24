@@ -23,41 +23,44 @@ var flowControl = (function () {
             return hash;
         },
         showInitialView = getViewAnchor(),
-        ext = {
-            /**
-             *
-             * @param node
-             * @param innerNode
-             * @returns {{remove: remove}}
-             */
-            progress : function (node, innerNode) {
-                var newNode = document.createElement('div'), centerNode = document.createElement('div'), txtNode;
-                node.style.position = 'relative';
-                newNode.style.opacity = '0.6';
-                newNode.style.backgroundColor = '#666';
-                newNode.style.position = 'absolute';
-                newNode.style.top = 0;
-                newNode.style.left = 0;
-                newNode.style.width = node.offsetWidth + 'px';
-                newNode.style.height = node.offsetHeight + 'px';
-                newNode.style.borderRadius = window.getComputedStyle(node, null).borderRadius;
-
-                centerNode.style.position = 'absolute';
-                centerNode.style.top = (node.offsetHeight / 2) - 30 + 'px';
-                centerNode.style.width = node.offsetWidth + 'px';
-                centerNode.style.textAlign = 'center';
-
-                if (innerNode) {
-                    centerNode.appendChild(innerNode);
-                }
-                node.appendChild(newNode);
-                node.appendChild(centerNode);
-                return {
-                    remove : function () {
-                        node.removeChild(newNode);
-                        node.removeChild(centerNode);
+        fc = {
+            // get the parent module from the given viewName
+            getParentNode : function (viewName) {
+                var queue = Object.keys(modViews), l, i;
+                l = queue.length;
+                for (i = 0; i < l; i++) {
+                    if (modViews[queue[i]].hasChildrenWithName(viewName)) {
+                        return modViews[queue[i]];
                     }
-                };
+                }
+                return null;
+            },
+            // passes a view list and complete the list with all parent node names
+            addParents : function (views) {
+                var extViews = views, i, l, pNode,
+                    pushExtViews = function (name) {
+                        if (extViews.indexOf(name) === -1) {
+                            extViews.push(name);
+                        }
+                    },
+                    addParentView = function (viewName) {
+                        var pViewName = fc.getParentNode(viewName);
+                        if (pViewName) {
+                            // TOOD while has parent add it to the extViews
+                            pushExtViews(pViewName.getViewName());
+                            addParentView(pViewName.getViewName());
+                        }
+                    };
+                l = views.length;
+                for (i = 0; i < l; i++) {
+                    pNode = fc.getParentNode(views[i]);
+                    if (pNode) {
+                        pushExtViews(pNode.getViewName());
+                        // so far we have parents do it recursive
+                        addParentView(pNode.getViewName());
+                    }
+                }
+                return extViews;
             },
             fadeOut : function (node, cb) {
                 var opacity = node.style.opacity || 1,
@@ -98,44 +101,53 @@ var flowControl = (function () {
                 }
             }
         },
-        fc = {
-            // get the parent module from the given viewName
-            getParentNode : function (viewName) {
-                var queue = Object.keys(modViews), l, i;
-                l = queue.length;
-                for (i = 0; i < l; i++) {
-                    if (modViews[queue[i]].hasChildrenWithName(viewName)) {
-                        return modViews[queue[i]];
-                    }
+        ext = {
+            /**
+             *
+             * @param node
+             * @param innerNode
+             * @returns {{remove: remove}}
+             */
+            progress : function (node, innerNode) {
+                var newNode = document.createElement('div'), centerNode = document.createElement('div'), txtNode;
+                node.style.position = 'relative';
+                newNode.style.opacity = '0.6';
+                newNode.style.backgroundColor = '#666';
+                newNode.style.position = 'absolute';
+                newNode.style.top = 0;
+                newNode.style.left = 0;
+                newNode.style.width = node.offsetWidth + 'px';
+                newNode.style.height = node.offsetHeight + 'px';
+                newNode.style.borderRadius = window.getComputedStyle(node, null).borderRadius;
+
+                centerNode.style.position = 'absolute';
+                centerNode.style.top = (node.offsetHeight / 2) - 30 + 'px';
+                centerNode.style.width = node.offsetWidth + 'px';
+                centerNode.style.textAlign = 'center';
+
+                if (innerNode) {
+                    centerNode.appendChild(innerNode);
                 }
-                return null;
-            },
-            // passes a view list and complete the list with all parent node names
-            addParents : function (views) {
-                var extViews = views, i, l, pNode,
-                    pushExtViews = function (name) {
-                        if (extViews.indexOf(name) === -1) {
-                            extViews.push(name);
-                        }
+                node.appendChild(newNode);
+                node.appendChild(centerNode);
+                return {
+                    remove : function (delay, cb) {
+                        setTimeout(function () {
+                            node.removeChild(newNode);
+                            node.removeChild(centerNode);
+                            cb && cb();
+                        }, delay || 0);
                     },
-                    addParentView = function (viewName) {
-                        var pViewName = fc.getParentNode(viewName);
-                        if (pViewName) {
-                            // TOOD while has parent add it to the extViews
-                            pushExtViews(pViewName.getViewName());
-                            addParentView(pViewName.getViewName());
-                        }
-                    };
-                l = views.length;
-                for (i = 0; i < l; i++) {
-                    pNode = fc.getParentNode(views[i]);
-                    if (pNode) {
-                        pushExtViews(pNode.getViewName());
-                        // so far we have parents do it recursive
-                        addParentView(pNode.getViewName());
+                    fadeOut : function (delay, cb) {
+                        setTimeout(function () {
+                            fc.fadeOut(newNode, function () {
+                                node.removeChild(newNode);
+                                node.removeChild(centerNode);
+                                cb && cb();
+                            });
+                        }, delay || 0);
                     }
-                }
-                return extViews;
+                };
             }
         };
 
@@ -159,7 +171,7 @@ var flowControl = (function () {
 
             modViews[attr.view] = (function (node, parentView) {
                 var flowControlChildNodes = {},
-                // TODO do it with a querySelectorAll
+                        // TODO do it with a querySelectorAll
                     findChildren = function (cNode) {
                         if (cNode.hasChildNodes()) {
                             [].slice.call(cNode.children).forEach(findChildren);
@@ -196,14 +208,14 @@ var flowControl = (function () {
                         node.style.display = 'none';
                     },
                     fadeOut : function (cb) {
-                        ext.fadeOut(node, cb || function () {});
+                        fc.fadeOut(node, cb || function () {});
                     },
                     getNode : function () {
                         return node;
                     },
                     fadeIn : function (cb) {
                         parentView && parentView.show();  // do show fadeIn has flickering
-                        ext.fadeIn(node,  cb || function () {});
+                        fc.fadeIn(node,  cb || function () {});
                     }
                 };
 
