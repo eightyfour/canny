@@ -13,19 +13,22 @@ var canny = (function () {
             var gdModuleChildren = [].slice.call(document.querySelectorAll('[canny-mod]'));
 
             gdModuleChildren.forEach(function (node) {
-                var attribute = node.getAttribute('canny-mod'), attr, viewPart, attributes;
+                var attribute = node.getAttribute('canny-mod'), attr, viewPart, attributes, cannyVar;
 
                 attributes = attribute.split(' ');
 
                 attributes.forEach(function (eachAttr) {
                     if (canny.hasOwnProperty(eachAttr)) {
                         if (node.getAttribute('canny-mod')) {
-                            attr = node.getAttribute('canny-var').split("\'").join('\"');
-                            if (/:/.test(attr)) {
-                                // could be a JSON
-                                viewPart = JSON.parse(attr);
-                            } else {
-                                viewPart = attr;
+                            cannyVar = node.getAttribute('canny-var');
+                            if (cannyVar) {
+                                attr = cannyVar.split("\'").join('\"');
+                                if (/:/.test(attr)) {
+                                    // could be a JSON
+                                    viewPart = JSON.parse(attr);
+                                } else {
+                                    viewPart = attr;
+                                }
                             }
                         }
                         canny[eachAttr].add(node, viewPart);
