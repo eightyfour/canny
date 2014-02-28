@@ -8,7 +8,9 @@
     "engines": {
         "node": ">= v0.10.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "domready" : "x"
+    },
     "readmeFilename": "README.md",
     "main": "canny.js",
     "scripts": {
