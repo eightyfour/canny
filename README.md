@@ -21,7 +21,7 @@ index.html
     <br/>
     <div canny-mod="kodos" canny-var="{'kodos_load': '/async/flowControl.html'}">Show draft 2</div>
     <br/>
-    <div canny-mod="kodos" canny-var="{'kodos_load': '/async/popup.html'}">Show resultScreenPopup</div>
+    <div canny-mod="kodos" canny-var="{'kodos_load': '/async/popup.html'}">Show popup</div>
 </body>
 </html>
 ```
