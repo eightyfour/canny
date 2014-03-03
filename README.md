@@ -121,10 +121,10 @@ canny.add('popup', (function () {
             },
             fillDataButton : function (node) {
                 node.addEventListener('click', function () {
-                    canny.resultScreenPopup.mod().avatar1.setText("You are avatar one");
-                    canny.resultScreenPopup.mod().avatar2.setText("You are awesome");
-                    canny.resultScreenPopup.mod().avatar3.setText("You are new");
-                    canny.resultScreenPopup.mod().avatar4.setText("You're out");
+                    canny.popup.mod().avatar1.setText("You are avatar one");
+                    canny.popup.mod().avatar2.setText("You are awesome");
+                    canny.popup.mod().avatar3.setText("You are new");
+                    canny.popup.mod().avatar4.setText("You're out");
                 });
             }
         },
