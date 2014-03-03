@@ -2,7 +2,7 @@
 /*jslint browser: true*/
 
 /**
- * E.g.: gd-module="flowControl" gd-attr="{'view' : 'viewToShow'}"
+ * E.g.: canny-mod="flowControl" canny-var="{'view' : 'viewName'}"
  *
  * you can activate a initial view with a anchor in the URL e.g.: yourdomain.html#viewToShow
  * Or pass a comma separated module list for activate more module #viewToShow,otherView
@@ -171,7 +171,7 @@ var flowControl = (function () {
 
             modViews[attr.view] = (function (node, parentView) {
                 var flowControlChildNodes = {},
-                        // TODO do it with a querySelectorAll
+                    // TODO do it with a querySelectorAll
                     findChildren = function (cNode) {
                         if (cNode.hasChildNodes()) {
                             [].slice.call(cNode.children).forEach(findChildren);
