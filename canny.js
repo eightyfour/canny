@@ -10,18 +10,18 @@ var canny = (function () {
 
     console.log('INITIALIZE CANNY MODULE');
 
-    var parseNode = function (node, cb) {
-        var gdModuleChildren = [].slice.call(node.querySelectorAll('[canny-mod]'));
+    var parseNode = function (node, name, cb) {
+        var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]'));
 
         gdModuleChildren.forEach(function (node) {
-            var attribute = node.getAttribute('canny-mod'), attr, viewPart, attributes, cannyVar;
+            var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
 
             attributes = attribute.split(' ');
 
             attributes.forEach(function (eachAttr) {
-                if (canny.hasOwnProperty(eachAttr)) {
-                    if (node.getAttribute('canny-mod')) {
-                        cannyVar = node.getAttribute('canny-var');
+                if (that.hasOwnProperty(eachAttr)) {
+                    if (node.getAttribute(name + '-mod')) {
+                        cannyVar = node.getAttribute(name + '-var');
                         if (cannyVar) {
                             attr = cannyVar.split("\'").join('\"');
                             if (/:/.test(attr)) {
@@ -32,7 +32,7 @@ var canny = (function () {
                             }
                         }
                     }
-                    canny[eachAttr].add(node, viewPart);
+                    that[eachAttr].add(node, viewPart);
                 }
             });
         });
@@ -40,10 +40,10 @@ var canny = (function () {
     };
 
     domready(function () {
-        parseNode(document);
+        parseNode.apply(canny, [document, 'canny']);
         // find solution for calling ready...
-        Object.keys(canny).forEach(function(module) {
-// todo save all new registered objects and call there after appending all.
+        Object.keys(canny).forEach(function (module) {
+//  todo save all new registered objects and call there after appending all.
             if (canny[module].hasOwnProperty('ready')) {
                 canny[module].ready();
             }
@@ -58,9 +58,13 @@ var canny = (function () {
                 console.error('canny: Try to register module with name ' + name + ' twice');
             }
         },
-        cannyParse : function (node, cb) {
+        cannyParse : function (node, name, cb) {
             // TODO needs a callback
-            parseNode(node, cb || function () {})
+            if (typeof name === 'function') {
+                cb = name;
+                name = "canny";
+            }
+            parseNode.apply(this || canny, [node, name, cb || function () {}]);
         }
     };
 }());
