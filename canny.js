@@ -85,7 +85,7 @@ var canny = (function () {
                 cb = name;
                 name = "canny";
             }
-            parseNode.apply(this || canny, [node, name, cb || function () {}]);
+            parseNode.apply(this || canny, [node, name || 'canny', cb || function () {}]);
         }
     };
 }());
