@@ -5,6 +5,8 @@ Dom module manager.
 
 Note: the documentation is not completed because this is work in progress.
 
+A live example could be found here: [eightyfour.github.io/canny/](http://eightyfour.github.io/canny/)
+
 Here is an example code how canny works with the **flowControl** and the **async** module:
 
 index.html
