@@ -10,6 +10,10 @@
  *         console.log('CANNY PARSE DONE');
  *     });
  * });
+ * Or directly as canny module:
+ * <div canny-mod="async" canny-var="{'url':'/you/HTML/file.html'}"></div>
+ * 
+ * TODO solve dependency problem to canny.
  *
  */
 (function () {
