@@ -29,7 +29,6 @@
                         if (r.readyState != 4 || r.status != 200) {
                             c.cb(false);
                         } else {
-                            console.log('Success: ' + r.responseText);
                             c.cb(r.responseText);
                         }
                     };
