@@ -35,10 +35,15 @@
                     r.send(c.param);
                 },
                 loadHTML: function (node, attr) {
+                    var div = document.createElement('div');
                     modViews.load(attr.url, function (src) {
+                        var childs;
                         if (src) {
-                            node.innerHTML = src;
-                            canny.cannyParse.apply(canny.loginForm, [node, 'form']);
+                            div.innerHTML = src;
+                            childs = [].slice.call(div.childNodes);
+                            childs.forEach(function (child) {
+                                node.appendChild(child);
+                            });
                             canny.cannyParse(node); // init also canny own modules
                         } else {
                             console.error('Loading async HTML failed');
