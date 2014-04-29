@@ -9,6 +9,8 @@
  *
  * TODO made it possible to summarize views with one identifier.
  * Instead of call: gdom.flowControl.show('view1', 'view2', 'view3') call gdom.flowControl.show('view').
+ * 
+ * TODO add a hide method that just hide the specific element.
  */
 (function () {
     "use strict";
@@ -237,6 +239,10 @@
                                     });
                                 }
                             });
+                            // if last param is function than handle it as callback
+                            if (typeof showMods[showMods.length - 1] === 'function') {
+                                showMods[showMods.length - 1]();
+                            }
                         };
                     showMods = fc.addParents(showMods);
                     // hide all (except incoming)
