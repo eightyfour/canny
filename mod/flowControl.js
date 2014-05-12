@@ -298,8 +298,9 @@
                     };
                 }
             };
-        }());
+        }()),
+        module;
     // export as module or bind to global
-    if (typeof module !== 'undefined') { module.exports = flowControl; } else {canny.add('flowControl', flowControl); }
+    if (module) { module.exports = flowControl; } else {canny.add('flowControl', flowControl); }
 
 }());

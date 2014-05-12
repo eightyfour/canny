@@ -83,7 +83,8 @@
                     parseNode.apply(this || canny, [node, name || 'canny', cb || function () {}]);
                 }
             };
-        }());
+        }()),
+        module;
     // export as module or bind to global
-    if (typeof module !== 'undefined') { module.exports = canny; } else {global.canny = canny; }
+    if (module) { module.exports = canny; } else {global.canny = canny; }
 }(this));
