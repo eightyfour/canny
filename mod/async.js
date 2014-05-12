@@ -12,7 +12,7 @@
  * });
  * Or directly as canny module:
  * <div canny-mod="async" canny-var="{'url':'/you/HTML/file.html'}"></div>
- * 
+ *
  * TODO solve dependency problem to canny.
  *
  */
@@ -22,6 +22,14 @@
         var filesToLoad = [],
             ready = false,
             fc = {
+                appendScript : function (script, cb) {
+                    var node = document.createElement('script');
+                    node.type = "text/javascript";
+                    node.async = true;
+                    node.setAttribute('src', script.getAttribute('src'));
+                    node.addEventListener('load', cb, false);
+                    document.head.appendChild(node);
+                },
                 loadHtml: function (c) {
                     var r = new XMLHttpRequest();
                     r.open(c.method, c.path, true);
@@ -37,14 +45,34 @@
                 loadHTML: function (node, attr) {
                     var div = document.createElement('div');
                     modViews.load(attr.url, function (src) {
-                        var childs;
+                        var childs,
+                            scriptCounter = (function () {
+                                var count = 0;
+                                return {
+                                    state : function () {return count <= 0; },
+                                    up : function () {count++; },
+                                    ready : function () {
+                                        count--;
+                                        if (count <= 0) {
+                                            canny.cannyParse(node);
+                                        }
+                                    }
+                                };
+                            }());
                         if (src) {
                             div.innerHTML = src;
                             childs = [].slice.call(div.childNodes);
                             childs.forEach(function (child) {
-                                node.appendChild(child);
+                                if (child.tagName === 'SCRIPT' && child.getAttribute('src')) {
+                                    scriptCounter.up();
+                                    fc.appendScript(child, scriptCounter.ready);
+                                } else {
+                                    node.appendChild(child);
+                                }
                             });
-                            canny.cannyParse(node); // init also canny own modules
+                            if (scriptCounter.state()) {
+                                canny.cannyParse(node); // init also canny own modules
+                            }
                         } else {
                             console.error('Loading async HTML failed');
                         }
