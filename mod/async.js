@@ -2,6 +2,8 @@
 /*jslint browser: true*/
 
 /**
+ * Required: 'canny' in global scope
+ *
  * E.g.:
  * canny.async.load(URL, function (src) {
  *     node.innerHTML = src;
@@ -10,6 +12,12 @@
  *         console.log('CANNY PARSE DONE');
  *     });
  * });
+ *
+ * Alternative you can just use loadHTML (scripts will automatically added and parsed by canny):
+ * canny.async.loadHTML(node, {url : URL}, function () {
+ *     console.log('kodos_load READY');
+ * });
+ *
  * Or directly as canny module:
  * <div canny-mod="async" canny-var="{'url':'/you/HTML/file.html'}"></div>
  *
@@ -42,7 +50,7 @@
                     };
                     r.send(c.param);
                 },
-                loadHTML: function (node, attr) {
+                loadHTML: function (node, attr, cb) {
                     var div = document.createElement('div');
                     modViews.load(attr.url, function (src) {
                         var childs,
@@ -54,7 +62,7 @@
                                     ready : function () {
                                         count--;
                                         if (count <= 0) {
-                                            canny.cannyParse(node);
+                                            canny.cannyParse(node, cb);
                                         }
                                     }
                                 };
@@ -71,7 +79,7 @@
                                 }
                             });
                             if (scriptCounter.state()) {
-                                canny.cannyParse(node); // init also canny own modules
+                                canny.cannyParse(node, cb); // init also canny own modules
                             }
                         } else {
                             console.error('Loading async HTML failed');
@@ -99,16 +107,20 @@
                         } else {
                             fc.loadHTML(node, attr);
                         }
-
                     }
                 },
+                loadHTML : fc.loadHTML,
+                /**
+                 * Deprecated: use loadHTML instead
+                 * @param path
+                 * @param cb
+                 */
                 load: function (path, cb) {
                     fc.loadHtml({
                         method: 'GET',
                         path: path,
                         param: '',
-                        cb: cb || function () {
-                        }
+                        cb: cb || function () {}
                     });
                 }
             };
