@@ -2,7 +2,10 @@
 /*jslint browser: true*/
 
 /**
- * TODO DESCRIPTION
+ * E.g.:
+ *  <div canny-mod="whisker" canny-var="{'message':'dynamic text'}">
+ *     <p>DATA: {{message}})</p>
+ *  </div>
  *
  */
 (function () {
@@ -72,8 +75,7 @@
                  *  Compile a DOM node (recursive)
                  */
                 compile = function (node, dataObj) {
-                    var nodeType = node.nodeType
-                    console.log('NODE TYPE', nodeType, node);
+                    var nodeType = node.nodeType;
                     if (nodeType === 1 && node.tagName !== 'SCRIPT') { // a normal node
                         compileElement(node, dataObj);
                     } else if (nodeType === 3) {
@@ -94,10 +96,6 @@
                 };
 
             return {
-                data: {
-                    name : 'Enis',
-                    moduleName : 'knoppi'
-                },
                 add : function (node, attr) {
                     var obj = attr;
                     if (typeof attr === 'string') {
