@@ -82,9 +82,11 @@
             modViews = {
                 ready: function () {
                     console.log('async is ready');
-                    filesToLoad.forEach(function (obj) {
+                    var obj;
+                    while (filesToLoad.length > 0) {
+                        obj = filesToLoad.splice(0, 1)[0];
                         fc.loadHTML(obj.node, obj.attr);
-                    });
+                    }
                 },
                 add: function (node, attr) {    // part of api
                     // TODO implement logic for loading it directly from html
