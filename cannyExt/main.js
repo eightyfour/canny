@@ -10,12 +10,8 @@ canny.add('kodos', (function () {
         kodos_load : function (node, path) {
             node.addEventListener('click', function click() {
                 node.removeEventListener('click', click);
-                canny.async.load(path, function (src) {
-                    node.innerHTML = src;
-                    // trigger canny parse to register canny on our new modules
-                    canny.cannyParse(node, function () {
-                        console.log('CANNY PARSE DONE');
-                    });
+                canny.async.loadHTML(node, {url : path}, function () {
+                    console.log('kodos_load READY');
                 });
             });
         }
