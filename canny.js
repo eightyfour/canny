@@ -25,26 +25,29 @@
                     attributes = attribute.split(' ');
 
                     attributes.forEach(function (eachAttr) {
-
-                        if (node.getAttribute(name + '-mod')) {
-                            cannyVar = node.getAttribute(name + '-var');
-                            if (cannyVar) {
-                                attr = cannyVar.split("\'").join('\"');
-                                if (/:/.test(attr)) {
-                                    // could be a JSON
-                                    viewPart = JSON.parse(attr);
-                                } else {
-                                    viewPart = attr;
+                        if (that[eachAttr]) {
+                            if (node.getAttribute(name + '-mod')) {
+                                cannyVar = node.getAttribute(name + '-var');
+                                if (cannyVar) {
+                                    attr = cannyVar.split("\'").join('\"');
+                                    if (/:/.test(attr)) {
+                                        // could be a JSON
+                                        viewPart = JSON.parse(attr);
+                                    } else {
+                                        viewPart = attr;
+                                    }
                                 }
                             }
-                        }
-                        // has module a ready function than save it for calling
-                        if (that[eachAttr].hasOwnProperty('ready')) {
-                            // TODO or call it immediately?
-                            moduleQueue.push(that[eachAttr].ready);
-                        }
-                        if (that.hasOwnProperty(eachAttr)) {
-                            that[eachAttr].add(node, viewPart);
+                            // has module a ready function than save it for calling
+                            if (that[eachAttr].hasOwnProperty('ready')) {
+                                // TODO or call it immediately?
+                                moduleQueue.push(that[eachAttr].ready);
+                            }
+                            if (that.hasOwnProperty(eachAttr)) {
+                                that[eachAttr].add(node, viewPart);
+                            }
+                        } else {
+                            console.warn('canny parse: module with name is not registered', eachAttr);
                         }
                     });
                 });
