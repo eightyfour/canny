@@ -8,9 +8,6 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/respond.js"></script>
-    <script src="jasmine-standalone-2.0.0/lib/jasmine-2.0.0/jasmine.js"></script>
-    <script src="jasmine-standalone-2.0.0/lib/jasmine-2.0.0/jasmine-html.js"></script>
-    <script src="jasmine-standalone-2.0.0/lib/jasmine-2.0.0/boot.js"></script>
     <script src="canny.js"></script>
     <script src="cannyExt/main.js"></script>
     <script src="mod/flowControl.js"></script>
@@ -65,16 +62,11 @@
 
 
     </section>
+
+    <h2>Run test</h2>
+    <div canny-mod="kodos" canny-var="{'kodos_load': 'samples/test.html'}">click here to let jasmine test run</div>
 </div>
 <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-
-<script>
-    describe("Jasmine", function() {
-        it("makes testing JavaScript awesome!", function() {
-            expect(canny).not.toBe(undefined);
-        });
-    });
-</script>
 
 </body>
 </html>
