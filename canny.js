@@ -17,7 +17,7 @@
                 }());
             },
             parseNode = function (node, name, cb) {
-                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]'));
+                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]')), prepareReadyQueue = {};
 
                 gdModuleChildren.forEach(function (node) {
                     var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
@@ -41,7 +41,7 @@
                             // has module a ready function than save it for calling
                             if (that[eachAttr].hasOwnProperty('ready')) {
                                 // TODO or call it immediately?
-                                moduleQueue.push(that[eachAttr].ready);
+                                prepareReadyQueue[eachAttr] = that[eachAttr].ready;
                             }
                             if (that.hasOwnProperty(eachAttr)) {
                                 that[eachAttr].add(node, viewPart);
@@ -50,6 +50,10 @@
                             console.warn('canny parse: module with name is not registered', eachAttr);
                         }
                     });
+                });
+                // add ready callback to moduleQueue
+                Object.keys(prepareReadyQueue).forEach(function (name) {
+                    moduleQueue.push(prepareReadyQueue[name]);
                 });
                 cb && cb();
             };
