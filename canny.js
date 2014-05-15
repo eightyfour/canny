@@ -1,5 +1,13 @@
 /*global */
 /*jslint browser: true*/
+/**
+ * TODO
+ * If canny knows his own URL than canny could load none registered modules afterwords from his own
+ * modules folder (can also build as configurable extension adapted to the body).
+ * E.g.: canny-mod="moduleLoader" canny-var={'cannyPath':URL_FROM_CANNY, 'unknownMods':LOAD_FROM_OTHER_URL}
+ *
+ * ---------------------------------------------------------------------------- eightyfour
+ */
 (function (global) {
     "use strict";
     var canny = (function () {
