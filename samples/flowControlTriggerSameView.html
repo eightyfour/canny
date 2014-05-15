@@ -1,0 +1,39 @@
+<script src="samples/flowControlTriggerSameView.js" type="text/javascript"></script>
+<style>
+    #flowControlTriggerSameView .nav{
+        display:inline-block;
+        margin:10px;
+        width: auto;
+        height: 20px;
+        border-radius: 50%;
+        padding: 10px;
+        color:darkblue;
+        cursor: pointer;
+    }
+    #flowControlTriggerSameView .box{
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        margin: 5px;
+        display: inline-block;
+    }
+    #flowControlTriggerSameView .flow_one{background-color: turquoise;}
+    #flowControlTriggerSameView .flow_two{background-color: yellowgreen;}
+    #flowControlTriggerSameView .flow_three{background-color: red;}
+</style>
+<div id="flowControlTriggerSameView">
+
+    <div canny-mod="flowControlTriggerSameView" canny-var="flow_one" class="nav flow_one">flow_one</div>
+    <div canny-mod="flowControlTriggerSameView" canny-var="flow_two" class="nav flow_two">flow_two</div>
+    <div canny-mod="flowControlTriggerSameView" canny-var="flow_three" class="nav flow_three">flow_three</div>
+    <br/>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+    <div canny-mod="flowControl" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+</div>
