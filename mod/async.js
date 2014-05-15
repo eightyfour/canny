@@ -38,6 +38,37 @@
                     node.addEventListener('load', cb, false);
                     document.head.appendChild(node);
                 },
+                handleScriptTags : function (scripts, cb) {
+                    var script, i, includesScripts = false,
+                        scriptCounter = (function () {
+                            var count = 0;
+                            return {
+                                up : function () {count++; },
+                                ready : function () {
+                                    count--;
+                                    if (count <= 0) {
+                                        cb();
+                                    }
+                                }
+                            };
+                        }());
+
+                    for (i = 0; i < scripts.length; i++) {
+                        script = scripts[i];
+                        if (script.getAttribute('src')) {
+                            includesScripts = true;
+                            scriptCounter.up();
+                            fc.appendScript(script, scriptCounter.ready);
+                        } else {
+                            console.warn('found inline script tag!!!');
+                        }
+                    }
+
+                    if (scripts.length === 0 || includesScripts === false) {
+                        cb();
+                    }
+
+                },
                 loadHtml: function (c) {
                     var r = new XMLHttpRequest();
                     r.open(c.method, c.path, true);
@@ -51,50 +82,49 @@
                     r.send(c.param);
                 },
                 loadHTML: function (node, attr, cb) {
-                    var div = document.createElement('div');
+                    var div = document.createElement('div'),
+                        scripts;
                     modViews.load(attr.url, function (src) {
-                        var childs,
-                            scriptCounter = (function () {
-                                var count = 0;
-                                return {
-                                    state : function () {return count <= 0; },
-                                    up : function () {count++; },
-                                    ready : function () {
-                                        count--;
-                                        if (count <= 0) {
-                                            canny.cannyParse(node, cb);
-                                        }
-                                    }
-                                };
-                            }());
+                        var childs;
                         if (src) {
                             div.innerHTML = src;
+                            scripts = div.getElementsByTagName('script');
                             childs = [].slice.call(div.childNodes);
+                            fc.handleScriptTags(scripts, function () {
+                                canny.cannyParse(node, cb); // init also canny own modules
+                            });
                             childs.forEach(function (child) {
-                                if (child.tagName === 'SCRIPT' && child.getAttribute('src')) {
-                                    scriptCounter.up();
-                                    fc.appendScript(child, scriptCounter.ready);
-                                } else {
+                                if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
                                     node.appendChild(child);
                                 }
                             });
-                            if (scriptCounter.state()) {
-                                canny.cannyParse(node, cb); // init also canny own modules
-                            }
                         } else {
-                            console.error('Loading async HTML failed');
+                            //    console.error('Loading async HTML failed');
                         }
                     });
                 }
             },
+            pushLoadCBs = [],
             modViews = {
                 ready: function () {
                     console.log('async is ready');
-                    var obj;
+                    var obj, cbCount = filesToLoad.length;
                     while (filesToLoad.length > 0) {
                         obj = filesToLoad.splice(0, 1)[0];
-                        fc.loadHTML(obj.node, obj.attr);
+                        fc.loadHTML(obj.node, obj.attr, function () {
+                            cbCount--;
+                            if (cbCount <= 0) {
+                                console.log('async parsing done');
+                                while (pushLoadCBs.length > 0) {
+                                    pushLoadCBs.splice(0, 1)[0]();
+                                }
+                            }
+                        });
                     }
+
+                },
+                pushLoadCB : function (fc) {
+                    pushLoadCBs.push(fc);
                 },
                 add: function (node, attr) {    // part of api
                     // TODO implement logic for loading it directly from html
