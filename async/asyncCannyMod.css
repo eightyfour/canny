@@ -1,9 +1,0 @@
-#callReadySample.ready {
-    background-color: crimson;
-    display: inline-block;
-}
-#callReadySample p{
-    float: left;
-    margin: 2px 20px;
-    display: block;
-}
