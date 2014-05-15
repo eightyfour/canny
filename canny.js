@@ -1,5 +1,13 @@
 /*global */
 /*jslint browser: true*/
+/**
+ * TODO
+ * If canny knows his own URL than canny could load none registered modules afterwords from his own
+ * modules folder (can also build as configurable extension adapted to the body).
+ * E.g.: canny-mod="moduleLoader" canny-var={'cannyPath':URL_FROM_CANNY, 'unknownMods':LOAD_FROM_OTHER_URL}
+ *
+ * ---------------------------------------------------------------------------- eightyfour
+ */
 (function (global) {
     "use strict";
     var canny = (function () {
@@ -17,7 +25,7 @@
                 }());
             },
             parseNode = function (node, name, cb) {
-                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]'));
+                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]')), prepareReadyQueue = {};
 
                 gdModuleChildren.forEach(function (node) {
                     var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
@@ -41,7 +49,7 @@
                             // has module a ready function than save it for calling
                             if (that[eachAttr].hasOwnProperty('ready')) {
                                 // TODO or call it immediately?
-                                moduleQueue.push(that[eachAttr].ready);
+                                prepareReadyQueue[eachAttr] = that[eachAttr].ready;
                             }
                             if (that.hasOwnProperty(eachAttr)) {
                                 that[eachAttr].add(node, viewPart);
@@ -50,6 +58,10 @@
                             console.warn('canny parse: module with name is not registered', eachAttr);
                         }
                     });
+                });
+                // add ready callback to moduleQueue
+                Object.keys(prepareReadyQueue).forEach(function (name) {
+                    moduleQueue.push(prepareReadyQueue[name]);
                 });
                 cb && cb();
             };
