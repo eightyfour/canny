@@ -33,8 +33,9 @@
                     var queue = Object.keys(modViews), l, i;
                     l = queue.length;
                     for (i = 0; i < l; i++) {
-                        if (modViews[queue[i]].hasChildrenWithName(viewName)) {
-                            return modViews[queue[i]];
+                        // TODO for the first only the first element
+                        if (viewName !== queue[i] && modViews[queue[i]][0].hasChildrenWithName(viewName)) {
+                            return modViews[queue[i]][0];
                         }
                     }
                     return null;
@@ -81,7 +82,7 @@
                             }
                         };
                     fade(opacity);
-                    console.log('fadeOut', node);
+//                    console.log('fadeOut', node);
                 },
                 fadeIn : function (node, cb) {
                     var opacity = node.opacity || 0,
@@ -101,7 +102,7 @@
                         fade(opacity);
                     } else {
                         node.style.opacity = 1;
-                        console.log('fadeIn', node);
+//                        console.log('fadeIn', node);
                     }
                 }
             },
@@ -172,8 +173,10 @@
                 }
             },
             add : function (node, attr) {    // part of api
-
-                modViews[attr.view] = (function (node, parentView) {
+                if (!modViews[attr.view]) {
+                    modViews[attr.view] = [];
+                }
+                modViews[attr.view].push((function (node, parentView) {
                     var flowControlChildNodes = {},
                     // TODO do it with a querySelectorAll
                         findChildren = function (cNode) {
@@ -182,7 +185,7 @@
                             }
                             var modAttr = cNode.getAttribute('gd-module'), attrValue, view;
                             if (/flowControl/.test(modAttr)) {
-                                console.log(cNode);
+//                                console.log(cNode);
                                 // TODO read attributes should be part gdom functionality
                                 attrValue = cNode.getAttribute('gd-attr').split("\'").join('\"');
                                 if (/:/.test(attrValue)) {
@@ -223,19 +226,21 @@
                         }
                     };
 
-                }(node, fc.getParentNode(attr.view)));
+                }(node, fc.getParentNode(attr.view))));
             },
             // TODO rename it to fadeIn
             show : function (name) {    // module specific
                 var showMods = [].slice.call(arguments),
                     queue = Object.keys(modViews),
-                    queueCount = queue.length,
+                    queueCount = 0,// = queue.length,
                     fadeIn = function () {
                         showMods.forEach(function (module) {
                             if (modViews.hasOwnProperty(module)) {
-                                modViews[module].fadeIn(function () {
-                                    // TODO remove
-                                    console.log('FADE IN DONE');
+                                modViews[module].forEach(function (obj) {
+                                    obj.fadeIn(function () {
+                                        // TODO remove
+//                                        console.log('FADE IN DONE');
+                                    });
                                 });
                             }
                         });
@@ -244,48 +249,57 @@
                             showMods[showMods.length - 1]();
                         }
                     };
+
                 showMods = fc.addParents(showMods);
                 // hide all (except incoming)
 
-                queue.forEach(function (obj) {
-                    if (showMods.indexOf(obj) === -1) {
-                        modViews[obj].fadeOut(function () {
+                queue.forEach(function (view) {
+                    queueCount += modViews[view].length;
+                    modViews[view].forEach(function (obj) {
+                        if (showMods.indexOf(obj) === -1) {
+                            obj.fadeOut(function () {
+                                queueCount--;
+                                if (queueCount <= 0) {
+                                    // FADE IN
+                                    fadeIn();
+                                }
+                            });
+                        } else {
                             queueCount--;
                             if (queueCount <= 0) {
-                                // FADE IN
                                 fadeIn();
                             }
-                        });
-                    } else {
-                        queueCount--;
-                        if (queueCount <= 0) {
-                            fadeIn();
                         }
-                    }
+                    });
                 });
             },
             // rename it to show
             showImmediately : function (name) {    // module specific
                 var showMods = [].slice.call(arguments),
                     queue = Object.keys(modViews),
-                    queueCount = queue.length,
+                    queueCount = 0,
                     show = function () {
                         showMods.forEach(function (module) {
                             if (modViews.hasOwnProperty(module)) {
-                                modViews[module].show();
+                                modViews[module].forEach(function (obj) {
+                                    obj.show();
+                                });
                             }
                         });
                     };
                 showMods = fc.addParents(showMods);
                 // hide all (except incoming)
-                queue.forEach(function (obj) {
+                queue.forEach(function (view) {
+                    queueCount += modViews[view].length;
+                    modViews[view].forEach(function (obj) {
                     queueCount--;
-                    if (showMods.indexOf(obj) === -1) {
-                        modViews[obj].hide();
-                    }
-                    if (queueCount <= 0) {
-                        show();
-                    }
+                        if (showMods.indexOf(obj) === -1) {
+                            obj.hide();
+                        }
+                        if (queueCount <= 0) {
+                            show();
+                        }
+                    });
                 });
             },
             overlay : function (name) {
