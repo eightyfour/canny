@@ -108,32 +108,40 @@
                         var childs;
                         if (src) {
                             div.innerHTML = src;
+                            scripts = div.getElementsByTagName('script');
                             childs = [].slice.call(div.childNodes);
+                            fc.appendScriptsToHead(scripts, handleCannyParse.scriptReady);
                             childs.forEach(function (child) {
-                                if (child.tagName === 'SCRIPT' && child.getAttribute('src')) {
-                                    scriptCounter.up();
-                                    fc.appendScript(child, scriptCounter.ready);
-                                } else {
+                                if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
                                     node.appendChild(child);
                                 }
                             });
-                            if (scriptCounter.state()) {
-                                canny.cannyParse(node, cb); // init also canny own modules
-                            }
+                            handleCannyParse.htmlReady();
                         } else {
-                            console.error('Loading async HTML failed');
+                            console.warn('async: Loading async HTML failed');
                         }
                     });
                 }
             },
+            pushLoadCBs = [],
             modViews = {
                 ready: function () {
-                    console.log('async is ready');
-                    var obj;
+                    var obj, cbCount = filesToLoad.length;
                     while (filesToLoad.length > 0) {
                         obj = filesToLoad.splice(0, 1)[0];
-                        fc.loadHTML(obj.node, obj.attr);
+                        fc.loadHTML(obj.node, obj.attr, function () {
+                            cbCount--;
+                            if (cbCount <= 0) {
+                                while (pushLoadCBs.length > 0) {
+                                    pushLoadCBs.splice(0, 1)[0]();
+                                }
+                            }
+                        });
                     }
+
+                },
+                pushLoadCB : function (fc) {
+                    pushLoadCBs.push(fc);
                 },
                 add: function (node, attr) {    // part of api
                     // TODO implement logic for loading it directly from html
