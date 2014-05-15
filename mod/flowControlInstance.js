@@ -251,12 +251,13 @@
                     };
 
                 showMods = fc.addParents(showMods);
-                // hide all (except incoming)
-
                 queue.forEach(function (view) {
                     queueCount += modViews[view].length;
+                });
+                queue.forEach(function (view) {
                     modViews[view].forEach(function (obj) {
-                        if (showMods.indexOf(obj) === -1) {
+                        // hide all (except incoming)
+                        if (showMods.indexOf(view) === -1) {
                             obj.fadeOut(function () {
                                 queueCount--;
                                 if (queueCount <= 0) {
