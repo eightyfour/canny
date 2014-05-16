@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
 
-</body>
-</html>
+<style>
+    #require .box{width: 10px;height:30px;float: left;margin: 10px;border-radius: 100%;background-color: white;}
+</style>
+
+<div id="require" canny-mod="require" canny-var="{'ext':'samples'}">
+    <p>Expect RGB (instead of white)</p>
+    <div canny-mod="requireSample" canny-var="#ff0000" class="box"></div>
+    <div canny-mod="requireSample" canny-var="#00ff00" class="box"></div>
+    <div canny-mod="requireSample" canny-var="#0000ff" class="box"></div>
+</div>
