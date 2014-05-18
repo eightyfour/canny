@@ -12,14 +12,70 @@
                     name : 'whisker',
                     text : 'rand: ' + n
                 };
-            }
+            },
+            data3 = {
+                user : {
+                    name: 'Peter',
+                    age: 30
+                }
+            },
+            inputs = (function () {
+                var update = function () {};
+                return {
+                    value : '',
+                    notifierWhisker : function (value) {
+                        update({value: value});
+                    },
+                    whiskerUpdate : function (cb) {
+                        update = cb;
+                    }
+                };
+            }()),
+            triggerWhiskerUpdate = (function () {
+                var whiskerUpdate = function () {
+                        console.log('NOT YET INITIALIZED FROM WHISKER');
+                    },
+                    data = data2();
+                return {
+                    // trigger this to update the data
+                    updateData : function () {
+                        console.log('CLICK');
+                        whiskerUpdate(data2());
+                    },
+                    // part of api to whisker
+                    whiskerUpdate : function (cb) {
+                        whiskerUpdate = cb;
+                    },
+                    // object
+                    name : data.name,
+                    text : data.text
+                };
+            }()),
+            brain = {
+                triggerWhiskerUpdate : function (node) {
+                    node.addEventListener('click', function () {
+                        triggerWhiskerUpdate.updateData();
+                    });
+                },
+                triggerWhiskerInput : function (node) {
+                    node.addEventListener('keyup', function () {
+                        console.log('register new key', this.value);
+                        inputs.notifierWhisker(this.value);
+                    });
+                }
+            };
         return {
             data1 : data1,
             data2 : function () {
                 return data2();
             },
-            add : function (elem) {
-                node = elem;
+            inputs : inputs,
+            data3 : data3,
+            triggerWhiskerUpdate : triggerWhiskerUpdate,
+            add : function (node, attr) {
+                if (brain.hasOwnProperty(attr)) {
+                    brain[attr](node);
+                }
             }
         };
     }()));

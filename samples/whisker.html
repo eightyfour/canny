@@ -1,24 +1,55 @@
 
 <script src="samples/whiskerSample.js" type="text/javascript"></script>
+<style>
+    #whisker{}
+    #whisker hr{clear:both; width: 50%;}
+    #whisker input{float:left;margin-right: 20px;margin-bottom:10px;}
+</style>
+<div id="whisker">
+    <h3>Load from static data object</h3>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.data1">
+        <p>Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>
+    </div>
+    <hr/>
 
-<h3>Load from static data object</h3>
-<div canny-mod="whisker" canny-var="canny.whiskerSample.data1">
-    <p>Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>
-</div>
-
-<h3>Load from dynamic data object (object is return by function)</h3>
-<div canny-mod="whisker" canny-var="canny.whiskerSample.data2">
-    <p>Hello I'm {{name}} and I take the data from a function.</p>
+    <h3>Load from dynamic data object (object is return by function)</h3>
     <ul>
        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{text}}</li>
        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{text}}</li>
        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{text}}</li>
        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{text}}</li>
     </ul>
-</div>
+    <hr/>
 
-<h3>Load direct as html JSON</h3>
-<div canny-mod="whisker" canny-var="{'name':'Carlo','message':'...that could be the message...'}">
-    <p>My name is {{name}}</p>
-    <p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>
+    <h3>Load from dynamic data object with option to trigger data again</h3>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.triggerWhiskerUpdate">
+        <p>
+            Hello I'm {{name}} and I take the data from a function.
+            <a canny-mod="whiskerSample" canny-var="triggerWhiskerUpdate">Click here to update the data</a>
+        </p>
+        <ul>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+        </ul>
+    </div>
+    <hr/>
+
+    <h3>Trigger whisker update </h3>
+    <input type="text" placeholder="type something" canny-mod="whiskerSample" canny-var="triggerWhiskerInput"/>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">Here the input: {{value}}</div>
+    <hr/>
+
+    <h3>Load from object object</h3>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.data3">
+        <p>Hello I'm <strong>{{user.name}}</strong> and I'm <strong>{{user.age}}</strong> years old.</p>
+    </div>
+    <hr/>
+
+    <h3>Load direct as html JSON</h3>
+    <div canny-mod="whisker" canny-var="{'name':'Carlo','message':'...that could be the message...'}">
+        <p>My name is {{name}}</p>
+        <p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>
+    </div>
 </div>
