@@ -2,10 +2,13 @@
 /*jslint browser: true*/
 
 /**
- * E.g.:
+ * E.g. {{whisker}}:
  *  <div canny-mod="whisker" canny-var="{'message':'dynamic text'}">
  *     <p>DATA: {{message}})</p>
  *  </div>
+ *
+ *  If the object implements a function named 'whiskerUpdate' whisker will push a callback to it.
+ *  This callback can be called with the data object to update the data there bind to the whiskers.
  *
  */
 (function () {
@@ -16,6 +19,7 @@
         ESCAPE_RE = /[-.*+?^${}()|[\]\/\\]/g,
         whisker = (function () {
             var BINDING_RE = getRegex(),
+                whiskerUpdateMap = {},
                 /**
                  *  Parse a piece of text, return an array of tokens
                  */
@@ -26,7 +30,7 @@
                     while (m = text.match(BINDING_RE)) {
                         i = m.index;
                         if (i > 0) {tokens.push(text.slice(0, i)); }
-                        token = { key: m[1].trim() }
+                        token = { key: m[1].trim() };
                         match = m[0];
                         token.html =
                                 match.charAt(2) === openChar &&
@@ -42,44 +46,51 @@
                  * @param node
                  * @param dataObj
                  */
-                compileTextNode  = function (node, dataObj) {
-                    var tokens = parse(node.nodeValue), obj = dataObj, el, token, i, l;
+                compileTextNode  = function (node, dataObj, attr) {
+                    var tokens = parse(node.nodeValue), obj = dataObj, el, token, i, l, span;
 
-                    if (typeof dataObj === 'function') {
-                        obj = dataObj();
-                    }
                     if (!tokens || obj === undefined) {return; }
 
                     for (i = 0, l = tokens.length; i < l; i++) {
                         token = tokens[i];
 
                         if (token.key && obj.hasOwnProperty(token.key)) { // a binding
+                            span = document.createElement('span');
                             el = document.createTextNode(obj[token.key]);
+                            span.appendChild(el);
+                            if (whiskerUpdateMap.hasOwnProperty(attr)) {
+                                if (!whiskerUpdateMap[attr].keyMap[token.key]) {
+                                    whiskerUpdateMap[attr].keyMap[token.key] = [];
+                                }
+                                whiskerUpdateMap[attr].keyMap[token.key].push(span);
+                            }
+                            node.parentNode.insertBefore(span, node);
                         } else { // a plain string
                             el = document.createTextNode(token);
+                            node.parentNode.insertBefore(el, node);
                         }
                         // insert node
-                        node.parentNode.insertBefore(el, node);
+
                     }
                     node.parentNode.removeChild(node);
                 },
-                compileElement = function (node, dataObj) {
+                compileElement = function (node, dataObj, attr) {
                     // recursively compile childNodes
                     if (node.hasChildNodes()) {
                         [].slice.call(node.childNodes).forEach(function (child) {
-                            compile(child, dataObj);
+                            compile(child, dataObj, attr);
                         });
                     }
                 },
                 /**
                  *  Compile a DOM node (recursive)
                  */
-                compile = function (node, dataObj) {
+                compile = function (node, dataObj, attr) {
                     var nodeType = node.nodeType;
                     if (nodeType === 1 && node.tagName !== 'SCRIPT') { // a normal node
-                        compileElement(node, dataObj);
+                        compileElement(node, dataObj, attr);
                     } else if (nodeType === 3) {
-                        compileTextNode(node, dataObj);
+                        compileTextNode(node, dataObj, attr);
                     }
                 },
                 getGlobalCall = function (value) {
@@ -96,12 +107,36 @@
                 };
 
             return {
+                getTextNodes : function () {
+                    return whiskerUpdateMap;
+                },
                 add : function (node, attr) {
-                    var obj = attr;
+                    var obj = attr, dataObj;
                     if (typeof attr === 'string') {
-                        obj = getGlobalCall(attr);
+                        dataObj = getGlobalCall(attr);
+                        if (typeof dataObj === 'function') {
+                            obj = dataObj();
+                        } else {
+                            obj = dataObj;
+                        }
+                        if (obj.hasOwnProperty('whiskerUpdate')) {
+                            console.log('WHISKER SAVE ' + attr, obj);
+                            whiskerUpdateMap[attr] = {
+                                obj : obj,
+                                keyMap : {}
+                            };
+                            whiskerUpdateMap[attr].obj.whiskerUpdate(function (data) {
+                                Object.keys(whiskerUpdateMap[attr].keyMap).forEach(function (whiskerName) {
+                                    if (data[whiskerName]) {
+                                        whiskerUpdateMap[attr].keyMap[whiskerName].forEach(function (node) {
+                                            node.innerHTML = data[whiskerName];
+                                        });
+                                    }
+                                });
+                            });
+                        }
                     }
-                    compile(node, obj);
+                    compile(node, obj, attr);
                 },
                 ready : function () {
                     console.log('module parse ready');
