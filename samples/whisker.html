@@ -3,6 +3,7 @@
 <style>
     #whisker{}
     #whisker hr{clear:both; width: 50%;}
+    #whisker ul{clear:both;}
     #whisker input{float:left;margin-right: 20px;margin-bottom:10px;}
 </style>
 <div id="whisker">
@@ -38,7 +39,14 @@
 
     <h3>Trigger whisker update </h3>
     <input type="text" placeholder="type something" canny-mod="whiskerSample" canny-var="triggerWhiskerInput"/>
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">Here the input: {{value}}</div>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">
+        Here the input: {{value}}
+        <ul>
+            <li>{{value}}</li>
+            <li>{{value}}</li>
+        </ul>
+    </div>
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">And a second instance: {{value}}</div>
     <hr/>
 
     <h3>Load from object object</h3>

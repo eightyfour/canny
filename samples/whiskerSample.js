@@ -20,14 +20,16 @@
                 }
             },
             inputs = (function () {
-                var update = function () {};
+                var update = [];
                 return {
                     value : '',
                     notifierWhisker : function (value) {
-                        update({value: value});
+                        update.forEach(function (fc) {
+                            fc({value: value});
+                        });
                     },
                     whiskerUpdate : function (cb) {
-                        update = cb;
+                        update.push(cb);
                     }
                 };
             }()),
@@ -39,7 +41,6 @@
                 return {
                     // trigger this to update the data
                     updateData : function () {
-                        console.log('CLICK');
                         whiskerUpdate(data2());
                     },
                     // part of api to whisker
@@ -59,7 +60,6 @@
                 },
                 triggerWhiskerInput : function (node) {
                     node.addEventListener('keyup', function () {
-                        console.log('register new key', this.value);
                         inputs.notifierWhisker(this.value);
                     });
                 }
