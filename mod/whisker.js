@@ -120,11 +120,12 @@
                             obj = dataObj;
                         }
                         if (obj.hasOwnProperty('whiskerUpdate')) {
-                            console.log('WHISKER SAVE ' + attr, obj);
-                            whiskerUpdateMap[attr] = {
-                                obj : obj,
-                                keyMap : {}
-                            };
+                            if (!whiskerUpdateMap[attr]) {
+                                whiskerUpdateMap[attr] = {
+                                    obj : obj,
+                                    keyMap : {}
+                                };
+                            }
                             whiskerUpdateMap[attr].obj.whiskerUpdate(function (data) {
                                 Object.keys(whiskerUpdateMap[attr].keyMap).forEach(function (whiskerName) {
                                     if (data[whiskerName]) {
