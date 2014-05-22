@@ -158,6 +158,10 @@
 
         return {
             mod : modViews, // part of api
+            /* this method could be used to create new instances of flowControl (only needed if you load this script directly without require) */
+            createNewInstance : function (name) {
+                return flowControl(name);
+            },
             ready : function () {
                 var modNames, i, l;
                 if (showInitialView) {
