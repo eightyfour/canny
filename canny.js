@@ -12,6 +12,7 @@
     "use strict";
     var canny = (function () {
         var readyQueue = [],
+            readyQueueInit = false,
             moduleQueue = [], // save modules to call the ready method once
             callMethQueue = function (queue) {
                 (function reduce() {
@@ -73,6 +74,7 @@
 
             callMethQueue(moduleQueue);
             // call registered ready functions
+            readyQueueInit = true;
             callMethQueue(readyQueue);
         }, false);
 
@@ -85,7 +87,7 @@
                 }
             },
             ready : function (fc) {
-                if (readyQueue !== null) {
+                if (!readyQueueInit) {
                     readyQueue.push(fc);
                 } else {
                     fc();
