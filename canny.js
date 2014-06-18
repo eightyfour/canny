@@ -56,7 +56,7 @@
                                 that[eachAttr].add(node, viewPart);
                             }
                         } else {
-                            console.warn('canny parse: module with name is not registered', eachAttr);
+                            console.warn('canny parse: module with name ´' + eachAttr + '´ is not registered');
                         }
                     });
                 });
