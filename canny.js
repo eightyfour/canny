@@ -41,7 +41,11 @@
                                     attr = cannyVar.split("\'").join('\"');
                                     if (/:/.test(attr)) {
                                         // could be a JSON
-                                        viewPart = JSON.parse(attr);
+                                        try {
+                                            viewPart = JSON.parse(attr);
+                                        } catch (ex) {
+                                            console.error("canny can't parse passed JSON for module: " + eachAttr, node);
+                                        }
                                     } else {
                                         viewPart = attr;
                                     }
