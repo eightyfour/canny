@@ -12,6 +12,7 @@
     "use strict";
     var canny = (function () {
         var readyQueue = [],
+            readyQueueInit = false,
             moduleQueue = [], // save modules to call the ready method once
             callMethQueue = function (queue) {
                 (function reduce() {
@@ -40,7 +41,11 @@
                                     attr = cannyVar.split("\'").join('\"');
                                     if (/:/.test(attr)) {
                                         // could be a JSON
-                                        viewPart = JSON.parse(attr);
+                                        try {
+                                            viewPart = JSON.parse(attr);
+                                        } catch (ex) {
+                                            console.error("canny can't parse passed JSON for module: " + eachAttr, node);
+                                        }
                                     } else {
                                         viewPart = attr;
                                     }
@@ -55,7 +60,7 @@
                                 that[eachAttr].add(node, viewPart);
                             }
                         } else {
-                            console.warn('canny parse: module with name is not registered', eachAttr);
+                            console.warn('canny parse: module with name ´' + eachAttr + '´ is not registered');
                         }
                     });
                 });
@@ -73,6 +78,7 @@
 
             callMethQueue(moduleQueue);
             // call registered ready functions
+            readyQueueInit = true;
             callMethQueue(readyQueue);
         }, false);
 
@@ -85,7 +91,7 @@
                 }
             },
             ready : function (fc) {
-                if (readyQueue !== null) {
+                if (!readyQueueInit) {
                     readyQueue.push(fc);
                 } else {
                     fc();
