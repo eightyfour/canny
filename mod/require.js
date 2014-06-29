@@ -6,6 +6,11 @@
  *  Will try to reload modules there are not registered on canny.
  *
  *  Only modules which name is the same name as the file name can be loaded.
+ *
+ *  TODO: require should not parse node which already parsed from canny. Otherwise the
+ *  add method is called twice. Means also that click listeners there added in the add
+ *  phase a registered more than one.
+ *  Maybe call only the add methods from modules there are loaded afterwords.
  */
 (function () {
     "use strict";
