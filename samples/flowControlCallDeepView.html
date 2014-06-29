@@ -1,0 +1,53 @@
+<script src="samples/flowControlCallDeepView.js" type="text/javascript"></script>
+<style>
+    #flowControlCallDeepView .nav{
+        display:inline-block;
+        margin:10px;
+        width: auto;
+        height: 20px;
+        border-radius: 50%;
+        padding: 10px;
+        color:darkblue;
+        cursor: pointer;
+    }
+    #flowControlCallDeepView .box{
+        min-width: 30px;
+        min-height: 30px;
+        border-radius: 100%;
+        margin: 5px;
+        display: inline-block;
+    }
+    #flowControlCallDeepView .box[class^=flow_],#flowControlCallDeepView .box[class*=flow_]{
+        padding:5px;
+    }
+    #flowControlCallDeepView .flow_one{background-color: turquoise;}
+    #flowControlCallDeepView .flow_two{background-color: yellowgreen;}
+    #flowControlCallDeepView .flow_three{background-color: red;}
+</style>
+<div id="flowControlCallDeepView" >
+
+    <input type="checkbox" name="fctsv" canny-mod="flowControlCallDeepView" canny-var="{'checkbox':'flow_one'}" />
+    <input type="checkbox" name="fctsv" canny-mod="flowControlCallDeepView" canny-var="{'checkbox':'flow_two'}"/>
+    <input type="checkbox" name="fctsv" canny-mod="flowControlCallDeepView" canny-var="{'checkbox':'flow_three'}"/>
+    <div canny-mod="flowControlCallDeepView" canny-var="flow_one" class="nav flow_one">flow_one</div>
+    <div canny-mod="flowControlCallDeepView" canny-var="flow_two" class="nav flow_two">flow_two</div>
+    <div canny-mod="flowControlCallDeepView" canny-var="flow_three" class="nav flow_three">flow_three</div>
+    <br/>
+    <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;">
+        <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;">
+            <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+        </div>
+    </div>
+    <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;">
+        <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;">
+            <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_one'}" class="box flow_one" style="display: none;"></div>
+    <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_two'}" class="box flow_two" style="display: none;"></div>
+    <div canny-mod="flowControlInstanceCallDeepView" canny-var="{'view':'flow_three'}" class="box flow_three" style="display: none;"></div>
+
+    <p>TODO Only one of the last three cycles should be displayed</p>
+
+</div>
