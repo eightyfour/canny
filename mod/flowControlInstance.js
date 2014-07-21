@@ -17,6 +17,28 @@
 (function () {
     "use strict";
 
+    /**
+     * wraps transitionend event vendor implementation
+     */
+    function onTransitionEndOnce(node, cb) {
+        var event = (function () {
+                if (node.style.webkitTransition !== undefined) {
+                    return 'webkitTransitionEnd';
+                } else if (node.style.transition !== undefined) {
+                    return 'transitionend';
+                }
+            }()),
+            listener = function(e) {
+                e.target.removeEventListener(e.type, listener);
+                cb(e);
+            };
+        if (event) {
+            node.addEventListener(event, listener, false);
+        } else {
+            cb();
+        }
+    }
+
     var flowControlInstance = function (fcInstanceName) {
         var instanceName = fcInstanceName,
             modViews = {}, // saves module views
@@ -170,44 +192,43 @@
                     return extViews;
                 },
                 fadeOut : function (node, cb) {
-                    var opacity = node.style.opacity || 1,
-                        fade = function (op) {
-                            if (op > 0) {
-                                node.style.opacity = op;
 
-                                setTimeout(function () {
-                                    fade(op - 0.1);
-                                }, 30);
-                            } else {
-                                node.style.display = 'none';
-                                cb();
-                            }
-                        };
-                    fade(opacity);
-//                    console.log('fadeOut', node);
+                    if(node.style.display === 'none') {
+                        cb();
+                    } else {
+                        node.classList.add('c-flowControl');
+                        node.classList.add('fade-out');
+
+                        setTimeout(function () {
+                            node.style.display = 'none';
+                            node.classList.remove('c-flowControl');
+                            node.classList.remove('fade-out');
+                            cb();
+                        }, 300);
+                    }
+
                 },
                 fadeIn : function (node, cb) {
-                    var opacity = node.opacity || 0,
-                        fade = function (op) {
-                            if (op <= 1) {
-                                node.style.opacity = op;
-                                setTimeout(function () {
-                                    fade(op + 0.1);
-                                }, 30);
-                            } else {
-                                node.style.opacity = 1;
-                                cb();
-                            }
-                        };
-                    if (node.style.display === 'none') {
-                        node.style.opacity = opacity;
-                        node.style.display = '';
-                        fade(opacity);
-                    } else {
-                        node.style.opacity = 1;
+                    // TODO: fade in does not work properly
+                    node.style.display = '';
+                    node.classList.add('c-flowControl');
+                    node.classList.add('fade-in');
+
+                    setTimeout(function() {
+                        node.classList.remove('c-flowControl');
+                        node.classList.remove('fade-in');
                         cb();
-//                        console.log('fadeIn', node);
-                    }
+
+                        // trigger reflow to fix the black boxes issue FTTWO-1249
+                        // TODO: check if this can be avoided or
+                        var box = document.querySelector('.t-centerBox-content');
+                        if (box) {
+                            box.style.opacity = 0.99;
+                            setTimeout(function() {
+                                box.style.opacity = 1;
+                            }, 50);
+                        }
+                    }, 300);
                 }
             },
             ext = {
