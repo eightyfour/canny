@@ -6,6 +6,10 @@
  * modules folder (can also build as configurable extension adapted to the body).
  * E.g.: canny-mod="moduleLoader" canny-var={'cannyPath':URL_FROM_CANNY, 'unknownMods':LOAD_FROM_OTHER_URL}
  *
+ *
+ * canny-var is deprecated: please use just the module name instead like:
+ * E.g.: canny-mod="mod1 mod2" canny-mod1={'foo':'123456', 'bar':'654321'} canny-mod2="mod2Property"
+ *
  * ---------------------------------------------------------------------------- eightyfour
  */
 (function (global) {
@@ -36,7 +40,11 @@
                     attributes.forEach(function (eachAttr) {
                         if (that[eachAttr]) {
                             if (node.getAttribute(name + '-mod')) {
-                                cannyVar = node.getAttribute(name + '-var');
+                                if (node.getAttribute(name + '-' + eachAttr)) {
+                                    cannyVar = node.getAttribute(name + '-' + eachAttr);
+                                } else {
+                                    cannyVar = node.getAttribute(name + '-var');
+                                }
                                 if (cannyVar) {
                                     attr = cannyVar.split("\'").join('\"');
                                     if (/:/.test(attr)) {
