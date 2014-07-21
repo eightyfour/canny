@@ -69,17 +69,36 @@
                     }
 
                 },
-                loadHtml: function (c) {
-                    var r = new XMLHttpRequest();
-                    r.open(c.method, c.path, true);
-                    r.onreadystatechange = function () {
-                        if (r.readyState != 4 || r.status != 200) {
-                            c.cb(false);
+                doAjax : function (params) {
+                    var call = new XMLHttpRequest();
+                    var url = params.path;
+                    if (params.method === 'GET' && typeof params.data === 'object') {
+                        for (var attr in params.data) {
+                            url = url + ((/\?/).test(url) ? "&" : "?") + attr + "=" + params.data[attr];
+                        }
+                    }
+                    if (params.noCache) {
+                        url = url + ((/\?/).test(url) ? "&" : "?") + "ts=" + (new Date()).getTime();
+                    }
+                    params.method = params.method || 'POST';
+                    call.open(params.method, url, true);
+                    call.onreadystatechange = function () {
+                        if (call.readyState != 4 || call.status != 200) {
+                            if (params.onFailure) {
+                                params.onFailure(call);
+                            }
                         } else {
-                            c.cb(r.responseText);
+                            if (params.onSuccess) {
+                                params.onSuccess(call)
+                            }
                         }
                     };
-                    r.send(c.param);
+                    call.setRequestHeader(params.contentType || "Content-Type", params.mimeType || "text/plain");
+                    if (params.method === 'POST') {
+                        call.send(params.data);
+                    } else {
+                        call.send();
+                    }
                 },
                 loadHTML: function (node, attr, cb) {
                     var div = document.createElement('div'),
@@ -156,6 +175,7 @@
                         }
                     }
                 },
+                doAjax: fc.doAjax,
                 loadHTML : fc.loadHTML,
                 /**
                  * Deprecated: use loadHTML instead
@@ -163,11 +183,12 @@
                  * @param cb
                  */
                 load: function (path, cb) {
-                    fc.loadHtml({
+                    fc.doAjax({
                         method: 'GET',
                         path: path,
-                        param: '',
-                        cb: cb || function () {}
+                        onSuccess: function (response) {
+                            cb(response.responseText);
+                        }
                     });
                 }
             };
@@ -182,3 +203,4 @@
     }
 
 }());
+
