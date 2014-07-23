@@ -1,24 +1,28 @@
 {
-    "name": "canny",
-    "auth": "eightyfour",
-    "email": "eightyfour@thinkuseful.de",
-    "description": "Simple dom module manager with basic view support.",
-    "version": "0.0.7",
-    "browserify": "canny.js",
-    "engines": {
-        "node": ">= v0.10.0"
-    },
-    "dependencies": {},
-    "readmeFilename": "README.md",
-    "main": "canny.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": "",
-    "keywords": [
-        "dom",
-        "html",
-        "module"
-    ],
-    "license": "MIT"
+  "name": "canny",
+  "auth": "eightyfour",
+  "email": "eightyfour@thinkuseful.de",
+  "description": "Simple dom module manager with basic view support.",
+  "version": "0.0.7",
+  "browserify": "canny.js",
+  "engines": {
+    "node": ">= v0.10.0"
+  },
+  "dependencies": {},
+  "readmeFilename": "README.md",
+  "main": "canny.js",
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": "",
+  "keywords": [
+    "dom",
+    "html",
+    "module"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-qunit": "~0.5.2"
+  }
 }
