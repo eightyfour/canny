@@ -196,8 +196,8 @@
         return modViews;
     }());
     // export as module or bind to global
-    if (typeof module !== 'undefined') {
-        module.exports = async;
+    if (typeof exports !== 'undefined') {
+        exports = async;
     } else {
         canny.add('async', async);
     }
