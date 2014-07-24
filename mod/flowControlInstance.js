@@ -458,6 +458,6 @@
         };
     }());
     // export as module or bind to global
-    if (typeof module !== 'undefined') { module.exports = flowControl; } else {canny.add('flowControl', flowControl('flowControl')); }
+    if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) { module.exports = flowControl; } else {canny.add('flowControl', flowControl('flowControl')); }
 
 }());
