@@ -119,5 +119,5 @@
         };
     }());
     // export as module or bind to global
-    if (typeof exports !== 'undefined') { exports = canny; } else {global.canny = canny; }
+    if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) { module.exports = canny; } else {global.canny = canny; }
 }(this));
