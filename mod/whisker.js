@@ -156,7 +156,7 @@
     }
 
     // export as module or bind to global
-    if (typeof module !== 'undefined') {
+    if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) {
         module.exports = whisker;
     } else {
         canny.add('whisker', whisker);
