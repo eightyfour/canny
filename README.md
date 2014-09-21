@@ -1,185 +1,238 @@
-canny (Beta)
+canny
 =====
 
 Dom module manager. 
 
-Note: the documentation is not completed because this is work in progress.
+Canny helps you to organize you javascript in modules. Canny is just a quite simple helper to initialize your javascript modules directly with the dom. 
 
-A live example could be found here: [eightyfour.github.io/canny/](http://eightyfour.github.io/canny/)
+# documentation
 
-Here is an example code how canny works with the **flowControl** and the **async** module:
+## create module
 
-index.html
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>canny example</title>
-    <script src="main.gen.js"></script>
-</head>
-<body>
-    <H1>hallo kodos</H1>
-    <div canny-mod="kodos" canny-var="{'kodos_load': '/async/plain.html'}">Show draft 1</div>
-    <br/>
-    <div canny-mod="kodos" canny-var="{'kodos_load': '/async/flowControl.html'}">Show draft 2</div>
-    <br/>
-    <div canny-mod="kodos" canny-var="{'kodos_load': '/async/popup.html'}">Show popup</div>
-</body>
-</html>
-```
-
-Thats all in the index.html. Now let us create the required JavaScript. What you can see in the HTML snippet above we need a canny-mod named **kodos** the name is irrelevant it's just an identifier to register our module which will help us to handle the content.
-
-First of all add the required resources to our main JavaScript file:
+Each canny module has to implement the add function. Here an example of the basic interface: 
 
 ```javascript
-var canny = require("canny");
-// register flowControl
-canny.add('flowControl', require('canny/mod/flowControl'));
-// register async
-canny.add('async', require('canny/mod/async'));
+var myCannyMod = {
+	add : function () {}
+}
 ```
 
-Now we need a module named **kodos** which register the click events and trigger the async load call to fill the content with more HTML.
+## register module
+
+Before you can use it, your module needs to be registererd to the canny module. The name is important for canny to match the dom elements and also for you to get access to your module via the canny namespace.
 
 ```javascript
-canny.add('kodos', (function () {
-    "use strict";
-
-    var mod = {
-        kodos_show : function (node, value) {
-            node.addEventListener('click', function () {
-                canny.flowControl.show(value);
-            });
-        },
-        kodos_load : function (node, path) {
-            node.addEventListener('click', function click() {
-                node.removeEventListener('click', click);
-                canny.async.load(path, function (src) {
-                    node.innerHTML = src;
-                    // trigger canny parse to register canny on our new modules
-                    canny.cannyParse(node, function () {
-                        console.log('CANNY PARSE DONE');
-                    });
-                });
-            });
-        }
-    };
-
-    return {
-        mod : mod, // part of api
-        add : function (node, attr) {    // part of api
-            // register simpe click event
-            if (attr.hasOwnProperty('kodos_show')) {
-                mod.kodos_show(node, attr.kodos_show);
-            }
-            // register the async functionality
-            if (attr.hasOwnProperty('kodos_load')) {
-                mod.kodos_load(node, attr.kodos_load);
-            }
-        },
-        ready : function () {
-            console.log('KODOS IS INITIALIZED');
-        }
-    };
-}()));
+canny.add('myUniqueModuleName', myCannyMod);
 ```
 
-And now add a new module named **popup** this file will be initialized when the popup.html is loaded in the dom.
+Now you module is available via: <strong>canny.myUniqueModuleName</strong>
+
+Note: There are some names there are already used from canny and can't be used as module names like: add, ready and cannyParse. 
+
+Congratulation you've registered your first canny module! As next we bind our module to a specific dom element:
+
+## bind to a dom element
+
+Canny searches the hole dom tree for canny-mod attributes and calls the add method if a registered module is found.
+
+```html
+<div canny-mod="myUniqueModuleName" ></div>
+```
+
+You can add so many dom elements as you wont. Canny will call the add method for each registered module which was found in the dom.
+
+Below an example where the add method from the same module is called three times. Exactly one call for each matched dom element.
+
+```html
+<div canny-mod="myUniqueModuleName" ></div>
+<div canny-mod="myUniqueModuleName" ></div>
+<div canny-mod="myUniqueModuleName" ></div>
+```
+
+### get access via add
+
+The add methods is called with two parameters. The first one is the matched dom element. The second one is an optional parameter which you can add module specific attributes, the <strong>canny-var</strong>.
 
 ```javascript
-canny.add('popup', (function () {
-    "use strict";
-    var logic = {
-            avatar : function (node, slot) {
-                node.style.backgroundColor = '#' + slot + slot + slot;
-                node.style.width = "100px";
-                node.style.height = "100px";
-                node.style.float = "left";
-                node.style.marginRight = "20px";
-                node.style.color = '#fff';
-
-                node.innerHTML = "avatar" + slot;
-
-                return {
-                    setText : function (txt) {
-                        node.innerHTML = txt;
-                    }
-                };
-            }
-        },
-        data = {
-            avatar1 : function (node) {
-                return logic.avatar(node, 1);
-            },
-            avatar2 : function (node) {
-                return logic.avatar(node, 2);
-            },
-            avatar3 : function (node) {
-                return logic.avatar(node, 3);
-            },
-            avatar4 : function (node) {
-                return logic.avatar(node, 4);
-            },
-            fillDataButton : function (node) {
-                node.addEventListener('click', function () {
-                    canny.popup.mod().avatar1.setText("You are avatar one");
-                    canny.popup.mod().avatar2.setText("You are awesome");
-                    canny.popup.mod().avatar3.setText("You are new");
-                    canny.popup.mod().avatar4.setText("You're out");
-                });
-            }
-        },
-        viewInterface = {};
-
-    return {
-        mod : function () {return viewInterface; },
-        add : function (node, attr) {    // part of api
-            if (data.hasOwnProperty(attr)) {
-                viewInterface[attr] = data[attr](node);
-            } else {
-                console.log('NON EXISTING ATTRIBUTE');
-            }
-        },
-        ready : function () {
-            // send code automatical - if code in input
-            console.log('popup is ready to use');
-        }
-    };
-}()));
+var myCannyMod = {
+	add : function (domNode, attributes) {
+		// domNode - the dom element which was found in the view
+	}
+}
 ```
 
-Thats all required JavaScript code. Now we have to provide the HTML files in a **async** folder. We need three files for our example.
-
-First the **plain.html** (just to see something)
+Below we add the canny-var attribute to our dom element.
 
 ```html
-<div>
-    <H1>Draft one example</H1>
-    <p>Just plain html</p>
-</div>
+<div canny-mod="myUniqueModuleName" canny-var="helloModule"></div>
 ```
 
-As next the **flowControl.html** too see that the **flowControl** works and canny parse also content which is loaded afterwords.
-```html
-<H1>Draft 2</H1>
-            
-<a canny-mod="flowControl kodos" canny-var="{'view' : 'init', 'kodos_show': 'content'}">Hey click here to load content</a>
+Now canny pass the var attribute to the add function.
 
-<div canny-mod="flowControl kodos" canny-var="{'view' : 'content', 'kodos_show': 'init'}" style="display: none">
-  <h2>Will be shown after click the link</h2>
-</div>
+```javascript
+var myCannyMod = {
+	add : function (domNode, attributes) {
+		// attributes - this is our passed string 'helloModule'
+		console.log(attributes); // --> 'helloModule'
+	}
+}
 ```
 
-And the next one is for the **popup**
+If you need to pass more than one attribute you can also pass a JSON object to canny-var like:
+
 ```html
-<div id="popup">
-    <h1>Some avatare</h1>
-    <div canny-mod="popup" canny-var="avatar1"></div>
-    <div canny-mod="popup" canny-var="avatar2"></div>
-    <div canny-mod="popup" canny-var="avatar3"></div>
-    <div canny-mod="popup" canny-var="avatar4"></div>
-    <h2>And the close button</h2>
-    <div canny-mod="popup" canny-var="fillDataButton">fill view with data</div>
-</div>
+<div canny-mod="myUniqueModuleName" canny-var="{'foo':'this is foo', 'bar':'this is bar'}"></div>
+```
+
+Canny will parse the JSON and pass it as second attribute to the add method. But now as an object!
+
+```javascript
+var myCannyMod = {
+	add : function (domNode, attributes) {
+		// attributes - this is a object with foo and bar
+		console.log(attributes.foo); // --> 'helloModule'
+        console.log(attributes.bar); // --> 'helloModule'
+	}
+}
+```
+
+### handle ready
+
+The ready method from your module will be called when the dom is parsed completely. Means that all add methods from all canny-mod which could be found in the dom are called. 
+
+```javascript
+var myCannyMod = {
+	add : function () {/*...*/},
+	ready : function () {
+		// called if all modules registered
+	}
+}
+```
+
+Important to know is that the ready method from your module will only be called when canny has found your module in the dom. If you module is not used in the view (but registered via canny.add('myModule', ... ) the ready method will not called. If you need this you have to use the canny.ready method:
+
+```javascript
+canny.ready(function () {
+    // will be called if all modules are initialized
+})
+``` 
+___
+
+## API
+
+### canny-mod
+
+Expects a module name. If the name is not registered canny will print a warn.
+
+```html
+<div canny-mod="myUniqueModuleName"></div>
+```
+
+If you need more than one module you can pass module names as a space seperated list
+
+```html
+<div canny-mod="myUniqueModuleName fooMod barMod"></div>
+```
+
+### canny-var
+
+Pass attributes to your module as string:
+```html
+<div canny-mod="fooMod" canny-var="myFoo"></div>
+```
+Pass attributes to your module as object:
+
+```html
+<div canny-mod="fooMod" canny-var="{'foo':'my foo', 'bar':'my bar'}"></div>
+```
+If you have mroe than one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
+
+```html
+<div canny-mod="fooMod barMod" canny-fooMod="myFoo" barMod-var={'bar':'my bar'}></div>
+```
+If you use both, canny-var and moduleName-var than canny will give the moduleName-var the prior and will ignore the canny-var. 
+
+```html
+<div canny-mod="fooMod barMod" canny-fooMod="myFoo" canny-var=myBar></div>
+```
+The 'canny.fooMod.add' method will called with 'myFoo' and not with the 'myBar'. Only the 'barMod' will called with 'myBar'.
+
+### canny modules
+
+#### add
+
+```javascript
+canny[myModuleName].add(domNode, [cannyVars])
+```
+
+#### ready
+Will be called when:
+ * all add methods from all modules there are found in the dom are called
+ * and your module was found in the view
+
+If your module is not in the view (registered on a dom element with canny-mod) than it will not called. If you need this please use the 'canny.ready' instead. 
+```javascript
+canny[myModuleName].ready()
+```
+
+### canny
+
+#### add
+
+Use this to register your modules to canny. Should be done early as possible (If canny parses the dom and your module is registered later canny will ignore it - if you need this check the cannyParse function).
+
+```javascript
+canny.add(moduleName, obj)
+```
+
+#### ready
+
+Canny own ready method. Like the dom ready but all canny modules are registered and initialized.
+
+```javascript
+canny.ready(callback)
+```
+
+#### cannyParse
+
+Public method to parse content manually with canny initialisation behavior. 
+
+```javascript
+canny.cannyParse(node, name, callback) 
+```
+
+E.g.: use cannyParse to parse your own dom elements. This function needs to be called with a object on which the modules is registered. 
+
+```javascript
+canny.cannyParse.apply(canny, [node, 'canny', function () {
+	console.log('parse done');
+}]) 
+```
+This function is helpful if you wont to add your modules on a different name space. E.g. we create our own namespace 'myModule' and add a 'canny module' fooMod:
+
+```javascript
+var myModule = {
+	fooMod : {
+		add : function (node, attr) {
+		    console.log('use cannyParse to initialize my none canny module', attr);
+		}
+	}
+};
+```
+
+Than we could have the following HTML content. Instead of canny we named it 'myModule'.
+
+```html
+<div myModule-mod="fooMod" myModule-var="myAttributes"></div>
+```
+Canny will ignore this content. But we can use the cannyParse to let canny initialize our own module with canny behavior.
+
+```javascript
+canny.cannyParse.apply(myModule, [node, 'myModule', function () {
+	console.log('parse done');
+}]) 
+```
+What we get is the console output from the add method of our 'fooMod':
+```javascript
+>>> use cannyParse to initialize my none canny module > myAttributes 
 ```
