@@ -3,7 +3,7 @@ canny
 
 Dom module manager. 
 
-Canny helps you to organize you javascript in modules. Canny is just a quite simple helper to initialize your javascript modules directly with the dom. 
+Canny helps you to organize javascript in modules. Canny is just a quite simple helper to initialize your javascript modules directly with the dom. 
 
 # documentation
 
@@ -39,7 +39,7 @@ Canny searches the hole dom tree for canny-mod attributes and calls the add meth
 <div canny-mod="myUniqueModuleName" ></div>
 ```
 
-You can add so many dom elements as you wont. Canny will call the add method for each registered module which was found in the dom.
+You can add as many dom elements as you wont. Canny will call the add method for each registered module which was found in the dom.
 
 Below an example where the add method from the same module is called three times. Exactly one call for each matched dom element.
 
@@ -145,7 +145,7 @@ Pass attributes to your module as object:
 ```html
 <div canny-mod="fooMod" canny-var="{'foo':'my foo', 'bar':'my bar'}"></div>
 ```
-If you have mroe than one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
+If you have more than one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
 
 ```html
 <div canny-mod="fooMod barMod" canny-fooMod="myFoo" barMod-var={'bar':'my bar'}></div>
