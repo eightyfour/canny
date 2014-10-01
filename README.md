@@ -148,9 +148,9 @@ Pass attributes to your module as object:
 If you have more than one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
 
 ```html
-<div canny-mod="fooMod barMod" canny-fooMod="myFoo" barMod-var={'bar':'my bar'}></div>
+<div canny-mod="fooMod barMod" canny-fooMod="myFoo" canny-var={'bar':'my bar'}></div>
 ```
-If you use both, canny-var and moduleName-var than canny will give the moduleName-var the prior and will ignore the canny-var. 
+If you use both, canny-var and canny-moduleName than canny will give the canny-moduleName the prior and will ignore the canny-var. 
 
 ```html
 <div canny-mod="fooMod barMod" canny-fooMod="myFoo" canny-var=myBar></div>
