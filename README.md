@@ -5,14 +5,14 @@ Dom module manager. Canny is not a framework canny is more a tiny library which 
 
 *Why should I use canny? You can:*
 
- ** write module without any selectors*
- ** write modules there are easily to test*
- ** break down your modules in tiny logical pieces*
- ** have a global name space*
- ** have your own name space (on for each module)*
- ** have maximum flexibility to desgin your modules* 
- ** work with test driven development*
- ** use canny or not*
+ * *write module without any selectors*
+ * *write modules there are easily to test*
+ * *break down your modules in tiny logical pieces*
+ * *have a global name space*
+ * *have your own name space (on for each module)*
+ * *have maximum flexibility to desgin your modules*
+ * *work with test driven development*
+ * *use canny or not*
 
 Canny interact quite close with the dom. You can register the modules directly to the dom elements, instead of using selectors which are defined somewhere in the javascript and points to id's or classes there must be available... 
 This is one of the main advantages because it makes easier to see which HTML elements have a javascript functionality. And in most of the cases it's not complicated to change the dom structure. 
@@ -293,7 +293,7 @@ Now we have access to the nodes without written a selector:
 // return all registered nodes:
 canny.saveDomNodes.getNodes(); 
 // returns node2:
-canny.saveDomNodes.getNodeById('node2); 
+canny.saveDomNodes.getNodeById('node2');
 ```
 
 Using the example above only for selectors looks over engineered. But with this knowledge you can create great modules. We can define in the var attribute different behaviors for our module. 
