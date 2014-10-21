@@ -266,10 +266,10 @@ canny.add('saveDomNodes', (function () {
 	var nodes = {};	
 	return {
 	    getNodes : function (id) {
-	        return [].slice.call(Object.keys(node));
+	        return [].slice.call(Object.keys(nodes));
 	    },
 	    getNodeById : function (id) {
-	        return node[id];
+	        return nodes[id];
 	    },
 		add : function (node, attr) {
 			nodes[attr] = node;
