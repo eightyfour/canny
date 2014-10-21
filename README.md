@@ -302,35 +302,35 @@ Below an example where you give your module more functionality. We just need the
 
 ```javascript
 canny.add('menuModule', (function () {
-	var menu,
-		modules = {
-			toggleOpenMenuButton : function (node) {
-				node.addEventlistener('click'), function () {
-					if (menu.classList.contains('c-open')) {
-						menu.classList.remove('c-open');
-					} else {
-						menu.classList.add('c-open');
-					}
-				}	
-			},
-			menu : function (node) {
-				menu = node;
-				// initialize the menu - e.g. closed by default
-				menu.classList.remove('c-open');
-			}
-		};	
-	return {
-		add : function (node, attr) {
-			// check if the module supports the attr
-			if (modules.hasOwnProperty(attr)) {
-				// execute the function
-				modules[attr](node);
-			}
-		},
-		ready : function () {
-			// secure access to other modules via canny.otherModule.doSomething();
-		}
-	}
+    var menu,
+        modules = {
+            toggleOpenMenuButton : function (node) {
+                node.addEventListener(('click'), function () {
+                    if (menu.classList.contains('c-open')) {
+                        menu.classList.remove('c-open');
+                    } else {
+                        menu.classList.add('c-open');
+                    }
+                })
+            },
+            menu : function (node) {
+                menu = node;
+                // initialize the menu - e.g. closed by default
+                menu.classList.remove('c-open');
+            }
+        };
+    return {
+        add : function (node, attr) {
+            // check if the module supports the attr
+            if (modules.hasOwnProperty(attr)) {
+                // execute the function
+                modules[attr](node);
+            }
+        },
+        ready : function () {
+            // secure access to other modules via canny.otherModule.doSomething();
+        }
+    }
 }()));
 ```
 Now we define a node for our menu. And a additional node to register a show button.
