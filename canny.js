@@ -92,8 +92,12 @@
 
         return {
             add : function (name, module) {
+                var moduleApi = module;
                 if (!this.hasOwnProperty(name)) {
-                    this[name] = module;
+                    if (typeof module === 'function') {
+                        moduleApi = module(this); // initialize the module with the actual canny instance
+                    }
+                    this[name] = moduleApi;
                 } else {
                     console.error('canny: Try to register module with name ' + name + ' twice');
                 }

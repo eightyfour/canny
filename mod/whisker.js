@@ -25,7 +25,7 @@
                  */
                 parse = function (text) {
                     if (!BINDING_RE.test(text)) {return null; }
-                    var m, i, token, match, tokens = []
+                    var m, i, token, match, tokens = [];
                     /* jshint boss: true */
                     while (m = text.match(BINDING_RE)) {
                         i = m.index;
@@ -45,11 +45,12 @@
                  *
                  * @param node
                  * @param dataObj
+                 * @param attr
                  */
                 compileTextNode  = function (node, dataObj, attr) {
                     var tokens = parse(node.nodeValue), obj = dataObj, el, token, i, l, span;
 
-                    if (!tokens || obj === undefined) {return; }
+                    if (!tokens || obj === undefined || typeof obj === 'string') {return; }
 
                     for (i = 0, l = tokens.length; i < l; i++) {
                         token = tokens[i];
@@ -59,6 +60,9 @@
                             el = document.createTextNode(obj[token.key]);
                             span.appendChild(el);
                             if (whiskerUpdateMap.hasOwnProperty(attr)) {
+                                if (whiskerUpdateMap[attr].keyMap === undefined) {
+                                    whiskerUpdateMap[attr].keyMap = {};
+                                }
                                 if (!whiskerUpdateMap[attr].keyMap[token.key]) {
                                     whiskerUpdateMap[attr].keyMap[token.key] = [];
                                 }
@@ -66,6 +70,7 @@
                             }
                             node.parentNode.insertBefore(span, node);
                         } else { // a plain string
+                            console.log('whisker obj: ', obj);
                             el = document.createTextNode(token);
                             node.parentNode.insertBefore(el, node);
                         }
@@ -106,41 +111,47 @@
                     return end;
                 };
 
+            function initialize(node, attr) {
+                var dataObj = getGlobalCall(attr), obj;
+                if (typeof dataObj === 'function') {
+                    obj = dataObj();
+                } else {
+                    obj = dataObj;
+                }
+                if (obj.hasOwnProperty('whiskerUpdate')) {
+                    if (!whiskerUpdateMap[attr]) {
+                        whiskerUpdateMap[attr] = {
+                            obj : obj,
+                            keyMap : undefined
+                        };
+                    }
+                    whiskerUpdateMap[attr].obj.whiskerUpdate(function (data) {
+                        if (!whiskerUpdateMap[attr].keyMap) {
+                            initialize(node, attr);
+                        }
+
+                        if (whiskerUpdateMap[attr].keyMap) {
+                            Object.keys(whiskerUpdateMap[attr].keyMap).forEach(function (whiskerName) {
+                                if (data[whiskerName]) {
+                                    whiskerUpdateMap[attr].keyMap[whiskerName].forEach(function (node) {
+                                        node.innerHTML = data[whiskerName];
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+                compile(node, obj, attr);
+            }
+
             return {
                 getTextNodes : function () {
                     return whiskerUpdateMap;
                 },
                 add : function (node, attr) {
-                    var obj = attr, dataObj;
                     if (typeof attr === 'string') {
-                        dataObj = getGlobalCall(attr);
-                        if (typeof dataObj === 'function') {
-                            obj = dataObj();
-                        } else {
-                            obj = dataObj;
-                        }
-                        if (obj.hasOwnProperty('whiskerUpdate')) {
-                            if (!whiskerUpdateMap[attr]) {
-                                whiskerUpdateMap[attr] = {
-                                    obj : obj,
-                                    keyMap : {}
-                                };
-                            }
-                            whiskerUpdateMap[attr].obj.whiskerUpdate(function (data) {
-                                Object.keys(whiskerUpdateMap[attr].keyMap).forEach(function (whiskerName) {
-                                    if (data[whiskerName]) {
-                                        whiskerUpdateMap[attr].keyMap[whiskerName].forEach(function (node) {
-                                            node.innerHTML = data[whiskerName];
-                                        });
-                                    }
-                                });
-                            });
-                        }
+                        initialize(node, attr);
                     }
-                    compile(node, obj, attr);
-                },
-                ready : function () {
-                    console.log('module parse ready');
                 }
             };
         }());
@@ -156,7 +167,7 @@
     }
 
     // export as module or bind to global
-    if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) {
+    if (typeof module !== 'undefined') {
         module.exports = whisker;
     } else {
         canny.add('whisker', whisker);
