@@ -83,13 +83,16 @@
                     params.method = params.method || 'POST';
                     call.open(params.method, url, true);
                     call.onreadystatechange = function () {
-                        if (call.readyState != 4 || call.status != 200) {
-                            if (params.onFailure) {
-                                params.onFailure(call);
-                            }
-                        } else {
-                            if (params.onSuccess) {
-                                params.onSuccess(call)
+                        // TODO use === is this string or number ?
+                        if (call.readyState == 4) {
+                            if (call.status >= 400) {
+                                if (params.onFailure) {
+                                    params.onFailure(call);
+                                }
+                            } else {
+                                if (params.onSuccess) {
+                                    params.onSuccess(call);
+                                }
                             }
                         }
                     };
@@ -122,7 +125,9 @@
                                     triggger();
                                 }
                             };
-                        }(cb));
+                        }(function () {
+                            cb(attr);
+                        }));
                     modViews.load(attr.url, function (src) {
                         var childs;
                         if (src) {
@@ -148,13 +153,18 @@
                     var obj, cbCount = filesToLoad.length;
                     while (filesToLoad.length > 0) {
                         obj = filesToLoad.splice(0, 1)[0];
-                        fc.loadHTML(obj.node, obj.attr, function () {
+                        fc.loadHTML(obj.node, obj.attr, function (attr) {
+                            var keepPushCB = [], tmpCb;
                             cbCount--;
-                            if (cbCount <= 0) {
+//                            if (cbCount <= 0) {
                                 while (pushLoadCBs.length > 0) {
-                                    pushLoadCBs.splice(0, 1)[0]();
+                                    tmpCb = pushLoadCBs.splice(0, 1)[0];
+                                    if (tmpCb(attr) === true) {
+                                        keepPushCB.push(tmpCb);
+                                    }
                                 }
-                            }
+                                pushLoadCBs = keepPushCB;
+//                            }
                         });
                     }
 
@@ -203,4 +213,3 @@
     }
 
 }());
-
