@@ -58,6 +58,7 @@
                     query.forEach(function (elem) {
                         var attribute = elem.getAttribute(name + '-mod'), attributes;
                         attributes = attribute.split(' ');
+                        // TODO check for empty attributes in case of a space is included at the end of the attribute: canny-mod="moduleName "
                         attributes.forEach(function (attr) {
                             if (!canny.hasOwnProperty(attr)) {
                                 returns[attr] = null;
