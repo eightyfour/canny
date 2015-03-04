@@ -22,6 +22,7 @@
                     node.async = true;
                     node.setAttribute('src', path);
                     node.addEventListener('load', cb, false);
+                    node.addEventListener('error', cb, false);
                     document.head.appendChild(node);
                 },
                 appendScriptsToHead : function (urls, cb) {
