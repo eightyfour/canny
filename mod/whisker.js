@@ -48,7 +48,7 @@
                  * @param attr
                  */
                 compileTextNode  = function (node, dataObj, attr) {
-                    var tokens = parse(node.nodeValue), obj = dataObj, el, token, i, l, span;
+                    var tokens = parse(node.nodeValue), obj = dataObj, el, token, i, l;
 
                     if (!tokens || obj === undefined || typeof obj === 'string') {return; }
 
@@ -56,9 +56,7 @@
                         token = tokens[i];
 
                         if (token.key && obj.hasOwnProperty(token.key)) { // a binding
-                            span = document.createElement('span');
                             el = document.createTextNode(obj[token.key]);
-                            span.appendChild(el);
                             if (whiskerUpdateMap.hasOwnProperty(attr)) {
                                 if (whiskerUpdateMap[attr].keyMap === undefined) {
                                     whiskerUpdateMap[attr].keyMap = {};
@@ -66,9 +64,9 @@
                                 if (!whiskerUpdateMap[attr].keyMap[token.key]) {
                                     whiskerUpdateMap[attr].keyMap[token.key] = [];
                                 }
-                                whiskerUpdateMap[attr].keyMap[token.key].push(span);
+                                whiskerUpdateMap[attr].keyMap[token.key].push(el);
                             }
-                            node.parentNode.insertBefore(span, node);
+                            node.parentNode.insertBefore(el, node);
                         } else { // a plain string
                             console.log('whisker obj: ', obj);
                             el = document.createTextNode(token);
@@ -134,7 +132,7 @@
                             Object.keys(whiskerUpdateMap[attr].keyMap).forEach(function (whiskerName) {
                                 if (data[whiskerName]) {
                                     whiskerUpdateMap[attr].keyMap[whiskerName].forEach(function (node) {
-                                        node.innerHTML = data[whiskerName];
+                                        node.nodeValue = data[whiskerName];
                                     });
                                 }
                             });
