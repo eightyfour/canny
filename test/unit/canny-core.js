@@ -1,6 +1,6 @@
 
- 
-test('requirements', function() {
+
+QUnit.test('requirements', function() {
     ok(canny, 'canny is available');
 });
 

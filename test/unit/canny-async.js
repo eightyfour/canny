@@ -1,5 +1,5 @@
 
-test('requirements', function() {
+QUnit.test('requirements', function() {
     ok(canny, 'canny is available');
     ok(canny.async, 'async is available');
 });

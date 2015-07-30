@@ -19,6 +19,7 @@ grunt.initConfig({
             options: {
                 urls: [
                     'http://localhost:8000/test/canny-core.html',
+                    'http://localhost:8000/test/canny-repeat.html',
                     'http://localhost:8000/test/canny-async.html'
                 ]
             }
