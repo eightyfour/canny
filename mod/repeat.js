@@ -130,7 +130,8 @@
                 return node;
             }
             /**
-             *
+             * register click events
+             * TODO refactor code - because also other methods uses same code
              * @param clone
              * @param item
              * @param itemName
@@ -156,8 +157,39 @@
                     registerClick(clone);
                 }
                 // check children of clone
-                [].slice.call(clone.querySelectorAll(onClick)).forEach(registerClick);
+                [].slice.call(clone.querySelectorAll('[' + onClick + ']')).forEach(registerClick);
             }
+            /**
+             * add classes
+             * TODO refactor code - because also other methods uses same code
+             * @param clone
+             * @param item
+             * @param itemName
+             */
+            function handleClasses(clone, obj, itemName) {
+                var addClass = 'add-class';
+
+                function addClassToNode(node) {
+                    var tmp = node.getAttribute(addClass).split('.'), tokenObjectProperty, val;
+
+                    if (tmp.length > 0 && tmp[0] === itemName) {
+                        tokenObjectProperty = tmp.slice(1).join('.');
+                        val = getGlobalCall(tokenObjectProperty, obj);
+                        if (typeof val === 'string') {
+                            node.classList.add(val);
+                        } else {
+                            console.log('repeat:can not add class to node', tokenObjectProperty);
+                        }
+                    }
+                }
+                // check own clone (can't select parent - this will select all children in the repeat)
+                if (clone.hasAttribute(addClass)) {
+                    addClassToNode(clone);
+                }
+                // check children of clone
+                [].slice.call(clone.querySelectorAll('[' +addClass + ']')).forEach(addClassToNode);
+            }
+
             /**
              *
              * @param node
@@ -175,6 +207,7 @@
                                 var clone = childTpl.cloneNode(true);
                                 node.appendChild(compile(clone, item, itemName));
                                 handleEvents(clone, item, itemName);
+                                handleClasses(clone, item, itemName);
                             });
                         });
                     } else {

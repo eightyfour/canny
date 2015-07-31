@@ -43,6 +43,10 @@
         clickListener : [
             {foo : 'click me 1', clickMe : function () { console.log('canny-repeat: foo1 clicked'); }},
             {foo : 'click me 2', clickMe : function () { console.log('canny-repeat: foo2 clicked');}}
+        ],
+        addClasses : [
+            {className : 'itemClass0'},
+            {className : 'itemClass1'}
         ]
 
     };
@@ -64,6 +68,10 @@
 
     <ul id="qunitListObjectClickListener" canny-mod="repeat" canny-var="{'for':'item','in':'repeat.clickListener'}">
         <li on-click="item.clickMe">{{item.foo}}</li>
+    </ul>
+
+    <ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="{'for':'item','in':'repeat.addClasses'}">
+        <li add-class="item.className">{{item.className}}</li>
     </ul>
 </body>
 </html>

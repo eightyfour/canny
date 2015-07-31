@@ -55,9 +55,17 @@ QUnit.test("dom list object with click listener", function( assert ) {
 
 //    ok(true, 'foo1 clicked');
 //    start();
-    links[0].click();
+//    links[0].click();
 //    ok(true, 'foo2 clicked');
 //    start();
 //    links[1].click();
+
+});
+
+QUnit.test("dom list object with class adding", function( assert ) {
+    var links = document.getElementById("qunitListObjectAddClass").children;
+
+    assert.equal(links[0].className, "itemClass0");
+    assert.equal(links[1].className, "itemClass1");
 
 });
