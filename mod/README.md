@@ -132,6 +132,32 @@ Generates:
   <p class="bar" add-class="item.className">I have the class bar</p>
 </diV>
 ```
+
+### if conditions
+With the if condition you can decide which part of you template should be rendered and which not.
+There are two attributes: **if** and **if-not**. 
+
+Note:
+Maybe later it could also contain more logic like to pass directly a conditional statement in to like if="item.foo === 'foo'".
+```javascript
+var path = {
+  conditionCollection : [{foo : true}, {foo : false}]     
+}
+```
+Can be used like this:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.conditionCollection'}">
+  <p if="item.foo">foo if {{item.foo}}</p>
+  <p if-not="item.foo">foo if not {{item.foo}}</p>
+</div>
+```
+Generates:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+  <p if="item.foo">foo if true</p>
+  <p if-not="item.foo">foo if not false</p>
+</diV>
+```
 ___
 async
 =====

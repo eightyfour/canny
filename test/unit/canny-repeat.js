@@ -52,7 +52,7 @@ QUnit.test("dom list object with click listener", function( assert ) {
 
     assert.equal(links[0].innerHTML, "click me 1");
     assert.equal(links[1].innerHTML, "click me 2");
-
+    // TODO test that the click event is registered and can be executed
 //    ok(true, 'foo1 clicked');
 //    start();
 //    links[0].click();
@@ -67,5 +67,23 @@ QUnit.test("dom list object with class adding", function( assert ) {
 
     assert.equal(links[0].className, "itemClass0");
     assert.equal(links[1].className, "itemClass1");
+
+});
+
+QUnit.test("Test the if and if-not condition statement", function( assert ) {
+    var links = document.getElementById("qunitIfConditionCollection").children;
+
+    assert.equal(links.length, 2);
+    assert.equal(links[0].innerHTML, "foo if true");
+    assert.equal(links[1].innerHTML, "foo if not false");
+
+});
+
+QUnit.test("Test if condition save object access", function( assert ) {
+    var links = document.getElementById("qunitIfConditionObjectExists").children;
+
+    assert.equal(links.length, 2);
+    assert.equal(links[0].innerHTML, "there is no item bar only foo: foo");
+    assert.equal(links[1].innerHTML, "if bar: barFoo");
 
 });

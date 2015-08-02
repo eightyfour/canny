@@ -28,7 +28,7 @@
  *
  */
 (function () {
-    "use strict";
+    'use strict';
 
     var openChar = '{',
         endChar  = '}',
@@ -78,13 +78,20 @@
                         tmp = token.key.split('.');
                         if (tmp.length > 0 && tmp[0] === itemName) {
                             tokenObjectProperty = tmp.slice(1).join('.');
-                            val = getGlobalCall(tokenObjectProperty, obj);
+                            if (typeof obj === 'object') {
+                                val = getGlobalCall(tokenObjectProperty, obj);
+                            } else {
+                                val = obj;
+                            }
                         } else {
                             // just a string?
                             val = obj;
                         }
                         if (typeof val === 'string') {
                             el = document.createTextNode(val);
+                            textNode.parentNode.insertBefore(el, textNode);
+                        } else if (typeof val === 'boolean') {
+                            el = document.createTextNode(val.toString());
                             textNode.parentNode.insertBefore(el, textNode);
                         } else {
                             console.error('repeat: can not find property "' + tokenObjectProperty + '" for object', obj);
@@ -129,99 +136,148 @@
 
                 return node;
             }
+
+            /**
+             * helper function to do the read variable from string magic.
+             * The cb will called with the property value - in case of undefined the variable does not exists
+             * @param node
+             * @param attributeName
+             * @param cb
+             */
+            function getLoopValueFromAttribute(node, obj, itemName, attributeName, cb) {
+                var tmp = node.getAttribute(attributeName).split('.'), tokenObjectProperty;
+
+                if (tmp.length > 0 && tmp[0] === itemName) {
+                    tokenObjectProperty = tmp.slice(1).join('.');
+                    cb(getGlobalCall(tokenObjectProperty, obj));
+                } else {
+                    // TODO handle this correctly
+                    console.error('repeat:getLoopValueFromAttribute has problems');
+                }
+            }
+
             /**
              * register click events
-             * TODO refactor code - because also other methods uses same code
+             *
              * @param clone
              * @param item
              * @param itemName
              */
             function handleEvents(clone, obj, itemName) {
                 var onClick = 'on-click';
-
-                function registerClick(node) {
-                    var tmp = node.getAttribute(onClick).split('.'), tokenObjectProperty, val;
-
-                    if (tmp.length > 0 && tmp[0] === itemName) {
-                        tokenObjectProperty = tmp.slice(1).join('.');
-                        val = getGlobalCall(tokenObjectProperty, obj);
+                // check children of clone
+                [].slice.call(clone.querySelectorAll('[' + onClick + ']')).forEach(function (node) {
+                    getLoopValueFromAttribute(node, obj, itemName, onClick, function (val) {
                         if (typeof val === 'function') {
                             node.addEventListener('click', val);
                         } else {
-                            console.log('repeat:can not register click listener without a function', tokenObjectProperty);
+                            console.log('repeat:can not register click listener without a function', node);
                         }
-                    }
-                }
-                // check own clone (can't select parent - this will select all children in the repeat)
-                if (clone.hasAttribute(onClick)) {
-                    registerClick(clone);
-                }
-                // check children of clone
-                [].slice.call(clone.querySelectorAll('[' + onClick + ']')).forEach(registerClick);
+                    });
+                });
             }
             /**
              * add classes
-             * TODO refactor code - because also other methods uses same code
+             *
              * @param clone
              * @param item
              * @param itemName
              */
             function handleClasses(clone, obj, itemName) {
-                var addClass = 'add-class';
-
-                function addClassToNode(node) {
-                    var tmp = node.getAttribute(addClass).split('.'), tokenObjectProperty, val;
-
-                    if (tmp.length > 0 && tmp[0] === itemName) {
-                        tokenObjectProperty = tmp.slice(1).join('.');
-                        val = getGlobalCall(tokenObjectProperty, obj);
+                var attributeName = 'add-class';
+                // check children of clone
+                [].slice.call(clone.querySelectorAll('[' + attributeName + ']')).forEach(function (node) {
+                    getLoopValueFromAttribute(node, obj, itemName, attributeName, function (val) {
                         if (typeof val === 'string') {
                             node.classList.add(val);
                         } else {
-                            console.log('repeat:can not add class to node', tokenObjectProperty);
+                            console.log('repeat:can not add class to node', node);
                         }
-                    }
-                }
-                // check own clone (can't select parent - this will select all children in the repeat)
-                if (clone.hasAttribute(addClass)) {
-                    addClassToNode(clone);
-                }
-                // check children of clone
-                [].slice.call(clone.querySelectorAll('[' +addClass + ']')).forEach(addClassToNode);
+                    });
+                });
             }
 
             /**
-             *
+             * handle the if conditions if and if-not
+             * @param clone
+             * @param obj
+             * @param itemName
+             */
+            function handleIfCondition(clone, obj, itemName) {
+                var attributeName_if = 'if',
+                    attributeName_if_not = 'if-not';
+
+                function checkIf(val, node) {
+                    if (!val) {
+                        node.parentNode.removeChild(node);
+                    }
+                }
+                function checkIfNot(val, node) {
+                    if (val) {
+                        node.parentNode.removeChild(node);
+                    }
+                }
+                // check children of clone
+                [].slice.call(clone.querySelectorAll('[' +attributeName_if + ']')).forEach(function (node) {
+                    getLoopValueFromAttribute(node, obj, itemName, attributeName_if, function (val) {checkIf(val, node);});
+                });
+
+                [].slice.call(clone.querySelectorAll('[' +attributeName_if_not + ']')).forEach(function (node) {
+                    getLoopValueFromAttribute(node, obj, itemName, attributeName_if_not, function (val) {checkIfNot(val, node);});
+                });
+            }
+
+            /**
+             * Looped through the collection and do the logic for each clone instance.
+             * Actually it supports only collection - no objects.
              * @param node
              * @param itemName
-             * @param data
+             * @param collection
              * @param template
              */
-            function registerTemplate(node, itemName, data, template) {
-                if (typeof data === 'object') {
-                    if (Object.prototype.toString.call(data) === '[object Array]') {
+            function registerTemplate(node, itemName, collection, template) {
+                var mainFrag;
+                if (typeof collection === 'object') {
+                    if (Object.prototype.toString.call(collection) === '[object Array]') {
                         // it is an array
-                        // TODO functions in array could also be registered as click listeners
-                        data.forEach(function (item) {
+                        mainFrag = document.createDocumentFragment();
+                        collection.forEach(function (item) {
                             template.forEach(function (childTpl) {
-                                var clone = childTpl.cloneNode(true);
-                                node.appendChild(compile(clone, item, itemName));
-                                handleEvents(clone, item, itemName);
-                                handleClasses(clone, item, itemName);
+                                // TODO works also with fragment but then the qunit test fails
+                                // - there is a problem with the phantomjs
+//                                var fragment = document.createDocumentFragment();
+                                var fragment = document.createElement('div');
+                                fragment.appendChild(childTpl.cloneNode(true));
+                                // if condition can remove elements from clone
+                                handleIfCondition(fragment, item, itemName);
+                                if (fragment.children && fragment.children.length === 1) {
+                                    handleEvents(fragment, item, itemName);
+                                    handleClasses(fragment, item, itemName);
+                                    // replace texts:
+                                    mainFrag.appendChild(compile(fragment.children[0], item, itemName));
+                                } else {
+                                   // console.log('repeat:element has been removed from DOM');
+                                }
                             });
                         });
+                        node.appendChild(mainFrag);
                     } else {
                         // it is an object
                         console.error('repeat detect object but object currently not supported');
                         // what render? - property name or value? - Both?
                     }
-
                 } else {
-                    console.error('repeat:newRepeat detect none acceptable data argument', data);
+                    console.error('repeat:registerTemplate detect none acceptable data argument', collection);
                 }
             }
 
-            function newRepeat(node, itemName, data) {
+            /**
+             * Create a new repeat instance and do the "magic".
+             * @param node
+             * @param itemName
+             * @param data
+             */
+            function execRepeat(node, itemName, data) {
                 // for te first it accepts only one child
                 var template = [];
                 [].slice.call(node.children).forEach(function (child) {
@@ -229,8 +285,6 @@
                 });
 
                 if (typeof data === 'function') {
-                    // TODO - this will be the magic ;-)
-//                    console.log('repeat:detect function');
                     data(function (data) {
                         // better would be a update children but this is much effort to detect
                         [].slice.call(node.children).forEach(function (child) {
@@ -241,7 +295,6 @@
                 } else {
                     registerTemplate(node, itemName, data, template)
                 }
-
             }
 
             return {
@@ -257,11 +310,12 @@
                     var inPointer;
                     if (typeof attr === 'object' && attr.in && attr.for) {
                         if (typeof attr.in === 'string') {
+                            // TODO replace window with this and also other instances could use the magic as closure
                             inPointer = getGlobalCall(attr.in, window);
                         } else {
                             inPointer = attr.in;
                         }
-                        newRepeat(node, attr.for, inPointer);
+                        execRepeat(node, attr.for, inPointer);
                     } else {
                         console.warn('repeat:add none acceptable attributes', attr);
                     }
@@ -279,16 +333,26 @@
         return new RegExp(open + open + open + '?(.+?)' + end + '?' + end + end);
     }
 
-    function getGlobalCall (value, end) {
+    /**
+     * Read a property from a given string and object.
+     * Returns the founded property pointer or undefined.
+     * @param value
+     * @param obj
+     * @returns {*} or undefined
+     */
+    function getGlobalCall (value, obj) {
         var split = value.split('.'),
             rec = function (cur) {
-                if (end[cur]) {
-                    end = end[cur];
+                // TODO whisker needs this too
+                if (obj[cur] !== undefined) {
+                    obj = obj[cur];
                     rec(split.shift());
+                } else if (cur === value ) {
+                    obj = undefined;
                 }
             };
         rec(split.shift());
-        return end;
+        return obj;
     }
 
     // export as module or bind to global
