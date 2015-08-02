@@ -10,7 +10,7 @@ Each template instance gets its own scope, where the given loop variable
 is set to the current collection item.
 
 ### canny-var attributes
-* **for:** configure the loop vaiable name.
+* **for:** configure the loop variable name.
 * **in**: is the source where repeat can find the collection.
  It accepts functions and collections:
    * **collection:** accepts Objects, strings or functions (see on-click)  
