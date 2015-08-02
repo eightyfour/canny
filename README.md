@@ -197,12 +197,11 @@ Use this to register your modules to canny. Should be done early as possible (If
 canny.add(moduleName, obj)
 ```
 
->**(draft)** If you need the current canny instance which is parsing your module you can pass a function instead of an object. Canny will call the function and expect to return a object with the canny interface. As a attribute of the function you will get the actually canny instance.
+> If you need the current canny instance you can pass a function instead of an object to the add method. Canny will call the function with the canny instance.
 
 > ```javascript
 > canny.add(moduleName, function(cannyInstance))
 > ```
-> *this feature is not implented yet...*
  
 #### ready
 
