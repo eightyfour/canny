@@ -137,8 +137,7 @@ Generates:
 With the if condition you can decide which part of you template should be rendered and which not.
 There are two attributes: **if** and **if-not**. 
 
-Note:
-Maybe later it could also contain more logic like to pass directly a conditional statement in to like if="item.foo === 'foo'".
+Note: maybe later it could also contain more complex logic. E.g. pass directly a conditional statement like if="item.foo === 'foo'". But actually this logic could also be implemented in the javascript file. Currently there is no reasion to move logic like this to the DOM level.
 ```javascript
 var path = {
   conditionCollection : [{foo : true}, {foo : false}]     
@@ -158,6 +157,30 @@ Generates:
   <p if-not="item.foo">foo if not false</p>
 </diV>
 ```
+To avoid none existing property exceptions you can also use the if attribute to check if a property of an object exists or not. For example the **barFoo** property only exists for the second element. And instead of four elements it will only render two :
+```javascript
+var path = {
+  conditionCollection :[
+    {foo : 'foo'},
+    {foo : 'foo', bar: {barFoo : 'barFoo'}}
+  ]     
+}
+```
+Can be used like this:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.conditionCollection'}">
+  <h1 if="item.bar">if bar: {{item.bar.barFoo}}</h1>
+  <h2 if-not="item.bar">there is no item bar only foo: {{item.foo}}</h2>
+</div>
+```
+Generates:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+  <h2 if-not="item.bar">there is no item bar only foo: foo</h2>
+  <h1 if="item.bar">if bar: barFoo</h1>
+</diV>
+```
+
 ___
 async
 =====
