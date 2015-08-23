@@ -1,0 +1,31 @@
+
+<ul id="qunitList" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.list'}">
+    <li>{{item}}</li>
+</ul>
+
+<ul id="qunitListObject" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listObj'}">
+    <li>{{item.main}}</li>
+    <li>{{item.bar.foo1}}</li>
+    <li>With before text {{item.bar.bar1}} and after text.</li>
+</ul>
+
+<ul id="qunitListObjectFunction" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.closureFc.listObjFunction'}">
+    <li>{{item.foo}}</li>
+</ul>
+
+<ul id="qunitListObjectClickListener" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.clickListener'}">
+    <li on-click="item.clickMe">{{item.foo}}</li>
+</ul>
+
+<ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
+    <li add-class="item.className">{{item.className}}</li>
+</ul>
+
+<ul id="qunitIfConditionCollection" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditions'}">
+    <li if="item.foo">foo if {{item.foo}}</li>
+    <li if-not="item.foo">foo if not {{item.foo}}</li>
+</ul>
+<ul id="qunitIfConditionObjectExists" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditionsWithMissingProperties'}">
+    <li if="item.bar">if bar: {{item.bar.barFoo}}</li>
+    <li if-not="item.bar">there is no item bar only foo: {{item.foo}}</li>
+</ul>
