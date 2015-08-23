@@ -1,10 +1,10 @@
 
-describe("Test repeat", function() {
+describe("Test repeat", function () {
 
     var div;
     
-    beforeAll(function() {
-        canny.add('repeatSpecs',{
+    beforeAll(function () {
+        canny.add('repeatSpecs', {
             list : ['item0', 'item1', 'item2'],
             listObj : [{
                 main:'main1',
@@ -37,8 +37,8 @@ describe("Test repeat", function() {
                 {foo : 'click me 2', clickMe : function () { console.log('canny-repeat: foo2 clicked');}}
             ],
             addClasses : [
-                {className : 'itemClass0'},
-                {className : 'itemClass1'}
+                {className : 'itemClass0 foo'},
+                {className : 'itemClass1 foo'}
             ],
             conditions : [
                 {foo : true},
@@ -54,11 +54,11 @@ describe("Test repeat", function() {
         div = canny.fixture.load('repeatSpec.html');
     });
 
-    it('repeat available', function() {
+    it('repeat available', function () {
         expect(canny.repeat).toBeDefined();
     });
 
-    it("dom list string", function() {
+    it("dom list string", function () {
         var links = div.querySelector('#qunitList').children;
 
         expect(links[0].innerHTML).toEqual( "item0");
@@ -66,7 +66,7 @@ describe("Test repeat", function() {
         expect(links[2].innerHTML).toEqual( "item2");
     });
 
-    it("dom list object", function() {
+    it("dom list object", function () {
         var links = div.querySelector('#qunitListObject').children;
 
         expect(links[0].innerHTML).toEqual( "main1");
@@ -82,7 +82,7 @@ describe("Test repeat", function() {
         expect(links[8].innerHTML).toEqual( "With before text bar3 and after text.");
     });
 
-    it("dom list object with function and trigger update", function() {
+    it("dom list object with function and trigger update", function () {
         var links = div.querySelector('#qunitListObjectFunction').children;
 
         expect(links[0].innerHTML).toEqual( "foo1");
@@ -101,7 +101,7 @@ describe("Test repeat", function() {
         expect(links[2].innerHTML).toEqual( "foo6");
     });
 
-    it("dom list object with click listener", function() {
+    it("dom list object with click listener", function () {
         var links = div.querySelector('#qunitListObjectClickListener').children;
 
         expect(links[0].innerHTML).toEqual( "click me 1");
@@ -116,15 +116,17 @@ describe("Test repeat", function() {
 
     });
 
-    it("dom list object with class adding", function() {
-        var links = div.querySelector('#qunitListObjectAddClass').children;
+    it("dom list object with class adding", function () {
+        var links = div.querySelector("#qunitListObjectAddClass").children;
 
-        expect(links[0].className).toEqual( "itemClass0");
-        expect(links[1].className).toEqual( "itemClass1");
+        expect(links[0].classList.contains("itemClass0")).toBe(true);
+        expect(links[0].classList.contains("foo")).toBe(true);
+        expect(links[1].classList.contains("itemClass1")).toBe(true);
+        expect(links[1].classList.contains("foo")).toBe(true);
 
     });
 
-    it("Test the if and if-not condition statement", function() {
+    it("Test the if and if-not condition statement", function () {
         var links = div.querySelector('#qunitIfConditionCollection').children;
 
         expect(links.length).toEqual( 2);
@@ -133,7 +135,7 @@ describe("Test repeat", function() {
 
     });
 
-    it("Test if condition save object access", function() {
+    it("Test if condition save object access", function () {
         var links = div.querySelector('#qunitIfConditionObjectExists').children;
 
         expect(links.length).toEqual( 2);
