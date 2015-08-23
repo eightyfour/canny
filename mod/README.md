@@ -116,7 +116,7 @@ Generates:
 To add a specific class to a template instance you can use the **add-class** attribute. 
 ```javascript
 var path = {
-  objectList : [{className : 'foo'}, {className : 'bar'}]     
+  objectList : [{className : 'foo foo1'}, {className : 'bar'}]     
 }
 ```
 Can be used like this:
@@ -128,7 +128,7 @@ Can be used like this:
 Generates:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
-  <p class="foo" add-class="item.className">I have the class foo</p>
+  <p class="foo foo1" add-class="item.className">I have the class foo and foo1</p>
   <p class="bar" add-class="item.className">I have the class bar</p>
 </diV>
 ```

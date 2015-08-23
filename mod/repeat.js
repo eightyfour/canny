@@ -188,8 +188,14 @@
                 // check children of clone
                 [].slice.call(clone.querySelectorAll('[' + attributeName + ']')).forEach(function (node) {
                     getLoopValueFromAttribute(node, obj, itemName, attributeName, function (val) {
+                        var classes;
                         if (typeof val === 'string') {
-                            node.classList.add(val);
+                            classes = val.split(' ');
+                            classes.forEach(function (clasz) {
+                                if (clasz) {
+                                    node.classList.add(clasz);
+                                }
+                            });
                         } else {
                             console.log('repeat:can not add class to node', node);
                         }
