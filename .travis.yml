@@ -1,0 +1,19 @@
+notifications:
+  email:
+    recipients:
+      - travis@eightyfour.de
+    on_success: always #[always|never|change] # default: change
+    on_failure: always #[always|never|change] # default: always
+
+language: node_js
+
+node_js:
+  - "stable"
+  - "0.12"
+
+before_script:
+  - npm install -g phantomjs
+  - npm install -g karma
+
+install:
+  - npm install

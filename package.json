@@ -17,6 +17,9 @@
     "html",
     "module"
   ],
+  "scripts": {
+    "test": "karma start karma.conf.js"
+  },
   "license": "MIT",
   "devDependencies": {
     "jasmine": "^2.3.2",
