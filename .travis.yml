@@ -14,6 +14,8 @@ node_js:
 before_script:
   - npm install -g phantomjs
   - npm install -g karma
+  - npm install -g bower
 
 install:
+  - bower install
   - npm install

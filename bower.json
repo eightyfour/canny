@@ -1,0 +1,22 @@
+{
+  "name": "canny",
+  "main": "canny.js",
+  "version": "0.0.9",
+  "homepage": "https://github.com/eightyfour/canny",
+  "authors": [
+    "eightyfour <eightyfour@thinkuseful.de>"
+  ],
+  "description": "Simple dom module manager with basic view support.",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+      "jquery": "~2.1.4",
+      "jasmine-jquery": "~2.1.0"
+  }
+}
