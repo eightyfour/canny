@@ -68,7 +68,6 @@
                             }
                             node.parentNode.insertBefore(el, node);
                         } else { // a plain string
-                            console.log('whisker obj: ', obj);
                             el = document.createTextNode(token);
                             node.parentNode.insertBefore(el, node);
                         }

@@ -1,0 +1,55 @@
+<div id="whisker">
+    <!-- Load from static data object -->
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.data1">
+        <p id="whisker_data1">Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>
+    </div>
+    <hr/>
+
+    <!-- Load from dynamic data object (object is return by function) -->
+    <ul id="whisker_data_function">
+        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
+        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
+        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
+        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
+    </ul>
+    <hr/>
+
+    <!-- Load from dynamic data object with option to trigger data again -->
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.triggerWhiskerUpdate">
+        <p>
+            Hello I'm {{name}} and I take the data from a function.
+        </p>
+        <ul>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+            <li>{{text}}</li>
+        </ul>
+    </div>
+    <hr/>
+
+    <!-- Trigger whisker update and test also that the data is updated for a second instance  -->
+    <input type="text" placeholder="type something" />
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">
+        Here the input: {{value}}
+        <ul>
+            <li>{{value}}</li>
+            <li>{{value}}</li>
+        </ul>
+    </div>
+
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">And a second instance: {{value}}</div>
+    <hr/>
+
+    <!-- Load from object object -->
+    <div canny-mod="whisker" canny-var="canny.whiskerSample.data3">
+        <p>Hello I'm <strong>{{user.name}}</strong> and I'm <strong>{{user.age}}</strong> years old.</p>
+    </div>
+    <hr/>
+
+    <!-- Load direct as html JSON -->
+    <div canny-mod="whisker" canny-var="{'name':'Carlo','message':'...that could be the message...'}">
+        <p>My name is {{name}}</p>
+        <p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>
+    </div>
+</div>
