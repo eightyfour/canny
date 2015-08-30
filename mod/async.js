@@ -25,185 +25,262 @@
  *
  */
 (function () {
-    "use strict";
+    'use strict';
     var async = (function () {
         var filesToLoad = [],
-            ready = false,
-            fc = {
-                appendScript : function (script, cb) {
-                    var node = document.createElement('script');
-                    node.type = "text/javascript";
-                    node.async = true;
-                    node.setAttribute('src', script.getAttribute('src'));
-                    node.addEventListener('load', cb, false);
-                    document.head.appendChild(node);
-                },
-                appendScriptsToHead : function (scripts, cb) {
-                    var script, i, includesScripts = false,
-                        scriptCounter = (function () {
-                            var count = 0;
-                            return {
-                                up : function () {count++; },
-                                ready : function () {
-                                    count--;
-                                    if (count <= 0) {
-                                        cb();
-                                    }
-                                }
-                            };
-                        }());
+            pushLoadCBs = [],
+            ready = false;
 
-                    for (i = 0; i < scripts.length; i++) {
-                        script = scripts[i];
-                        if (script.getAttribute('src')) {
-                            includesScripts = true;
-                            scriptCounter.up();
-                            fc.appendScript(script, scriptCounter.ready);
-                        } else {
-                            console.warn('async: found inline script tag!!!');
-                        }
-                    }
+        /**
+         *
+         * @param script
+         * @param cb
+         */
+        function appendScript(script, cb) {
+            var node = document.createElement('script');
+            node.type = "text/javascript";
+            node.async = true;
+            node.setAttribute('src', script.getAttribute('src'));
+            node.addEventListener('load', cb, false);
+            node.addEventListener('error', cb, true);
+            document.head.appendChild(node);
+        }
 
-                    if (scripts.length === 0 || includesScripts === false) {
-                        cb();
-                    }
-
-                },
-                doAjax : function (params) {
-                    var call = new XMLHttpRequest();
-                    var url = params.path;
-                    if (params.method === 'GET' && typeof params.data === 'object') {
-                        for (var attr in params.data) {
-                            url = url + ((/\?/).test(url) ? "&" : "?") + attr + "=" + params.data[attr];
-                        }
-                    }
-                    if (params.noCache) {
-                        url = url + ((/\?/).test(url) ? "&" : "?") + "ts=" + (new Date()).getTime();
-                    }
-                    params.method = params.method || 'POST';
-                    call.open(params.method, url, true);
-                    call.onreadystatechange = function () {
-                        // TODO use === is this string or number ?
-                        if (call.readyState == 4) {
-                            if (call.status >= 400) {
-                                if (params.onFailure) {
-                                    params.onFailure(call);
-                                }
-                            } else {
-                                if (params.onSuccess) {
-                                    params.onSuccess(call);
-                                }
+        /**
+         *
+         * @param scripts
+         * @param cb
+         */
+        function appendScriptsToHead(scripts, cb) {
+            var script, i, includesScripts = false,
+                scriptCounter = (function () {
+                    var count = 0;
+                    return {
+                        up : function () {count++; },
+                        ready : function () {
+                            count--;
+                            if (count <= 0) {
+                                cb();
                             }
                         }
                     };
-                    call.setRequestHeader(params.contentType || "Content-Type", params.mimeType || "text/plain");
-                    if (params.method === 'POST') {
-                        call.send(params.data);
-                    } else {
-                        call.send();
-                    }
-                },
-                loadHTML: function (node, attr, cb) {
-                    var div = document.createElement('div'),
-                        scripts,
-                        // only parse if html and scripts are loaded (scripts has callbacks because there are needs to loaded asynchronous)
-                        handleCannyParse = (function (cb) {
-                            var waitForScripts = true,
-                                waitForHTML = true,
-                                triggger = function () {
-                                    if (!waitForScripts && !waitForHTML) {
-                                        canny.cannyParse(node, cb); // init also canny own modules
-                                    }
-                                };
-                            return {
-                                scriptReady : function () {
-                                    waitForScripts = false;
-                                    triggger();
-                                },
-                                htmlReady : function () {
-                                    waitForHTML = false;
-                                    triggger();
-                                }
-                            };
-                        }(function () {
-                            cb(attr);
-                        }));
-                    modViews.load(attr.url, function (src) {
-                        var childs;
-                        if (src) {
-                            div.innerHTML = src;
-                            scripts = div.getElementsByTagName('script');
-                            childs = [].slice.call(div.childNodes);
-                            fc.appendScriptsToHead(scripts, handleCannyParse.scriptReady);
-                            childs.forEach(function (child) {
-                                if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
-                                    node.appendChild(child);
-                                }
-                            });
-                            handleCannyParse.htmlReady();
-                        } else {
-                            console.warn('async: Loading async HTML failed');
-                        }
-                    });
+                }());
+            console.log('async:detect script', scripts);
+            for (i = 0; i < scripts.length; i++) {
+                script = scripts[i];
+                if (script.getAttribute('src')) {
+                    includesScripts = true;
+                    scriptCounter.up();
+                    appendScript(script, scriptCounter.ready);
+                } else {
+                    console.warn('async: found inline script tag!!!');
                 }
-            },
-            pushLoadCBs = [],
-            modViews = {
-                ready: function () {
-                    var obj, cbCount = filesToLoad.length;
-                    while (filesToLoad.length > 0) {
-                        obj = filesToLoad.splice(0, 1)[0];
-                        fc.loadHTML(obj.node, obj.attr, function (attr) {
-                            var keepPushCB = [], tmpCb;
-                            cbCount--;
-//                            if (cbCount <= 0) {
-                                while (pushLoadCBs.length > 0) {
-                                    tmpCb = pushLoadCBs.splice(0, 1)[0];
-                                    if (tmpCb(attr) === true) {
-                                        keepPushCB.push(tmpCb);
-                                    }
-                                }
-                                pushLoadCBs = keepPushCB;
-//                            }
-                        });
-                    }
+            }
 
-                },
-                pushLoadCB : function (fc) {
-                    pushLoadCBs.push(fc);
-                },
-                add: function (node, attr) {    // part of api
-                    // TODO implement logic for loading it directly from html
-                    if (attr.hasOwnProperty('url')) {
-                        if (!ready) {
-                            filesToLoad.push({
-                                node: node,
-                                attr: attr
-                            });
-                        } else {
-                            fc.loadHTML(node, attr);
+            if (scripts.length === 0 || includesScripts === false) {
+                cb();
+            }
+
+        }
+
+        /**
+         *
+         * @param node
+         * @param attr {{url:string}}
+         * @param cb
+         */
+        function loadHTML(node, attr, cb) {
+            var div = document.createElement('div'),
+                scripts,
+                // only parse if html and scripts are loaded (scripts has callbacks because there are needs to loaded asynchronous)
+                handleCannyParse = (function (cb) {
+                    var waitForScripts = true,
+                        waitForHTML = true,
+                        triggger = function () {
+                            if (!waitForScripts && !waitForHTML) {
+                                canny.cannyParse(node, cb); // init only canny own modules
+                            }
+                        };
+                    return {
+                        scriptReady : function () {
+                            waitForScripts = false;
+                            triggger();
+                        },
+                        htmlReady : function () {
+                            waitForHTML = false;
+                            triggger();
                         }
-                    }
-                },
-                doAjax: fc.doAjax,
-                loadHTML : fc.loadHTML,
-                /**
-                 * Deprecated: use loadHTML instead
-                 * @param path
-                 * @param cb
-                 */
-                load: function (path, cb) {
-                    fc.doAjax({
-                        method: 'GET',
-                        path: path,
-                        onSuccess: function (response) {
-                            cb(response.responseText);
+                    };
+                }(function () {
+                    cb(attr);
+                }));
+
+            load(attr.url, function (src) {
+                var childs;
+                if (src) {
+                    div.innerHTML = src;
+                    scripts = div.getElementsByTagName('script');
+                    childs = [].slice.call(div.childNodes);
+                    console.log('async:load', attr);
+                    appendScriptsToHead(scripts, handleCannyParse.scriptReady);
+                    childs.forEach(function (child) {
+                        if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
+                            node.appendChild(child);
                         }
                     });
+                    handleCannyParse.htmlReady();
+                } else {
+                    console.warn('async: Loading async HTML failed');
+                }
+            });
+        }
+        /**
+         * simple wrapper to load HTML files with GET
+         * @param path
+         * @param cb
+         */
+        function load(path, cb) {
+            doAjax({
+                method: 'GET',
+                path: path,
+                onSuccess: function (response) {
+                    cb(response.responseText);
+                }
+            });
+        }
+        /**
+         *
+         * @param params {{
+         *   noCache:boolean,
+         *   method:string|POST(default),
+         *   data:object|string,
+         *   path:string,
+         *   onFailure:function,
+         *   onSuccess:function,
+         *   contentType:string|Content-Type(default),
+         *   mimeType:string|text plain(default)
+         * }}
+         */
+         function doAjax(params) {
+            var call = new XMLHttpRequest();
+            var url = params.path;
+            if (params.method === 'GET' && typeof params.data === 'object') {
+                for (var attr in params.data) {
+                    url = url + ((/\?/).test(url) ? "&" : "?") + attr + "=" + params.data[attr];
+                }
+            }
+            if (params.noCache) {
+                url = url + ((/\?/).test(url) ? "&" : "?") + "ts=" + (new Date()).getTime();
+            }
+            params.method = params.method || 'POST';
+            call.open(params.method, url, true);
+            call.onreadystatechange = function () {
+                // TODO use === is this string or number ?
+                if (call.readyState == 4) {
+                    if (call.status >= 400) {
+                        if (params.onFailure) {
+                            params.onFailure(call);
+                        }
+                    } else {
+                        if (params.onSuccess) {
+                            params.onSuccess(call);
+                        }
+                    }
                 }
             };
+            call.setRequestHeader(params.contentType || "Content-Type", params.mimeType || "text/plain");
+            if (params.method === 'POST') {
+                call.send(params.data);
+            } else {
+                call.send();
+            }
+        }
 
-        return modViews;
+        return {
+            /**
+             * add a callback. So you will be notified when files are loaded asynchronous.
+             * You will be called only once except your return true then async will keep
+             * your callback in the notifier list and you will be informed for each async request.
+             *
+             * The async module will call each callback with the actual attr. So you have the control
+             * how often you will be notified.
+             *
+             * Might be changed in the future version of async:
+             * Currently this is only executed for canny modules which are loaded from the DOM directly.
+             *
+             * @param fc
+             */
+            pushLoadCB : function (fc) {
+                pushLoadCBs.push(fc);
+            },
+            /**
+             * Do a simple ajax call.
+             *
+             * @param params {{
+             *   noCache:boolean,
+             *   method:string|POST(default),
+             *   data:object,string,
+             *   path:string,
+             *   onFailure:function,
+             *   onSuccess:function,
+             *   contentType:string|Content-Type(default),
+             *   mimeType:string|text plain(default)
+             * }}
+             */
+            doAjax: doAjax,
+            /**
+             *
+             * @param node
+             * @param attr {{url:string}}
+             * @param cb
+             */
+            loadHTML : loadHTML,
+            /**
+             * Deprecated: use loadHTML instead
+             * @param path
+             * @param cb
+             */
+            load: function () {
+                console.warn('async:load function load is deprecated. Use loadHTML instead');
+                load.apply(null, arguments);
+            },
+            /**
+             * canny's add method
+             *
+             * @param node
+             * @param attr
+             */
+            add: function (node, attr) {    // part of api
+                // TODO implement logic for loading it directly from html
+                if (attr.hasOwnProperty('url')) {
+                    if (!ready) {
+                        filesToLoad.push({
+                            node: node,
+                            attr: attr
+                        });
+                    } else {
+                        loadHTML(node, attr);
+                    }
+                }
+            },
+            ready: function () {
+                var obj, cbCount = filesToLoad.length;
+                while (filesToLoad.length > 0) {
+                    obj = filesToLoad.splice(0, 1)[0];
+                    loadHTML(obj.node, obj.attr, function (attr) {
+                        var keepPushCB = [], tmpCb;
+                        cbCount--;
+                        while (pushLoadCBs.length > 0) {
+                            tmpCb = pushLoadCBs.splice(0, 1)[0];
+                            if (tmpCb(attr) === true) {
+                                keepPushCB.push(tmpCb);
+                            }
+                        }
+                        pushLoadCBs = keepPushCB;
+                    });
+                }
+            }
+        };
     }());
     // export as module or bind to global
     if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) {

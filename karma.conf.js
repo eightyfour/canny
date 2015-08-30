@@ -18,6 +18,8 @@ module.exports = function(config) {
             'bower_components/jquery/dist/jquery.min.js',
             'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
             {pattern: 'spec/fixtures/*.html', watched: true, included: false, served: true},
+            {pattern: 'spec/json/*.json', watched: true, included: false, served: true},
+            {pattern: 'spec/scripts/*.js', watched: true, included: false, served: true},
             'canny.js',
             'mod/*.js',
             'spec/helper/fixture.js',
