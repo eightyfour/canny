@@ -1,7 +1,7 @@
 canny
 =====
 
-[![NPM]][https://www.npmjs.com/package/canny]
+[NPM](https://www.npmjs.com/package/canny)
 [![Build Status](https://travis-ci.org/eightyfour/canny.svg)](https://travis-ci.org/eightyfour/canny)
 
 Dom module manager. Canny is not a framework canny is more a tiny library which helps you to organize javascript in modules. Canny is just a quite simple helper to initialize your javascript modules directly with the dom. 
