@@ -2,8 +2,11 @@ canny
 =====
 
 [NPM: canny](https://www.npmjs.com/package/canny)
+
 [Fork me on github](https://github.com/eightyfour/canny/)
+
 [Read more about the existing modules](https://github.com/eightyfour/canny/mod/)
+
 
 <span style="color:green;">Note: Canny is still in a alpha phase and some modules might be changed in near future. So far I've time I will continue with the development and documentation. Any input or help are welcome ;)</span>
 
