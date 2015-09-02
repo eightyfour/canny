@@ -94,22 +94,10 @@
                     } else if (nodeType === 3) {
                         compileTextNode(node, dataObj, attr);
                     }
-                },
-                getGlobalCall = function (value) {
-                    var split = value.split('.'),
-                        end = window,
-                        rec = function (cur) {
-                            if (end[cur]) {
-                                end = end[cur];
-                                rec(split.shift());
-                            }
-                        };
-                    rec(split.shift());
-                    return end;
                 };
 
             function initialize(node, attr) {
-                var dataObj = getGlobalCall(attr), obj;
+                var dataObj = getGlobalCall(attr, window), obj;
                 if (typeof dataObj === 'function') {
                     obj = dataObj();
                 } else {
@@ -161,6 +149,27 @@
         var open = escapeRegex(openChar),
             end  = escapeRegex(endChar);
         return new RegExp(open + open + open + '?(.+?)' + end + '?' + end + end);
+    }
+
+    /**
+     * Read a property from a given string and object.
+     * Returns the founded property pointer or undefined.
+     * @param value
+     * @param obj
+     * @returns {*} or undefined
+     */
+    function getGlobalCall (value, obj) {
+        var split = value.split('.'),
+            rec = function (cur) {
+                if (obj[cur] !== undefined) {
+                    obj = obj[cur];
+                    rec(split.shift());
+                } else if (cur === value ) {
+                    obj = undefined;
+                }
+            };
+        rec(split.shift());
+        return obj;
     }
 
     // export as module or bind to global

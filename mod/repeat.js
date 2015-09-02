@@ -349,7 +349,6 @@
     function getGlobalCall (value, obj) {
         var split = value.split('.'),
             rec = function (cur) {
-                // TODO whisker needs this too
                 if (obj[cur] !== undefined) {
                     obj = obj[cur];
                     rec(split.shift());
