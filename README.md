@@ -3,6 +3,8 @@ canny
 
 [NPM: canny](https://www.npmjs.com/package/canny)
 
+[Supports browserify](https://github.com/substack/node-browserify)
+
 [Fork me on github](https://github.com/eightyfour/canny/)
 
 [Read more about the existing modules](https://github.com/eightyfour/canny/tree/master/mod)
@@ -99,7 +101,7 @@ var myCannyMod = {
 }
 ```
 
-If you need to pass more than one attribute you can also pass a JSON object to canny-var like:
+If you need to pass more then one attribute you can also pass a JSON object to canny-var like:
 
 ```html
 <div canny-mod="myUniqueModuleName" canny-var="{'foo':'this is foo', 'bar':'this is bar'}"></div>
@@ -149,7 +151,7 @@ Expects a module name. If the name is not registered canny will print a warn.
 <div canny-mod="myUniqueModuleName"></div>
 ```
 
-If you need more than one module you can pass module names as a space seperated list
+If you need more then one module you can pass module names as a space seperated list
 
 ```html
 <div canny-mod="myUniqueModuleName fooMod barMod"></div>
@@ -166,12 +168,12 @@ Pass attributes to your module as object:
 ```html
 <div canny-mod="fooMod" canny-var="{'foo':'my foo', 'bar':'my bar'}"></div>
 ```
-If you have more than one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
+If you have more then one registered module and you need to pass for each module separate attributes you can use the moduleName-var.
 
 ```html
 <div canny-mod="fooMod barMod" canny-fooMod="myFoo" canny-var={'bar':'my bar'}></div>
 ```
-If you use both, canny-var and canny-moduleName than canny will give the canny-moduleName the prior and will ignore the canny-var. 
+If you use both, canny-var and canny-moduleName then canny will give the canny-moduleName the prior and will ignore the canny-var. 
 
 ```html
 <div canny-mod="fooMod barMod" canny-fooMod="myFoo" canny-var=myBar></div>
@@ -195,7 +197,7 @@ Will be called when:
 canny[myModuleName].ready()
 ```
 
-(**Notice:** If your module is not in the view (registered on a dom element with canny-mod) than ready will not be called. If you need this you can use the 'canny.ready' instead. See chapter canny -> ready)
+(**Notice:** If your module is not in the view (registered on a dom element with canny-mod) then ready will not be called. If you need this you can use the 'canny.ready' instead. See chapter canny -> ready)
 
 ### canny
 
@@ -248,7 +250,7 @@ var myModule = {
 };
 ```
 
-Than we could have the following HTML content. Instead of canny we named it 'myModule'.
+Then we could have the following HTML content. Instead of canny we named it 'myModule'.
 
 ```html
 <div myModule-mod="fooMod" myModule-var="myAttributes"></div>
@@ -355,7 +357,7 @@ Now we define a node for our menu. And a additional node to register a show butt
 <div canny-mod="menuModule" canny-var="toggleOpenMenuButton"></div>
 <!-- 
 	...
-and if you wont than add a second button somewhere else in the dom 
+and if you wont then add a second button somewhere else in the dom 
 	...
 -->
 <div canny-mod="menuModule" canny-var="toggleOpenMenuButton"></div>
@@ -434,13 +436,23 @@ canny.add('advanced', (function () {
 }()));
 ```
 
-The advanced module has the full controll and can decide when the nodes with the **advanced-mod** -attributes are initialized. 
+The advanced module has the full control and can decide when the nodes with the **advanced-mod** -attributes are initialized. 
 In the sample above we trigger the cannyParse in the ready method. We should see the following output in the console log:
 ```javascript
 item: item1
 item: item2
 item: item3
 ``` 
+
+## browserify
+You can also use browserify to import modules from the [mod folder](https://github.com/eightyfour/canny/tree/master/mod). Modules which are
+imported via require needs to be bind manually to the canny scope: 
+```javascript
+var canny = require('canny'),
+    repeat = require('canny/mod/repeat');
+canny.add('repeat', repeat);
+```
+With this approache it's also be possible to bind existing modules to a custom scope or give the module a different name (in case of name space conflicts).
 
 ## License
 
