@@ -5,10 +5,9 @@ canny
 
 [Fork me on github](https://github.com/eightyfour/canny/)
 
-[Read more about the existing modules](https://github.com/eightyfour/canny/mod/)
+[Read more about the existing modules](https://github.com/eightyfour/canny/tree/master/mod)
 
-
-<span style="color:green;">Note: Canny is still in a alpha phase and some modules might be changed in near future. So far I've time I will continue with the development and documentation. Any input or help are welcome ;)</span>
+> Note: Canny is still in a alpha phase and some modules might be changed in near future. So far I've time I will continue with the development and documentation. Any input or help are welcome ;)
 
 [![Build Status](https://travis-ci.org/eightyfour/canny.svg)](https://travis-ci.org/eightyfour/canny)
 
