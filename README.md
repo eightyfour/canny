@@ -1,9 +1,13 @@
 canny
 =====
 
-[![Build Status](https://travis-ci.org/eightyfour/canny.svg)](https://travis-ci.org/eightyfour/canny)
-
 [NPM: canny](https://www.npmjs.com/package/canny)
+[Fork me on github](https://github.com/eightyfour/canny/)
+[Read more about the existing modules](https://github.com/eightyfour/canny/mod/)
+
+<span style="color:green;">Note: Canny is still in a alpha phase and some modules might be changed in near future. So far I've time I will continue with the development and documentation. Any input or help are welcome ;)</span>
+
+[![Build Status](https://travis-ci.org/eightyfour/canny.svg)](https://travis-ci.org/eightyfour/canny)
 
 Dom module manager. Canny is not a framework canny is more a tiny library which helps you to organize javascript in modules. Canny is just a quite simple helper to initialize your javascript modules directly with the dom. 
 
