@@ -16,7 +16,14 @@ describe("Test repeat", function () {
                 main:'main3',bar:
                 {foo1 : 'foo3', bar1 : 'bar3'}
             }],
-            // TODO do the same with the attribute test and make it working ;-)
+            listOfFunctions : [
+                function () {return 'fc1'},
+                function () {return 'fc2'},
+                function () {return 'fc3'},
+            ],
+            objectMap : {
+                data1 : {}
+            },
             closureFc : (function () {
                 var triggerRepeat;
                 return {
@@ -45,8 +52,18 @@ describe("Test repeat", function () {
                 {attr1 : 'foo1', attr2 : 'bar1'},
                 {attr1 : 'foo2', attr2 : 'bar2'}
             ],
-            imageSrc : ['/image/foo.png', '/image/bar.png', 'http://image.de/image/foo.png',
-            ],
+            imageSrc : ['/image/foo.png', '/image/bar.png', 'http://image.de/image/foo.png'],
+            functionTest : (function () {
+                var triggerRepeat;
+                return {
+                    changeValues : function (list) {
+                        triggerRepeat(list);
+                    },
+                    functionPointer : function (cb) {
+                        triggerRepeat = cb;
+                    }
+                }
+            }()),
             conditions : [
                 {foo : true},
                 {foo : false}
@@ -55,7 +72,6 @@ describe("Test repeat", function () {
                 {foo : 'foo'},
                 {foo : 'foo', bar: {barFoo : 'barFoo'}}
             ]
-
         });
 
         div = canny.fixture.load('repeatSpec.html');
@@ -161,6 +177,41 @@ describe("Test repeat", function () {
         expect(links[1].classList.contains("foo2")).toBe(true);
         expect(links[1].classList.contains("bar2")).toBe(true);
         expect(links[1].getAttribute('id')).toEqual("foo2");
+
+    });
+
+    it("it should render the DOM for all attributes for each callback function", function () {
+        var li;
+        canny.repeatSpecs.functionTest.changeValues([
+            {id : 'id1', attr : 'attr1'},
+            {id : 'id2', attr : 'attr2'}
+        ]);
+
+        li = div.querySelector("#qunitListFunction").children;
+        expect(li[0].getAttribute('id')).toEqual('id1');
+        expect(li[0].classList.contains("attr1")).toBe(true);
+        expect(li[0].classList.contains("staticClass")).toBe(true);
+        expect(li[0].innerHTML).toBe('id1');
+
+        expect(li[1].getAttribute('id')).toEqual('id2');
+        expect(li[1].classList.contains("attr2")).toBe(true);
+        expect(li[1].classList.contains("staticClass")).toBe(true);
+        expect(li[1].innerHTML).toBe('id2');
+        // render the items again with new values
+        canny.repeatSpecs.functionTest.changeValues([
+            {id : 'id3', attr : 'attr3'},
+            {id : 'id4', attr : 'attr4'}
+        ]);
+
+        expect(li[0].getAttribute('id')).toEqual('id3');
+        expect(li[0].classList.contains("attr3")).toBe(true);
+        expect(li[0].classList.contains("staticClass")).toBe(true);
+        expect(li[0].innerHTML).toBe('id3');
+
+        expect(li[1].getAttribute('id')).toEqual('id4');
+        expect(li[1].classList.contains("attr4")).toBe(true);
+        expect(li[1].classList.contains("staticClass")).toBe(true);
+        expect(li[1].innerHTML).toBe('id4');
 
     });
 

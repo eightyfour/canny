@@ -29,6 +29,7 @@
  *  TODO: add example to get data direct from
  *   * a list of function
  *   * a object which contain functions
+ *
  */
 (function () {
     'use strict';
@@ -95,7 +96,8 @@
                             el = document.createTextNode(val.toString());
                             textNode.parentNode.insertBefore(el, textNode);
                         } else {
-                            console.error('repeat: can not find property "' + tokenObjectProperty + '" for object', obj);
+                            console.error('repeat: can not find property "' + tokenObjectProperty + '" for object', obj,
+                                'are you sure that the iterate variable is the same as the access token?');
                         }
                     } else {
                         el = document.createTextNode(token);
