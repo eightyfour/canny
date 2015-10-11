@@ -210,10 +210,9 @@ canny.add(moduleName, obj)
 ```
 
 > If you need the current canny instance you can pass a function instead of an object to the add method. Canny will call the function with the canny instance.
-
-> ```javascript
-> canny.add(moduleName, function(cannyInstance))
-> ```
+```javascript
+canny.add(moduleName, function(cannyInstance))
+```
  
 #### ready
 
