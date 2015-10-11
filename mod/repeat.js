@@ -26,6 +26,9 @@
  *  * function which needs to be called with the object or list
  *  * ...
  *
+ *  TODO: add example to get data direct from
+ *   * a list of function
+ *   * a object which contain functions
  */
 (function () {
     'use strict';
@@ -39,6 +42,7 @@
             /**
              *  Parse a piece of text, return an array of tokens
              *  @param text
+             *  @return [key:String, html:]
              */
             function parse(text) {
                 if (!BINDING_RE.test(text)) {return null; }
@@ -65,10 +69,7 @@
              * @param itemName
              */
             function compileTextNode(textNode, obj, itemName) {
-                var tokens = parse(textNode.nodeValue), el, token, val, i, l, tmp, tokenObjectProperty,
-                    tmpObj = {};
-
-                tmpObj[itemName] = obj;
+                var tokens = parse(textNode.nodeValue), el, token, val, i, l, tmp, tokenObjectProperty;
 
                 if (!tokens || obj === undefined) {return; }
 
@@ -146,7 +147,6 @@
              */
             function getLoopValueFromAttribute(node, obj, itemName, attributeName, cb) {
                 var tmp = node.getAttribute(attributeName).split('.'), tokenObjectProperty;
-
                 if (tmp.length > 0 && tmp[0] === itemName) {
                     tokenObjectProperty = tmp.slice(1).join('.');
                     cb(getGlobalCall(tokenObjectProperty, obj));
@@ -176,31 +176,59 @@
                     });
                 });
             }
+
             /**
-             * add classes
+             * Replaces expressions for all tag attributes
              *
              * @param clone
-             * @param item
-             * @param itemName
+             * @param obj
+             * @param itemName (currently not in used but needs to be checked)
              */
-            function handleClasses(clone, obj, itemName) {
-                var attributeName = 'add-class';
-                // check children of clone
-                [].slice.call(clone.querySelectorAll('[' + attributeName + ']')).forEach(function (node) {
-                    getLoopValueFromAttribute(node, obj, itemName, attributeName, function (val) {
-                        var classes;
-                        if (typeof val === 'string') {
-                            classes = val.split(' ');
-                            classes.forEach(function (clasz) {
-                                if (clasz) {
-                                    node.classList.add(clasz);
+            function handleAttributes(clone, obj, itemName) {
+                (function searchForExpressions(children) {
+                    [].slice.call(children).forEach(function (node) {
+                        var i, attr;
+                        if (node.children.length > 0) {
+                            // do it recursive for all children
+                            searchForExpressions(node.children);
+                        }
+                        for (i = 0; i < node.attributes.length; i++) {
+                            attr = node.attributes[i];
+                            if (/\{\{/.test(attr.textContent)) {
+                                if (attr.name) {
+                                    (function () {
+                                        var token = parse(attr.textContent),
+                                            endData = [], tmpToken, j, globalObj, tmpTokenSplit;
+                                        for (j = 0; j < token.length; j++) {
+                                            tmpToken = token[j];
+                                            if (typeof tmpToken === 'object') {
+                                                if (/\./.test(tmpToken.key)) {
+                                                    tmpTokenSplit = tmpToken.key.split('.').slice(1).join('.');
+                                                } else {
+                                                    tmpTokenSplit = tmpToken.key;
+                                                }
+                                                if (typeof obj === 'object') {
+                                                    globalObj = getGlobalCall(tmpTokenSplit, obj);
+                                                    if (typeof globalObj === 'function') {
+                                                        endData.push(globalObj());
+                                                    } else {
+                                                        endData.push(globalObj);
+                                                    }
+                                                } else {
+                                                    endData.push(obj);
+                                                }
+
+                                            } else {
+                                                endData.push(tmpToken.trim());
+                                            }
+                                        }
+                                        attr.textContent = endData.join(' ');
+                                    }())
                                 }
-                            });
-                        } else {
-                            console.log('repeat:can not add class to node', node);
+                            }
                         }
                     });
-                });
+                }(clone.children));
             }
 
             /**
@@ -248,17 +276,19 @@
                         // it is an array
                         mainFrag = document.createDocumentFragment();
                         collection.forEach(function (item) {
+                            // item could be an object or just a property like a
+                            // string (in case of it is direct a list of strings)
                             template.forEach(function (childTpl) {
                                 // TODO works also with fragment but then the qunit test fails
                                 // - there is a problem with the phantomjs
 //                                var fragment = document.createDocumentFragment();
                                 var fragment = document.createElement('div');
                                 fragment.appendChild(childTpl.cloneNode(true));
-                                // if condition can remove elements from clone
+                                // if conditions can remove elements from clone - it's important that this is executed first
                                 handleIfCondition(fragment, item, itemName);
                                 if (fragment.children && fragment.children.length === 1) {
                                     handleEvents(fragment, item, itemName);
-                                    handleClasses(fragment, item, itemName);
+                                    handleAttributes(fragment, item, itemName);
                                     // replace texts:
                                     mainFrag.appendChild(compile(fragment.children[0], item, itemName));
                                 } else {

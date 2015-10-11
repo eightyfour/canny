@@ -2,7 +2,7 @@
 describe("Test repeat", function () {
 
     var div;
-    
+
     beforeAll(function () {
         canny.add('repeatSpecs', {
             list : ['item0', 'item1', 'item2'],
@@ -16,6 +16,7 @@ describe("Test repeat", function () {
                 main:'main3',bar:
                 {foo1 : 'foo3', bar1 : 'bar3'}
             }],
+            // TODO do the same with the attribute test and make it working ;-)
             closureFc : (function () {
                 var triggerRepeat;
                 return {
@@ -39,6 +40,12 @@ describe("Test repeat", function () {
             addClasses : [
                 {className : 'itemClass0 foo'},
                 {className : 'itemClass1 foo'}
+            ],
+            customAttributes : [
+                {attr1 : 'foo1', attr2 : 'bar1'},
+                {attr1 : 'foo2', attr2 : 'bar2'}
+            ],
+            imageSrc : ['/image/foo.png', '/image/bar.png', 'http://image.de/image/foo.png',
             ],
             conditions : [
                 {foo : true},
@@ -124,6 +131,44 @@ describe("Test repeat", function () {
         expect(links[1].classList.contains("itemClass1")).toBe(true);
         expect(links[1].classList.contains("foo")).toBe(true);
 
+    });
+
+    it("dom list object with class adding with existing classes", function () {
+        var links = div.querySelector("#qunitListObjectAddClass2").children;
+
+        expect(links[0].classList.contains("itemClass0")).toBe(true);
+        expect(links[0].classList.contains("foo")).toBe(true);
+        // static class is already in the DOM and should not be removed
+        expect(links[0].classList.contains("prevClass")).toBe(true);
+        // static class is already in the DOM and should not be removed
+        expect(links[0].classList.contains("nextClass")).toBe(true);
+        expect(links[1].classList.contains("itemClass1")).toBe(true);
+        expect(links[1].classList.contains("foo")).toBe(true);
+        // static class is already in the DOM and should not be removed
+        expect(links[1].classList.contains("prevClass")).toBe(true);
+        // static class is already in the DOM and should not be removed
+        expect(links[1].classList.contains("nextClass")).toBe(true);
+
+    });
+
+    it("dom list object with multiple custom attributes", function () {
+        var links = div.querySelector("#qunitListTestCustomAttributes").children;
+
+        expect(links[0].classList.contains("foo1")).toBe(true);
+        expect(links[0].classList.contains("bar1")).toBe(true);
+        expect(links[0].getAttribute('id')).toEqual("foo1");
+
+        expect(links[1].classList.contains("foo2")).toBe(true);
+        expect(links[1].classList.contains("bar2")).toBe(true);
+        expect(links[1].getAttribute('id')).toEqual("foo2");
+
+    });
+
+    it("dom simple list with src attributes", function () {
+        var images = div.querySelector("#qunitListObjectImages").children;
+        expect(images[0].getAttribute('src')).toEqual(canny.repeatSpecs.imageSrc[0]);
+        expect(images[1].getAttribute('src')).toEqual(canny.repeatSpecs.imageSrc[1]);
+        expect(images[2].getAttribute('src')).toEqual(canny.repeatSpecs.imageSrc[2]);
     });
 
     it("Test the if and if-not condition statement", function () {

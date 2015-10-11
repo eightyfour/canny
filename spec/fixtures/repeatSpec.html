@@ -18,8 +18,20 @@
 </ul>
 
 <ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
-    <li add-class="item.className">{{item.className}}</li>
+    <li class="{{item.className}}">{{item.className}}</li>
 </ul>
+
+<ul id="qunitListObjectAddClass2" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
+    <li class="prevClass {{item.className}} nextClass">{{item.className}}</li>
+</ul>
+
+<ul id="qunitListTestCustomAttributes" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.customAttributes'}">
+    <li class="{{item.attr1}} {{item.attr2}}" id="{{item.attr1}}">{{item.attr2}}</li>
+</ul>
+
+<div id="qunitListObjectImages" canny-mod="repeat" canny-var="{'for':'img','in':'canny.repeatSpecs.imageSrc'}">
+    <img src="{{img}}" alt=""/>
+</div>
 
 <ul id="qunitIfConditionCollection" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditions'}">
     <li if="item.foo">foo if {{item.foo}}</li>
