@@ -95,6 +95,9 @@
                         } else if (typeof val === 'boolean') {
                             el = document.createTextNode(val.toString());
                             textNode.parentNode.insertBefore(el, textNode);
+                        } else if (typeof val === 'function') {
+                            el = document.createTextNode(val(textNode.parentNode));
+                            textNode.parentNode.insertBefore(el, textNode);
                         } else {
                             console.error('repeat: can not find property "' + tokenObjectProperty + '" for object', obj,
                                 'are you sure that the iterate variable is the same as the access token?');
@@ -216,8 +219,10 @@
                                                     } else {
                                                         endData.push(globalObj);
                                                     }
-                                                } else {
+                                                } else if (typeof obj === 'string') {
                                                     endData.push(obj);
+                                                } else if (typeof obj === 'function') {
+                                                    endData.push(obj(node));
                                                 }
 
                                             } else {

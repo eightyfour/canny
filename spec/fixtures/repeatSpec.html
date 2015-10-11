@@ -37,6 +37,10 @@
     <li class="{{item.attr}} staticClass" id="{{item.id}}">{{item.id}}</li>
 </ul>
 
+<ul id="qunitListOfFunctions" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listOfFunctions'}">
+    <li class="{{item}}">{{item}}</li>
+</ul>
+
 <ul id="qunitIfConditionCollection" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditions'}">
     <li if="item.foo">foo if {{item.foo}}</li>
     <li if-not="item.foo">foo if not {{item.foo}}</li>

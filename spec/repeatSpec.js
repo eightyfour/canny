@@ -149,6 +149,20 @@ describe("Test repeat", function () {
 
     });
 
+     it("it should read the data from a list of functions", function () {
+         var links = div.querySelector("#qunitListOfFunctions").children;
+
+         expect(links[0].classList.contains("fc1")).toBe(true);
+         expect(links[0].innerHTML).toEqual( "fc1");
+
+         expect(links[1].classList.contains("fc2")).toBe(true);
+         expect(links[1].innerHTML).toEqual( "fc2");
+
+         expect(links[2].classList.contains("fc3")).toBe(true);
+         expect(links[2].innerHTML).toEqual("fc3");
+
+     });
+
     it("dom list object with class adding with existing classes", function () {
         var links = div.querySelector("#qunitListObjectAddClass2").children;
 

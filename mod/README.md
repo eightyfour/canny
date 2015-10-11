@@ -67,10 +67,36 @@ Generates:
 </div>
 ```
 
+### List of functions
+It excepts list of functions. Each function will called from canny.repeat with the actual DOM node.
+<br/>Important to know is that Functions can only return strings! 
+```javascript
+var obj = {
+  functionList : [
+    function() {return "retValue1"},
+    function() {return "retValue2"}
+  ]     
+}
+```
+Can be used like this:
+```html
+<div canny-mod="repeat" canny-var="{'for':'retValue', 'in':'obj.functionList'}">
+  <p>return value 1: {{retValue}})</p>
+  <p>return value 2: {{retValue}})</p>
+</div>
+```
+Generates:
+```html
+<div canny-mod="repeat" canny-var="{'for':'retValue', 'in':'obj.functionList'}">
+  <p>return value 1: retValue1</p>
+  <p>return value 2: retValue2</p>
+</div>
+```
+
 ### Accepts also functions
 If you need to generate the data at later time you can pass repeat a function pointer. The **renderRepeatFc** can be 
 executed at later time or directly. The advantage of the function is that if the data has changed you can call 
-the function again to render the data. If you do this all old data will be removed and replaced byt the new one.
+the function again to render the data again. If you do this all old data will be removed and replaced by the new one.
 ```javascript
 var path = {
   functionPointer : function (renderRepeatFc) {
@@ -112,8 +138,8 @@ Generates:
 </div>
 ```
 
-### add dynamic classes
-To add a specific class to a template instance you can use the **add-class** attribute. 
+### modifier attributes
+To add a specific attribute to a template instance you can just add the "expression" to the attribute. 
 ```javascript
 var path = {
   objectList : [{className : 'foo foo1'}, {className : 'bar'}]     
@@ -122,16 +148,17 @@ var path = {
 Can be used like this:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
-  <p add-class="item.className">I have the class {{item.className}}</p>
+  <p class="{{item.className}}">I have the class {{item.className}}</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
-  <p class="foo foo1" add-class="item.className">I have the class foo and foo1</p>
-  <p class="bar" add-class="item.className">I have the class bar</p>
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
+  <p class="foo foo1">I have the class foo and foo1</p>
+  <p class="bar">I have the class bar</p>
 </diV>
 ```
+This works for all kind of attributes. Like id, src, href... and so on.
 
 ### if conditions
 With the if condition you can decide which part of you template should be rendered and which not.
@@ -157,7 +184,9 @@ Generates:
   <p if-not="item.foo">foo if not false</p>
 </diV>
 ```
-To avoid none existing property exceptions you can also use the if attribute to check if a property of an object exists or not. For example the **barFoo** property only exists for the second element. And instead of four elements it will only render two :
+To avoid none existing property exceptions you can also use the if attribute to check if a property 
+of an object exists or not. For example the **barFoo** property only exists for the second element. 
+And instead of four elements it will only render two :
 ```javascript
 var path = {
   conditionCollection :[
@@ -195,4 +224,4 @@ TODO:
 
 whisker
 =====
-like mustache but with much less functionality
+like mustache but with much less functionality :)
