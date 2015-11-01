@@ -8,6 +8,7 @@ notifications:
 language: node_js
 
 node_js:
+  - "4.2.1"
   - "stable"
 
 before_install:
