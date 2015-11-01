@@ -1,1 +1,9 @@
 <div canny-mod="dummy" canny-var="hello">canny core test module</div>
+
+<div canny-mod="parseSingleQuotes" canny-var="{'textWithSingleQuotes':'Hey I'm a text'}"></div>
+
+<div canny-mod="parseWhiteSpacesCorrectInJSON"
+     canny-var="{   't1' :  'Hey I'm a text', 't2':'foo   2'  ,  't3':'bar     3' }   "></div>
+
+<div canny-mod="testStringToBeNotAJSON1" canny-var="I've a : in my text"></div>
+<div canny-mod="testStringToBeNotAJSON2" canny-var="Foo{ bar : boo}  "></div>

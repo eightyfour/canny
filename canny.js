@@ -1,13 +1,12 @@
 /*global */
 /*jslint browser: true*/
 /**
- * TODO
- * If canny knows his own URL than canny could load none registered modules afterwords from his own
- * modules folder (can also build as configurable extension adapted to the body).
- * E.g.: canny-mod="moduleLoader" canny-var={'cannyPath':URL_FROM_CANNY, 'unknownMods':LOAD_FROM_OTHER_URL}
  *
+ * E.g.:
+ *  canny-mod="moduleObj" canny-var="{'propertyKey':'value'}"
+ *  canny-mod="moduleString" canny-var="button"
  *
- * canny-var is deprecated: please use just the module name instead like:
+ * Instead of canny-var you can use the module name to avoid conflicts like:
  * E.g.: canny-mod="mod1 mod2" canny-mod1={'foo':'123456', 'bar':'654321'} canny-mod2="mod2Property"
  *
  * ---------------------------------------------------------------------------- eightyfour
@@ -17,77 +16,95 @@
     var canny = (function () {
         var readyQueue = [],
             readyQueueInit = false,
-            moduleQueue = [], // save modules to call the ready method once
-            callMethQueue = function (queue) {
-                (function reduce() {
-                    var fc = queue.pop();
-                    if (fc) {
-                        fc();
-                        reduce();
-                    } else {
-                        queue = [];
-                    }
-                }());
-            },
-            parseNode = function (node, name, cb) {
-                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]')), prepareReadyQueue = {};
+            moduleQueue = []; // save modules to call the ready method once
 
-                gdModuleChildren.forEach(function (node) {
-                    var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
+        /**
+         * Find the single quotes and replace them with double quotes except string which
+         * are part of the property string.
+         *
+         * @param string
+         * @returns {string}
+         */
+        function escapeStringForJSON(string) {
+            var s = string
+                .replace(/{\s*?\'/g,'{"').replace(/\'\s*?}/g,'"}')
+                .replace(/:\s*?\'/g,':"').replace(/\'\s*?:/g,'":')
+                .replace(/,\s*?\'/g,',"').replace(/\'\s*?,/g,'",');
+            return s;
+        }
 
-                    attributes = attribute.split(' ');
+        function callMethodQueue(queue) {
+            (function reduce() {
+                var fc = queue.pop();
+                if (fc) {
+                    fc();
+                    reduce();
+                } else {
+                    queue = [];
+                }
+            }());
+        }
 
-                    attributes.forEach(function (eachAttr) {
-                        if (that[eachAttr]) {
-                            if (node.getAttribute(name + '-mod')) {
-                                if (node.getAttribute(name + '-' + eachAttr)) {
-                                    cannyVar = node.getAttribute(name + '-' + eachAttr);
-                                } else {
-                                    cannyVar = node.getAttribute(name + '-var');
-                                }
-                                if (cannyVar) {
-                                    attr = cannyVar.split("\'").join('\"');
-                                    if (/:/.test(attr)) {
-                                        // could be a JSON
-                                        try {
-                                            viewPart = JSON.parse(attr);
-                                        } catch (ex) {
-                                            console.error("canny can't parse passed JSON for module: " + eachAttr, node);
-                                        }
-                                    } else {
-                                        viewPart = attr;
+        function parseNode(node, name, cb) {
+            var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]')), prepareReadyQueue = {};
+
+            gdModuleChildren.forEach(function (node) {
+                var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
+
+                attributes = attribute.split(' ');
+
+                attributes.forEach(function (moduleName) {
+                    if (that[moduleName]) {
+                        if (node.getAttribute(name + '-mod')) {
+                            if (node.getAttribute(name + '-' + moduleName)) {
+                                cannyVar = node.getAttribute(name + '-' + moduleName);
+                            } else {
+                                cannyVar = node.getAttribute(name + '-var');
+                            }
+                            if (cannyVar) {
+                                // simple JSON test
+                                if (/{\s*?\'.*:.*}/.test(cannyVar)) {
+                                    attr = escapeStringForJSON(cannyVar);
+                                    // could be a JSON
+                                    try {
+                                        viewPart = JSON.parse(attr);
+                                    } catch (ex) {
+                                        console.error("canny can't parse passed JSON for module: " + moduleName, node);
                                     }
+                                } else {
+                                    viewPart = cannyVar;
                                 }
                             }
-                            // has module a ready function than save it for calling
-                            if (that[eachAttr].hasOwnProperty('ready')) {
-                                // TODO or call it immediately?
-                                prepareReadyQueue[eachAttr] = that[eachAttr].ready;
-                            }
-                            if (that.hasOwnProperty(eachAttr)) {
-                                that[eachAttr].add(node, viewPart);
-                            }
-                        } else {
-                            console.warn('canny parse: module with name ´' + eachAttr + '´ is not registered');
                         }
-                    });
+                        // has module a ready function than save it for calling
+                        if (that[moduleName].hasOwnProperty('ready')) {
+                            // TODO or call it immediately?
+                            prepareReadyQueue[moduleName] = that[moduleName].ready;
+                        }
+                        if (that.hasOwnProperty(moduleName)) {
+                            that[moduleName].add(node, viewPart);
+                        }
+                    } else {
+                        console.warn('canny parse: module with name ´' + moduleName + '´ is not registered');
+                    }
                 });
-                // add ready callback to moduleQueue
-                Object.keys(prepareReadyQueue).forEach(function (name) {
-                    moduleQueue.push(prepareReadyQueue[name]);
-                });
-                cb && cb();
-            };
+            });
+            // add ready callback to moduleQueue
+            Object.keys(prepareReadyQueue).forEach(function (name) {
+                moduleQueue.push(prepareReadyQueue[name]);
+            });
+            cb && cb();
+        }
 
         document.addEventListener('DOMContentLoaded', function cannyDomLoad() {
             document.removeEventListener('DOMContentLoaded', cannyDomLoad);
 
             parseNode.apply(canny, [document, 'canny']);
 
-            callMethQueue(moduleQueue);
+            callMethodQueue(moduleQueue);
             // call registered ready functions
             readyQueueInit = true;
-            callMethQueue(readyQueue);
+            callMethodQueue(readyQueue);
         }, false);
 
         return {
@@ -116,7 +133,7 @@
                     name = "canny";
                 }
                 parseNode.apply(this || canny, [node, name || 'canny', function () {
-                    callMethQueue(moduleQueue);
+                    callMethodQueue(moduleQueue);
                     cb && cb();
                 }]);
             }
