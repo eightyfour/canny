@@ -26,10 +26,7 @@
          * @returns {string}
          */
         function escapeStringForJSON(string) {
-            var s = string.
-                replace(/{\s*?\'/g,'{"').replace(/\'\s*?}/g,'"}').
-                replace(/:\s*?\'/g,':"').replace(/\'\s*?:/g,'":').
-                replace(/,\s*?\'/g,',"').replace(/\'\s*?,/g,'",');
+            var s = string.replace(/{\s*?\'/g,'{"').replace(/\'\s*?}/g,'"}').replace(/:\s*?\'/g,':"').replace(/\'\s*?:/g,'":').replace(/,\s*?\'/g,',"').replace(/\'\s*?,/g,'",');
             return s;
         }
 
