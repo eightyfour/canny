@@ -27,9 +27,9 @@
          */
         function escapeStringForJSON(string) {
             var s = string
-                .replace(/{\s*?\'/g,'{"').replace(/\'\s*?}/g,'"}')
-                .replace(/:\s*?\'/g,':"').replace(/\'\s*?:/g,'":')
-                .replace(/,\s*?\'/g,',"').replace(/\'\s*?,/g,'",');
+                .replace(/\{\s*\'/g,'{"').replace(/\'\s*\}/g,'"}')
+                .replace(/:\s*\'/g,':"').replace(/\'\s*:/g,'":')
+                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",');
             return s;
         }
 
@@ -63,7 +63,7 @@
                             }
                             if (cannyVar) {
                                 // simple JSON test
-                                if (/{\s*?\'.*:.*}/.test(cannyVar)) {
+                                if (/\{\s*\'|\".*:.*\}/.test(cannyVar)) {
                                     attr = escapeStringForJSON(cannyVar);
                                     // could be a JSON
                                     try {
