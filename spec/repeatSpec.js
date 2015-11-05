@@ -16,6 +16,13 @@ describe("Test repeat", function () {
                 main:'main3',bar:
                 {foo1 : 'foo3', bar1 : 'bar3'}
             }],
+            // all trailing zeros will be removed in the view - so if you need them pass the float as string
+            listOfObjectsWithNumbers : [
+                {var1 : 1, var2 : 2},
+                {var1 : 3.2000, var2 : "3.0000"},
+                // 2.001 will work but be careful with that
+                {var1 : 1.00, var2 : 2.001}
+            ],
             listOfFunctions : [
                 function () {return 'fc1'},
                 function () {return 'fc2'},
@@ -87,6 +94,15 @@ describe("Test repeat", function () {
         expect(links[0].innerHTML).toEqual( "item0");
         expect(links[1].innerHTML).toEqual( "item1");
         expect(links[2].innerHTML).toEqual( "item2");
+    });
+
+    it("dom list string", function () {
+        var li = div.querySelector('#qunitRenderPlainNumbers').children;
+
+        expect(li[0].innerHTML).toEqual( "1 : 2");
+        expect(li[1].innerHTML).toEqual( "3.2 : 3.0000");
+        // so if you
+        expect(li[2].innerHTML).toEqual( "1 : 2.001");
     });
 
     it("dom list object", function () {

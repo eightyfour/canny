@@ -49,3 +49,7 @@
     <li if="item.bar">if bar: {{item.bar.barFoo}}</li>
     <li if-not="item.bar">there is no item bar only foo: {{item.foo}}</li>
 </ul>
+
+<ul id="qunitRenderPlainNumbers" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listOfObjectsWithNumbers'}">
+    <li>{{item.var1}} : {{item.var2}}</li>
+</ul>

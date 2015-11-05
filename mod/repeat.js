@@ -43,7 +43,7 @@
             /**
              *  Parse a piece of text, return an array of tokens
              *  @param text
-             *  @return [key:String, html:]
+             *  @return [key:String, html:boolean]
              */
             function parse(text) {
                 if (!BINDING_RE.test(text)) {return null; }
@@ -89,7 +89,7 @@
                             // just a string?
                             val = obj;
                         }
-                        if (typeof val === 'string') {
+                        if (typeof val === 'string' || typeof val === 'number') {
                             el = document.createTextNode(val);
                             textNode.parentNode.insertBefore(el, textNode);
                         } else if (typeof val === 'boolean') {
