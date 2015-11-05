@@ -20,4 +20,3 @@ install:
 
 before_script:
   - npm install -g phantomjs
-  - npm install -g karma
