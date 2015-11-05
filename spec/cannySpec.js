@@ -12,6 +12,18 @@ describe('Check canny', function() {
                 }
         });
 
+        canny.add('parseDoubleQuotes', {
+                add: function (node, attr) {
+                    this.value = attr.value;
+                }
+        });
+
+        canny.add('parseDoubleQuotesASCII', {
+                add: function (node, attr) {
+                    this.value = attr.value;
+                }
+        });
+
         canny.add('parseWhiteSpacesCorrectInJSON', {
                 add: function (node, attr) {
                     var ctx = this;
@@ -70,6 +82,14 @@ describe('Check canny', function() {
 
     it('should escape single quotes in JSON', function () {
           expect(canny.parseSingleQuotes.text).toEqual('Hey I\'m a text');
+    });
+
+    it('should escape double quotes in JSON', function () {
+        expect(canny.parseDoubleQuotes.value).toEqual('true');
+    });
+
+    it('should escape double ASCII quotes in JSON', function () {
+        expect(canny.parseDoubleQuotesASCII.value).toEqual('true');
     });
 
     it('should parse JSON with white spaces correctly', function () {
