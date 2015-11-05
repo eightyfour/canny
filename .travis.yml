@@ -1,7 +1,7 @@
 notifications:
   email:
     recipients:
-      - travis@eightyfour.de
+      - travis@thinkuseful.de
     on_success: always #[always|never|change] # default: change
     on_failure: always #[always|never|change] # default: always
 
@@ -17,6 +17,3 @@ before_install:
 install:
   - bower install
   - npm install
-
-before_script:
-  - npm install -g phantomjs
