@@ -317,11 +317,10 @@
             /**
              * Create a new repeat instance and do the "magic".
              * @param node
-             * @param itemName
+             * @param scopeName
              * @param data
              */
-            function execRepeat(node, itemName, data) {
-                // for te first it accepts only one child
+            function execRepeat(node, scopeName, data) {
                 var template = [];
                 [].slice.call(node.children).forEach(function (child) {
                     template.push(node.removeChild(child));
@@ -333,10 +332,10 @@
                         [].slice.call(node.children).forEach(function (child) {
                             node.removeChild(child);
                         });
-                        registerTemplate(node, itemName, data, template);
+                        registerTemplate(node, scopeName, data, template);
                     });
                 } else {
-                    registerTemplate(node, itemName, data, template)
+                    registerTemplate(node, scopeName, data, template)
                 }
             }
 
