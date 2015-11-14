@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../canny.js"></script>
+    <script src="../mod/beardie.js"></script>
+
+    <script>
+        canny.add('beardieSample', (function () {
+            var node,
+                    data1 = {
+                        name : 'beardie',
+                        text : 'Dynamical included text'
+                    },
+                    data2 = function () {
+                        return {
+                            name : 'beardie'
+                        };
+                    },
+                    data3 = function (cb) {
+                         cb({
+                             user : {
+                                 name: 'Peter',
+                                 age: 30
+                             }
+                         });
+                    },
+                    inputs = (function () {
+                        var update = [];
+                        return {
+                            value : '',
+                            notifierWhisker : function (value) {
+                                update.forEach(function (fc) {
+                                    fc({value: value});
+                                });
+                            },
+                            whiskerUpdate : function (cb) {
+                                update.push(cb);
+                            }
+                        };
+                    }()),
+                    triggerWhiskerUpdate = (function () {
+                        var whiskerUpdate = function () {},
+                                data = data2();
+                        return {
+                            // trigger this to update the data
+                            updateData : function () {
+                                whiskerUpdate(data2());
+                            },
+                            // part of api to whisker
+                            whiskerUpdate : function (cb) {
+                                whiskerUpdate = cb;
+                            },
+                            // object
+                            name : data.name,
+                            text : data.text
+                        };
+                    }());
+            return {
+                /**
+                 * simple obj
+                 */
+                data1 : data1,
+                /**
+                 * get the object from a function
+                 */
+                data2 : function () {
+                    return data2();
+                },
+                inputs : inputs,
+                data3 : data3,
+                data4 : function (fc) {
+                    fc('scope2', {
+                        name : 'birdy',
+                        age : 0
+                    })
+                } ,
+                triggerWhiskerUpdate : triggerWhiskerUpdate,
+                add : function (node, attr) {}
+            };
+        }()));
+    </script>
+</head>
+<body>
+
+    <!-- Load from object object -->
+    <!-- instead of passing the scope here just register as string - expect a function to be returned which
+        can call the callback with the scope name . E.g. it can call the callback with different scope names -->
+    <div id="loadFromObject" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.data3'}">
+        <p>Hello I'm <strong>{{scope.user.name}}</strong> and I'm <strong>{{scope.user.age}}</strong> years old.</p>
+        <p>And this expression should stay: {{scopeX.foo}}.</p>
+        <div id="loadFromObject2" canny-mod="beardie" canny-var="canny.beardieSample.data4">
+            <p>Hello I'm <strong>{{scope2.name}}</strong> and I'm <strong>{{scope2.age}}</strong> years old.</p>
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>

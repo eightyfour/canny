@@ -1,61 +1,62 @@
 <div id="beardie">
-    <!-- Load from static data object -->
-    <div canny-mod="beardie" canny-var="canny.beardieSample.data1">
-        <p id="beardie_data1">Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>
-    </div>
-    <hr/>
+    <!--&lt;!&ndash; Load from static data object &ndash;&gt;-->
+    <!--<div canny-mod="beardie" canny-var="canny.beardieSample.data1">-->
+        <!--<p id="beardie_data1">Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>-->
+    <!--</div>-->
+    <!--<hr/>-->
 
     <!-- Load from dynamic data object (object is return by function) -->
-    <ul id="beardie_data_function">
-        <li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>
-        <li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>
-        <li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>
-        <li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>
-    </ul>
-    <hr/>
+    <!--<ul id="beardie_data_function">-->
+        <!--<li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>-->
+        <!--<li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>-->
+        <!--<li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>-->
+        <!--<li canny-mod="beardie" canny-var="canny.beardieSample.data2">{{name}}</li>-->
+    <!--</ul>-->
+    <!--<hr/>-->
 
     <!-- Load from dynamic data object with option to trigger data again -->
-    <div canny-mod="beardie" canny-var="canny.beardieSample.triggerWhiskerUpdate">
-        <p>
-            Hello I'm {{name}} and I take the data from a function.
-        </p>
-        <ul>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-        </ul>
-    </div>
-    <hr/>
+    <!--<div id="updateData" canny-mod="beardie" canny-var="canny.beardieSample.triggerUpdate.data">-->
+        <!--<p>test if {{data.name}} is set</p>-->
+        <!--<ul>-->
+            <!--<li>{{data.text}}</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <!--<hr/>-->
 
-    <div canny-mod="beardie" canny-var="canny.beardieSample.inputs">
-        Here the input: {{value}}
-        <ul>
-            <li>{{value}}</li>
-            <li>{{value}}</li>
-        </ul>
-    </div>
+    <!--<div canny-mod="beardie" canny-var="canny.beardieSample.inputs">-->
+        <!--Here the input: {{value}}-->
+        <!--<ul>-->
+            <!--<li>{{value}}</li>-->
+            <!--<li>{{value}}</li>-->
+        <!--</ul>-->
+    <!--</div>-->
 
-    <div canny-mod="beardie" canny-var="canny.beardieSample.inputs">And a second instance: {{value}}</div>
+    <!--<div canny-mod="beardie" canny-var="canny.beardieSample.inputs">And a second instance: {{value}}</div>-->
     <hr/>
 
     <!-- Load from object object -->
-    <div canny-mod="beardie" canny-var="canny.beardieSample.data3">
-        <p>Hello I'm <strong>{{user.name}}</strong> and I'm <strong>{{user.age}}</strong> years old.</p>
+    <!-- instead of passing the scope here just register as string - expect a function to be returned which
+        can call the callback with the scope name . E.g. it can call the callback with different scope names -->
+    <div id="loadFromObject" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.data3'}">
+        <p>Hello I'm <strong>{{scope.user.name}}</strong> and I'm <strong>{{scope.user.age}}</strong> years old.</p>
+        <p>And this expression should stay: {{scopeX.foo}}.</p>
+        <div canny-mod="beardie" canny-var="canny.beardieSample.data4">
+            <p>Hello I'm {{scope2.name}} and I'm {{scope2.age}} years old.</p>
+        </div>
     </div>
     <hr/>
 
     <!-- Load direct as html JSON -->
-    <div canny-mod="beardie" canny-var="{'name':'Carlo','message':'...that could be the message...'}">
-        <p>My name is {{name}}</p>
-        <p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>
-    </div>
+    <!--<div id="testInnerJSON" canny-mod="beardie" canny-var="{'name':'Carlo','message':'bar'}">-->
+        <!--<p>My name is {{name}}</p>-->
+        <!--<p>And here are my message: {{message}}</p>-->
+    <!--</div>-->
 
     <!-- The expression should stay if property could not be find (so other whisker instances can find the property)
             But maybe not needed - if we keep this logic the global object will always win and no child
             instance can overwrite properties from it -->
-    <!--<div canny-mod="beardie" canny-var="{'name':'Carlo','message':'...that could be the message...'}">-->
+    <!--<div id="testExpressionStayIfNotExists" canny-mod="beardie" canny-var="{'name':'Carlo'}">-->
         <!--<p>My name is {{name}}</p>-->
-        <!--<p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>-->
+        <!--<p>And this should stay {{message}}</p>-->
     <!--</div>-->
 </div>
