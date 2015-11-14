@@ -31,6 +31,20 @@ describe("Test repeat", function () {
             objectMap : {
                 data1 : {}
             },
+            listWithDeepObjectMap : [
+                {
+                    data : {
+                        foo : 'foo1',
+                        bar : 'bar1'
+                    }
+                },
+                {
+                    data : {
+                        foo : 'foo2',
+                        bar : 'bar2'
+                    }
+                }
+            ],
             closureFc : (function () {
                 var triggerRepeat;
                 return {
@@ -119,6 +133,16 @@ describe("Test repeat", function () {
         expect(links[6].innerHTML).toEqual( "main3");
         expect(links[7].innerHTML).toEqual( "foo3");
         expect(links[8].innerHTML).toEqual( "With before text bar3 and after text.");
+    });
+
+    it("dom list object", function () {
+        var links = div.querySelector('#listWithDeepObjectMap').children;
+
+        expect(links[0].innerHTML).toEqual( "foo1");
+        expect(links[1].innerHTML).toEqual( "bar1");
+
+        expect(links[2].innerHTML).toEqual( "foo2");
+        expect(links[3].innerHTML).toEqual( "bar2");
     });
 
     it("dom list object with function and trigger update", function () {

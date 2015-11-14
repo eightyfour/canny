@@ -9,6 +9,11 @@
     <li>With before text {{item.bar.bar1}} and after text.</li>
 </ul>
 
+<ul id="listWithDeepObjectMap" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listWithDeepObjectMap'}">
+    <li>{{item.data.foo}}</li>
+    <li>{{item.data.bar}}</li>
+</ul>
+
 <ul id="qunitListObjectFunction" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.closureFc.listObjFunction'}">
     <li>{{item.foo}}</li>
 </ul>
