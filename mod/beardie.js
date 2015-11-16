@@ -39,7 +39,7 @@
             /**
              *  Parse a piece of text, return an array of tokens
              *  @param text
-             *  @return [key:String, html:boolean]
+             *  @return [key:String, html:DOM node]
              */
             function parse(text) {
                 if (!BINDING_RE.test(text)) {return null; }
@@ -69,7 +69,6 @@
                 var tokens = parse(node.nodeValue),
                     obj = dataObj,
                     el, token, i, l, tmp, tokenObjectProperty, val;
-
                 if (!tokens || obj === undefined || typeof obj === 'string') {return; }
 
                 for (i = 0, l = tokens.length; i < l; i++) {
@@ -102,6 +101,7 @@
                             el = document.createTextNode('{{' + token.key + '}}');
                             node.parentNode.insertBefore(el, node);
                         }
+                        token.node = el;
                     } else {
                         el = document.createTextNode(token);
                         // just normal string put back to view
@@ -109,6 +109,7 @@
                     }
                 }
                 node.parentNode.removeChild(node);
+                return tokens;
             }
             /**
              *
@@ -117,12 +118,18 @@
              * @param itemName
              */
             function compileElement (node, dataObj, itemName) {
+                var tokens = [],
+                    token;
                 // recursively compile childNodes
                 if (node.hasChildNodes()) {
                     [].slice.call(node.childNodes).forEach(function (child) {
-                        compile(child, dataObj, itemName);
+                        token = compile(child, dataObj, itemName);
+                        if (token) {
+                            tokens = tokens.concat(token);
+                        }
                     });
                 }
+                return tokens.length > 0 ? tokens : undefined;
             }
             /**
              *  Compile a DOM node (recursive)
@@ -132,35 +139,21 @@
              * @returns {*}
              */
             function compile(node, dataObj, itemName) {
-                var nodeType = node.nodeType;
+                var nodeType = node.nodeType,
+                    tokens = [],
+                    token;
                 if (nodeType === 1 && node.tagName !== 'SCRIPT') { // a normal node
-                    compileElement(node, dataObj, itemName);
+                    token = compileElement(node, dataObj, itemName);
+                    if (token) {
+                        tokens = tokens.concat(token);
+                    }
                 } else if (nodeType === 3) {
-                    compileTextNode(node, dataObj, itemName);
+                    token = compileTextNode(node, dataObj, itemName);
+                    if (token) {
+                        tokens = tokens.concat(token);
+                    }
                 }
-
-                return node;
-            }
-
-            /**
-             * register click events
-             *
-             * @param clone
-             * @param item
-             * @param itemName
-             */
-            function handleEvents(clone, obj, itemName) {
-                var onClick = 'on-click';
-                // check children of clone
-                [].slice.call(clone.querySelectorAll('[' + onClick + ']')).forEach(function (node) {
-                    getLoopValueFromAttribute(node, obj, itemName, onClick, function (val) {
-                        if (typeof val === 'function') {
-                            node.addEventListener('click', val);
-                        } else {
-                            console.log('beardie:can not register click listener without a function', node);
-                        }
-                    });
-                });
+                return tokens.length > 0 ? tokens : undefined;
             }
 
             /**
@@ -168,11 +161,11 @@
              *
              * loop though all children and check for attributes with expressions inside
              *
-             * @param clone
+             * @param containerNode
              * @param obj
              * @param itemName (currently not in used but needs to be checked)
              */
-            function handleAttributes(clone, obj, itemName) {
+            function handleAttributes(containerNode, obj, itemName) {
 
                 (function searchForExpressions(children) {
                     [].slice.call(children).forEach(function (node) {
@@ -228,7 +221,7 @@
                             }
                         }
                     });
-                }(clone.children));
+                }(containerNode.children));
             }
 
             /**
@@ -240,15 +233,44 @@
              * @param template
              */
             function fillData(node, scopeName, data) {
-
                 if (typeof data === 'object') {
                     // handleEvents(node, data, scopeName);
                     handleAttributes(node, data, scopeName);
                     // replace texts:
-                    compile(node, data, scopeName);
+                    return compile(node, data, scopeName);
                 } else {
                     console.error('beardie:handleAttributes detect none acceptable data argument', data);
                 }
+            }
+
+            /**
+             *
+             * TODO test also boolean and function
+             *
+             * @param tokenObjList [{key : "scopeName.property", node}]
+             * @param scopeName
+             * @param obj
+             */
+            function updateData(tokenObjList, scopeName, obj) {
+                tokenObjList.forEach(function (token) {
+                    var tmp = token.key.split('.'), tokenObjectProperty, val;
+                    if (tmp.length > 0 && tmp[0] === scopeName) {
+                        tokenObjectProperty = tmp.slice(1).join('.');
+                        if (typeof obj === 'object') {
+                            val = getGlobalCall(tokenObjectProperty, obj);
+                        } else {
+                            val = obj;
+                        }
+                        if (typeof val === 'string' || typeof val === 'number') {
+                            token.node.nodeValue = val;
+                        } else if (typeof val === 'boolean') {
+                            token.node.nodeValue = val.toString();
+                        } else if (typeof val === 'function') {
+                            el = document.createTextNode(val(node.parentNode));
+                            token.node.nodeValue = val(token.node.parentNode);
+                        }
+                    }
+                })
             }
 
             /**
@@ -259,7 +281,8 @@
              * @param data
              */
             function exec(node, data, scopeName) {
-                var currentScope = scopeName;
+                var currentScope = scopeName,
+                    keyValueholder = {};
                 if (typeof data === 'function') {
                     data(function (scope, data) {
                         if (data !== undefined) {
@@ -271,7 +294,12 @@
 //                        [].slice.call(node.children).forEach(function (child) {
 //                            node.removeChild(child);
 //                        });
-                        fillData(node, currentScope, data);
+                        console.log('beardie:keyValueholder', keyValueholder);
+                        if (keyValueholder.hasOwnProperty(scope)) {
+                            updateData(keyValueholder[scope], currentScope, data);
+                        } else {
+                            keyValueholder[scope] = fillData(node, currentScope, data);
+                        }
                     });
                 } else {
                     fillData(node, currentScope, data)

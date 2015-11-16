@@ -58,33 +58,35 @@
                         };
                     }());
             return {
-                attributes : function (fc) {
-                    fc({
-                        id : 'idFoo',
-                        testClass : 'classFoo'
-                    })
-                },
-                attributes2 : function (fc) {
-                    debugger
-                    fc('scope2', {
-                        testClass : 'bar'
-                    })
-                },
-                supportScopes : function (fc) {
-                    fc('scope1', {
-                        id : 'foo1',
-                        testClass : 'classTest1',
-                        text : 'foo1'
-                    });
-                    fc('scope2', {
-                        id : 'foo2',
-                        testClass : 'classTest2',
-                        text : 'foo2'
-                    });
-                    fc('scope3', {
-                        id : 'foo3',
-                        testClass : 'classTest3',
-                        text : 'foo3'
+                /**
+                 * save it in scope BUT: if other scope is out of this scope but has the same name it should not be effected by changing this... so
+                 * save also the node and parse from there.
+                 *
+                 * @returns {{changeData: changeData, beardiAPI: beardieAPI}}
+                 */
+                dynamicallyChangeData : (function () {
+                    var updateBeardie;
+                    return {
+                        // call this to change the data and update the DOM
+                        changeData : function (obj) {
+                            updateBeardie('scope', obj);
+                        },
+                        // pass this as reference to beardie
+                        beardieAPI : function (fc) {
+                            updateBeardie = fc;
+                            updateBeardie('scope', {
+                                className : 'init',
+                                text : 'initial text',
+                                id : 'main'
+                            });
+                        }
+                    }
+                }()),
+                sameScopeShouldNotEffected : function (fc) {
+                    fc('scope', {
+                        className : 'foo',
+                        text : 'bar',
+                        id : 'hoo'
                     });
                 },
                 add : function (node, attr) {}
@@ -94,11 +96,18 @@
 </head>
 <body>
 
-    <div id="checkAttributes" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.attributes'}">
-        <!--<div id="{{scope.id}}" class="{{scope.testClass}}"></div>-->
-        <div canny-mod="beardie" canny-var="canny.beardieSample.attributes2">
-            <p class="test {{scope2.testClass}}">test</p>
+    <div id="dynamicallyChangeData" canny-mod="beardie" canny-var="canny.beardieSample.dynamicallyChangeData.beardieAPI">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
         </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
+    </div>
+
+    <div id="sameScopeShouldNotEffected" canny-mod="beardie" canny-var="canny.beardieSample.sameScopeShouldNotEffected">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
+        </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
     </div>
 
     <!--<div id="supportMultipleScopes" canny-mod="beardie" canny-var="canny.beardieSample.supportScopes">-->

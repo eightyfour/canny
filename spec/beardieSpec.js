@@ -82,6 +82,37 @@ canny.add('beardieSample', (function () {
                 text : 'foo3'
             });
         },
+        /**
+         * save it in scope BUT: if other scope is out of this scope but has the same name it should not be effected by changing this... so
+         * save also the node and parse from there.
+         *
+         * @returns {{changeData: changeData, beardiAPI: beardieAPI}}
+         */
+        dynamicallyChangeData : (function () {
+            var updateBeardie;
+            return {
+                // call this to change the data and update the DOM
+                changeData : function (obj) {
+                    updateBeardie('scope', obj);
+                },
+                // pass this as reference to beardie
+                beardieAPI : function (fc) {
+                    updateBeardie = fc;
+                    updateBeardie('scope', {
+                        className : 'init',
+                        text : 'initial text',
+                        id : 'main'
+                    });
+                }
+            }
+        }()),
+        sameScopeShouldNotEffected : function (fc) {
+            fc('scope', {
+                className : 'foo',
+                text : 'bar',
+                id : 'hoo'
+            });
+        },
         data3 : data3,
         data4 : function (fc) {
             fc('scope2', {
@@ -130,6 +161,91 @@ describe('Check beardie', function() {
         });
     });
 
+    describe('test that dynamically update data works fine so', function () {
+        var nodeDynamic, nodeNotEffected;
+
+        beforeAll(function () {
+            nodeDynamic = mainNode.querySelector('#dynamicallyChangeData');
+            nodeNotEffected = mainNode.querySelector('#sameScopeShouldNotEffected');
+        });
+        /**
+         * the DOM structure for this test is always the same so add the object what you want test and the node
+         *
+         * @param node
+         * @param obj
+         */
+        function checkDOM(node, obj) {
+            var data = node.children;
+            expect(data[0].getAttribute('id')).toEqual(obj.id);
+            expect(data[0].children[0].className).toEqual(obj.className1);
+            expect(data[1].className).toEqual(obj.className2);
+            expect(data[1].innerHTML).toEqual(obj.text);
+        }
+
+        it('should have the correct initial data', function () {
+            checkDOM(nodeDynamic, {
+                id : 'main',
+                className1 : 'test with init',
+                className2 : 'init',
+                text : 'initial text'
+            })
+        });
+
+        it('should have data with the same scope name but in a different container set correctly', function () {
+            checkDOM(nodeNotEffected, {
+                id : 'hoo',
+                className1 : 'test with foo',
+                className2 : 'foo',
+                text : 'bar'
+            })
+        });
+
+        it('should update the text correct from scope', function () {
+            canny.beardieSample.dynamicallyChangeData.changeData({
+                text : 'a different text'
+            });
+            checkDOM(nodeDynamic, {
+                id : 'main',
+                className1 : 'test with init',
+                className2 : 'init',
+                text : 'a different text'
+            });
+        });
+
+        it('should not effect the other scope with same name', function () {
+            checkDOM(nodeNotEffected, {
+                id : 'hoo',
+                className1 : 'test with foo',
+                className2 : 'foo',
+                text : 'bar'
+            })
+        });
+
+        //it('should update the attributes correct from scope', function () {
+        //    canny.beardieSample.dynamicallyChangeData.changeData({
+        //        id : 'main1',
+        //        className : 'other'
+        //    });
+        //    checkDOM(nodeDynamic, {
+        //        id : 'main1',
+        //        className1 : 'test with other',
+        //        className2 : 'other',
+        //        text : 'a different text'
+        //    });
+        //});
+
+        //
+        //it('should not effect the other scope with same name', function () {
+        //    checkDOM(nodeNotEffected, {
+        //        id : 'hoo',
+        //        className1 : 'test with foo',
+        //        className2 : 'foo',
+        //        text : 'bar'
+        //    })
+        //});
+
+    });
+
 
     it('should load the data from a inline object', function () {
         var data = mainNode.querySelector('#checkAttributes').children;
@@ -137,9 +253,6 @@ describe('Check beardie', function() {
         expect(data[0].className).toEqual("classFoo");
         expect(data[1].children[0].className).toEqual("test bar");
     });
-
-
-
 
     it('should support multiple scopes called from same function 3 times with different data', function () {
         var data = mainNode.querySelector('#supportMultipleScopes').children;

@@ -58,6 +58,20 @@
         <div id="{{scope3.id}}" class="{{scope3.testClass}}">foo {{scope3.text}}</div>
     </div>
 
+    <div id="dynamicallyChangeData" canny-mod="beardie" canny-var="canny.beardieSample.dynamicallyChangeData.beardieAPI">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
+        </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
+    </div>
+
+    <div id="sameScopeShouldNotEffected" canny-mod="beardie" canny-var="canny.beardieSample.sameScopeShouldNotEffected">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
+        </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
+    </div>
+
 
     <!-- Load direct as html JSON -->
     <!--<div id="testInnerJSON" canny-mod="beardie" canny-var="{'name':'Carlo','message':'bar'}">-->
