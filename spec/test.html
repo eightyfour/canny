@@ -58,25 +58,35 @@
                         };
                     }());
             return {
-                /**
-                 * simple obj
-                 */
-                data1 : data1,
-                /**
-                 * get the object from a function
-                 */
-                data2 : function () {
-                    return data2();
-                },
-                inputs : inputs,
-                data3 : data3,
-                data4 : function (fc) {
-                    fc('scope2', {
-                        name : 'birdy',
-                        age : 0
+                attributes : function (fc) {
+                    fc({
+                        id : 'idFoo',
+                        testClass : 'classFoo'
                     })
-                } ,
-                triggerWhiskerUpdate : triggerWhiskerUpdate,
+                },
+                attributes2 : function (fc) {
+                    debugger
+                    fc('scope2', {
+                        testClass : 'bar'
+                    })
+                },
+                supportScopes : function (fc) {
+                    fc('scope1', {
+                        id : 'foo1',
+                        testClass : 'classTest1',
+                        text : 'foo1'
+                    });
+                    fc('scope2', {
+                        id : 'foo2',
+                        testClass : 'classTest2',
+                        text : 'foo2'
+                    });
+                    fc('scope3', {
+                        id : 'foo3',
+                        testClass : 'classTest3',
+                        text : 'foo3'
+                    });
+                },
                 add : function (node, attr) {}
             };
         }()));
@@ -84,16 +94,18 @@
 </head>
 <body>
 
-    <!-- Load from object object -->
-    <!-- instead of passing the scope here just register as string - expect a function to be returned which
-        can call the callback with the scope name . E.g. it can call the callback with different scope names -->
-    <div id="loadFromObject" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.data3'}">
-        <p>Hello I'm <strong>{{scope.user.name}}</strong> and I'm <strong>{{scope.user.age}}</strong> years old.</p>
-        <p>And this expression should stay: {{scopeX.foo}}.</p>
-        <div id="loadFromObject2" canny-mod="beardie" canny-var="canny.beardieSample.data4">
-            <p>Hello I'm <strong>{{scope2.name}}</strong> and I'm <strong>{{scope2.age}}</strong> years old.</p>
+    <div id="checkAttributes" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.attributes'}">
+        <!--<div id="{{scope.id}}" class="{{scope.testClass}}"></div>-->
+        <div canny-mod="beardie" canny-var="canny.beardieSample.attributes2">
+            <p class="test {{scope2.testClass}}">test</p>
         </div>
     </div>
+
+    <!--<div id="supportMultipleScopes" canny-mod="beardie" canny-var="canny.beardieSample.supportScopes">-->
+        <!--<div id="{{scope1.id}}" class="{{scope1.testClass}}">foo {{scope1.text}}</div>-->
+        <!--<div id="{{scope2.id}}" class="{{scope2.testClass}}">foo {{scope2.text}}</div>-->
+        <!--<div id="{{scope3.id}}" class="{{scope3.testClass}}">foo {{scope3.text}}</div>-->
+    <!--</div>-->
 
 
 

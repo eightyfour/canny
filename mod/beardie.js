@@ -166,11 +166,14 @@
             /**
              * Replaces expressions for all tag attributes
              *
+             * loop though all children and check for attributes with expressions inside
+             *
              * @param clone
              * @param obj
              * @param itemName (currently not in used but needs to be checked)
              */
             function handleAttributes(clone, obj, itemName) {
+
                 (function searchForExpressions(children) {
                     [].slice.call(children).forEach(function (node) {
                         var i, attr;
@@ -187,6 +190,15 @@
                                             endData = [], tmpToken, j, globalObj, tmpTokenSplit;
                                         for (j = 0; j < token.length; j++) {
                                             tmpToken = token[j];
+                                            // TODO if token not itemName skipp all
+                                            if (tmpToken.key === undefined || tmpToken.key.split('.')[0] !== itemName) {
+                                                if (tmpToken.hasOwnProperty('key')) {
+                                                    endData.push('{{' + tmpToken.key + '}}');
+                                                } else if (tmpToken.key === undefined) {
+                                                    endData.push(tmpToken.trim());
+                                                }
+                                                continue;
+                                            }
                                             if (typeof tmpToken === 'object') {
                                                 if (/\./.test(tmpToken.key)) {
                                                     tmpTokenSplit = tmpToken.key.split('.').slice(1).join('.');
@@ -220,22 +232,22 @@
             }
 
             /**
-             * Looped through the collection and do the logic for each clone instance.
-             * Actually it supports only collection - no objects.
+             * handle the different use cases
+             *
              * @param node
              * @param scopeName
              * @param collection
              * @param template
              */
-            function registerTemplate(node, scopeName, data) {
+            function fillData(node, scopeName, data) {
 
                 if (typeof data === 'object') {
-                    handleEvents(node, data, scopeName);
+                    // handleEvents(node, data, scopeName);
                     handleAttributes(node, data, scopeName);
                     // replace texts:
                     compile(node, data, scopeName);
                 } else {
-                    console.error('beardie:registerTemplate detect none acceptable data argument', data);
+                    console.error('beardie:handleAttributes detect none acceptable data argument', data);
                 }
             }
 
@@ -259,10 +271,10 @@
 //                        [].slice.call(node.children).forEach(function (child) {
 //                            node.removeChild(child);
 //                        });
-                        registerTemplate(node, currentScope, data);
+                        fillData(node, currentScope, data);
                     });
                 } else {
-                    registerTemplate(node, currentScope, data)
+                    fillData(node, currentScope, data)
                 }
             }
 

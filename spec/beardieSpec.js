@@ -54,17 +54,34 @@ canny.add('beardieSample', (function () {
             };
         }());
     return {
-        /**
-         * simple obj
-         */
-        data1 : data1,
-        /**
-         * get the object from a function
-         */
-        data2 : function (fc) {
-            fc(data2());
+        attributes : function (fc) {
+            fc({
+                id : 'idFoo',
+                testClass : 'classFoo'
+            })
         },
-        inputs : inputs,
+        attributes2 : function (fc) {
+            fc('scope2', {
+                testClass : 'bar'
+            })
+        },
+        supportScopes : function (fc) {
+            fc('scope1', {
+                id : 'foo1',
+                testClass : 'classTest1',
+                text : 'foo1'
+            });
+            fc('scope2', {
+                id : 'foo2',
+                testClass : 'classTest2',
+                text : 'foo2'
+            });
+            fc('scope3', {
+                id : 'foo3',
+                testClass : 'classTest3',
+                text : 'foo3'
+            });
+        },
         data3 : data3,
         data4 : function (fc) {
             fc('scope2', {
@@ -113,12 +130,32 @@ describe('Check beardie', function() {
         });
     });
 
-//
-//    it('should load the data from a inline object', function () {
-//        var data = mainNode.querySelector('#ẗestInnerJSON').children;
-//        expect(data[0].innerHTML).toEqual("My name is Carlo");
-//        expect(data[1].innerHTML).toEqual("And here are my message: bar");
-//    });
+
+    it('should load the data from a inline object', function () {
+        var data = mainNode.querySelector('#checkAttributes').children;
+        expect(data[0].getAttribute('id')).toEqual("idFoo");
+        expect(data[0].className).toEqual("classFoo");
+        expect(data[1].children[0].className).toEqual("test bar");
+    });
+
+
+
+
+    it('should support multiple scopes called from same function 3 times with different data', function () {
+        var data = mainNode.querySelector('#supportMultipleScopes').children;
+        expect(data[0].getAttribute('id')).toEqual("foo1");
+        expect(data[0].className).toEqual("classTest1");
+        expect(data[0].innerHTML).toEqual("foo foo1");
+
+        expect(data[1].getAttribute('id')).toEqual("foo2");
+        expect(data[1].className).toEqual("classTest2");
+        expect(data[1].innerHTML).toEqual("foo foo2");
+
+        expect(data[2].getAttribute('id')).toEqual("foo3");
+        expect(data[2].className).toEqual("classTest3");
+        expect(data[2].innerHTML).toEqual("foo foo3");
+    });
+
 //
 //    it('should update the values correctly', function () {
 //        // TODO

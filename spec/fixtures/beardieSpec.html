@@ -44,7 +44,20 @@
             <p>Hello I'm {{scope2.name}} and I'm {{scope2.age}} years old.</p>
         </div>
     </div>
-    <hr/>
+
+    <div id="checkAttributes" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.attributes'}">
+        <div id="{{scope.id}}" class="{{scope.testClass}}"></div>
+        <div canny-mod="beardie" canny-var="canny.beardieSample.attributes2">
+            <p class="test {{scope2.testClass}}">test</p>
+        </div>
+    </div>
+
+    <div id="supportMultipleScopes" canny-mod="beardie" canny-var="canny.beardieSample.supportScopes">
+        <div id="{{scope1.id}}" class="{{scope1.testClass}}">foo {{scope1.text}}</div>
+        <div id="{{scope2.id}}" class="{{scope2.testClass}}">foo {{scope2.text}}</div>
+        <div id="{{scope3.id}}" class="{{scope3.testClass}}">foo {{scope3.text}}</div>
+    </div>
+
 
     <!-- Load direct as html JSON -->
     <!--<div id="testInnerJSON" canny-mod="beardie" canny-var="{'name':'Carlo','message':'bar'}">-->
