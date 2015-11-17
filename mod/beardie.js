@@ -253,24 +253,26 @@
              */
             function updateData(tokenObjList, scopeName, obj) {
                 tokenObjList.forEach(function (token) {
-                    var tmp = token.key.split('.'), tokenObjectProperty, val;
-                    if (tmp.length > 0 && tmp[0] === scopeName) {
-                        tokenObjectProperty = tmp.slice(1).join('.');
-                        if (typeof obj === 'object') {
-                            val = getGlobalCall(tokenObjectProperty, obj);
-                        } else {
-                            val = obj;
-                        }
-                        if (typeof val === 'string' || typeof val === 'number') {
-                            token.node.nodeValue = val;
-                        } else if (typeof val === 'boolean') {
-                            token.node.nodeValue = val.toString();
-                        } else if (typeof val === 'function') {
-                            el = document.createTextNode(val(node.parentNode));
-                            token.node.nodeValue = val(token.node.parentNode);
+                    if (token && token.hasOwnProperty('key')) {
+                        var tmp = token.key.split('.'), tokenObjectProperty, val;
+                        if (tmp.length > 0 && tmp[0] === scopeName) {
+                            tokenObjectProperty = tmp.slice(1).join('.');
+                            if (typeof obj === 'object') {
+                                val = getGlobalCall(tokenObjectProperty, obj);
+                            } else {
+                                val = obj;
+                            }
+                            if (typeof val === 'string' || typeof val === 'number') {
+                                token.node.nodeValue = val;
+                            } else if (typeof val === 'boolean') {
+                                token.node.nodeValue = val.toString();
+                            } else if (typeof val === 'function') {
+                                el = document.createTextNode(val(node.parentNode));
+                                token.node.nodeValue = val(token.node.parentNode);
+                            }
                         }
                     }
-                })
+                });
             }
 
             /**

@@ -179,7 +179,8 @@ describe('Check beardie', function() {
             expect(data[0].getAttribute('id')).toEqual(obj.id);
             expect(data[0].children[0].className).toEqual(obj.className1);
             expect(data[1].className).toEqual(obj.className2);
-            expect(data[1].innerHTML).toEqual(obj.text);
+            expect(data[1].innerHTML).toEqual(obj.text1);
+            expect(data[2].innerHTML).toEqual(obj.text2);
         }
 
         it('should have the correct initial data', function () {
@@ -187,7 +188,8 @@ describe('Check beardie', function() {
                 id : 'main',
                 className1 : 'test with init',
                 className2 : 'init',
-                text : 'initial text'
+                text1 : 'initial text',
+                text2 : 'texts replace initial text inside a text'
             })
         });
 
@@ -196,7 +198,8 @@ describe('Check beardie', function() {
                 id : 'hoo',
                 className1 : 'test with foo',
                 className2 : 'foo',
-                text : 'bar'
+                text1 : 'bar',
+                text2 : 'texts replace bar inside a text'
             })
         });
 
@@ -208,7 +211,8 @@ describe('Check beardie', function() {
                 id : 'main',
                 className1 : 'test with init',
                 className2 : 'init',
-                text : 'a different text'
+                text1 : 'a different text',
+                text2 : 'texts replace a different text inside a text'
             });
         });
 
@@ -217,7 +221,8 @@ describe('Check beardie', function() {
                 id : 'hoo',
                 className1 : 'test with foo',
                 className2 : 'foo',
-                text : 'bar'
+                text1 : 'bar',
+                text2 : 'texts replace bar inside a text'
             })
         });
 
