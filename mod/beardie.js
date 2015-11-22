@@ -39,7 +39,7 @@
             /**
              *  Parse a piece of text, return an array of tokens
              *  @param text
-             *  @return [key:String, html:DOM node]
+             *  @return [{key:String, html:boolean}]
              */
             function parse(text) {
                 if (!BINDING_RE.test(text)) {return null; }
@@ -64,6 +64,7 @@
              * @param node
              * @param dataObj
              * @param itemName
+             * @return tokens [{key:String, node:DOM node, html: boolean}]
              */
             function compileTextNode(node, dataObj, itemName) {
                 var tokens = parse(node.nodeValue),
@@ -159,51 +160,47 @@
             /**
              * Replaces expressions for all tag attributes
              *
-             * loop though all children and check for attributes with expressions inside
+             * loop though all children and check if a attribute has a expressions inside
              *
              * @param containerNode
              * @param obj
-             * @param itemName (currently not in used but needs to be checked)
+             * @param itemName
+             * @return returnTokens [{key:String, attr: node attribute reference, html: boolean}]
              */
             function handleAttributes(containerNode, obj, itemName) {
-
+                var returnTokens = [];
                 (function searchForExpressions(children) {
                     [].slice.call(children).forEach(function (node) {
-                        var i, attr;
+                        var i, attr, rTokens;
                         if (node.children.length > 0) {
                             // do it recursive for all children
                             searchForExpressions(node.children);
                         }
+                        // loop through each attribute
                         for (i = 0; i < node.attributes.length; i++) {
                             attr = node.attributes[i];
                             if (/\{\{/.test(attr.textContent)) {
                                 if (attr.name) {
-                                    (function () {
+                                    rTokens = (function () {
                                         var token = parse(attr.textContent),
-                                            endData = [], tmpToken, j, globalObj, tmpTokenSplit;
+                                            endData = [], tmpToken, j, tmpTokenSplit;
                                         for (j = 0; j < token.length; j++) {
                                             tmpToken = token[j];
-                                            // TODO if token not itemName skipp all
-                                            if (tmpToken.key === undefined || tmpToken.key.split('.')[0] !== itemName) {
-                                                if (tmpToken.hasOwnProperty('key')) {
-                                                    endData.push('{{' + tmpToken.key + '}}');
-                                                } else if (tmpToken.key === undefined) {
-                                                    endData.push(tmpToken.trim());
-                                                }
-                                                continue;
-                                            }
-                                            if (typeof tmpToken === 'object') {
+                                            // if token not itemName skipp all
+                                            if (tmpToken.key !== undefined && tmpToken.key.split('.')[0] === itemName) {
+                                                // save the attribute
+                                                tmpToken.attr = attr;
                                                 if (/\./.test(tmpToken.key)) {
                                                     tmpTokenSplit = tmpToken.key.split('.').slice(1).join('.');
                                                 } else {
                                                     tmpTokenSplit = tmpToken.key;
                                                 }
                                                 if (typeof obj === 'object') {
-                                                    globalObj = getGlobalCall(tmpTokenSplit, obj);
-                                                    if (typeof globalObj === 'function') {
-                                                        endData.push(globalObj());
+                                                    tmpToken.value = getGlobalCall(tmpTokenSplit, obj);
+                                                    if (typeof tmpToken.value === 'function') {
+                                                        endData.push(tmpToken.value());
                                                     } else {
-                                                        endData.push(globalObj);
+                                                        endData.push(tmpToken.value);
                                                     }
                                                 } else if (typeof obj === 'string') {
                                                     endData.push(obj);
@@ -211,38 +208,83 @@
                                                     endData.push(obj(node));
                                                 }
 
-                                            } else {
+                                            } else if (tmpToken.hasOwnProperty('key')) {
+                                                // restore the expression - might be another beardie instance will
+                                                // needs this
+                                                endData.push('{{' + tmpToken.key + '}}');
+                                            } else if (tmpToken.key === undefined) {
                                                 endData.push(tmpToken.trim());
                                             }
                                         }
                                         attr.textContent = endData.join(' ');
-                                    }())
+                                        return token;
+                                    }());
+                                    returnTokens = returnTokens.concat(rTokens);
                                 }
                             }
                         }
                     });
                 }(containerNode.children));
+                return returnTokens;
             }
 
             /**
-             * handle the different use cases
+             * do the magic for attributes or text nodes
              *
              * @param node
              * @param scopeName
-             * @param collection
-             * @param template
+             * @param data
              */
             function fillData(node, scopeName, data) {
+                var tokens = [];
                 if (typeof data === 'object') {
                     // handleEvents(node, data, scopeName);
-                    handleAttributes(node, data, scopeName);
+                    tokens = tokens.concat(handleAttributes(node, data, scopeName));
                     // replace texts:
-                    return compile(node, data, scopeName);
+                    return tokens.concat(compile(node, data, scopeName));
                 } else {
                     console.error('beardie:handleAttributes detect none acceptable data argument', data);
                 }
             }
 
+            /**
+             * helper function for updateData to update the text nodes
+             * @param token
+             * @param val
+             */
+            function updateText(token, val) {
+
+                if (typeof val === 'string' || typeof val === 'number') {
+                    token.node.nodeValue = val;
+                } else if (typeof val === 'boolean') {
+                    // TODO test
+                    token.node.nodeValue = val.toString();
+                } else if (typeof val === 'function') {
+                    // TODO test and implement
+                //    token.node.nodeValue = val(token.node.parentNode);
+                }
+            }
+
+            /**
+             * helper function for updateData to update the attributes for a node
+             * @param token
+             * @param val
+             */
+            function updateAttributes(token, val) {
+                if (typeof val === 'string' || typeof val === 'number') {
+                    var replaceText = token.attr.textContent;
+                    if (replaceText) {
+                        token.attr.textContent = replaceText.replace(token.value, val);
+                        token.value = val;
+                    }
+                } else if (typeof val === 'boolean') {
+                    // TODO test
+                    token.node.nodeValue = val.toString();
+                } else if (typeof val === 'function') {
+                    // TODO test and implement
+                    //    token.node.nodeValue = val(token.node.parentNode);
+                }
+            }
             /**
              *
              * TODO test also boolean and function
@@ -262,13 +304,14 @@
                             } else {
                                 val = obj;
                             }
-                            if (typeof val === 'string' || typeof val === 'number') {
-                                token.node.nodeValue = val;
-                            } else if (typeof val === 'boolean') {
-                                token.node.nodeValue = val.toString();
-                            } else if (typeof val === 'function') {
-                                el = document.createTextNode(val(node.parentNode));
-                                token.node.nodeValue = val(token.node.parentNode);
+
+                            if (val !== undefined) {
+                                if (token.hasOwnProperty('attr')) {
+                                    // handle attribute
+                                    updateAttributes(token, val);
+                                } else {
+                                    updateText(token, val);
+                                }
                             }
                         }
                     }
@@ -292,11 +335,6 @@
                         } else {
                             data = scope;
                         }
-                        // better would be a update children but this is much effort to detect
-//                        [].slice.call(node.children).forEach(function (child) {
-//                            node.removeChild(child);
-//                        });
-                        console.log('beardie:keyValueholder', keyValueholder);
                         if (keyValueholder.hasOwnProperty(scope)) {
                             updateData(keyValueholder[scope], currentScope, data);
                         } else {

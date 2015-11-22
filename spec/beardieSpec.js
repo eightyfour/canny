@@ -205,12 +205,14 @@ describe('Check beardie', function() {
 
         it('should update the text correct from scope', function () {
             canny.beardieSample.dynamicallyChangeData.changeData({
+                id : 'newIdTest',
+                className : 'newClass2',
                 text : 'a different text'
             });
             checkDOM(nodeDynamic, {
-                id : 'main',
-                className1 : 'test with init',
-                className2 : 'init',
+                id : 'newIdTest',
+                className1 : 'test with newClass2',
+                className2 : 'newClass2',
                 text1 : 'a different text',
                 text2 : 'texts replace a different text inside a text'
             });
@@ -226,28 +228,32 @@ describe('Check beardie', function() {
             })
         });
 
-        //it('should update the attributes correct from scope', function () {
-        //    canny.beardieSample.dynamicallyChangeData.changeData({
-        //        id : 'main1',
-        //        className : 'other'
-        //    });
-        //    checkDOM(nodeDynamic, {
-        //        id : 'main1',
-        //        className1 : 'test with other',
-        //        className2 : 'other',
-        //        text : 'a different text'
-        //    });
-        //});
+        it('should update the attributes correct from scope after added attribute with white spaces', function () {
+            canny.beardieSample.dynamicallyChangeData.changeData({
+                id : 'thirdId',
+                className : 'more classes added',  // TODO that will work but the next update doesn't
+                text1 : 'a different text',
+                text2 : 'texts replace a different text inside a text'
+            });
+            checkDOM(nodeDynamic, {
+                id : 'thirdId',
+                className1 : 'test with more classes added',
+                className2 : 'more classes added',
+                text1 : 'a different text',
+                text2 : 'texts replace a different text inside a text'
+            });
 
-        //
-        //it('should not effect the other scope with same name', function () {
-        //    checkDOM(nodeNotEffected, {
-        //        id : 'hoo',
-        //        className1 : 'test with foo',
-        //        className2 : 'foo',
-        //        text : 'bar'
-        //    })
-        //});
+            canny.beardieSample.dynamicallyChangeData.changeData({
+                className : 'testclass'  // TODO that will work but the next update doesn't
+            });
+            checkDOM(nodeDynamic, {
+                id : 'thirdId',
+                className1 : 'test with testclass',
+                className2 : 'testclass',
+                text1 : 'a different text',
+                text2 : 'texts replace a different text inside a text'
+            });
+        });
 
     });
 
@@ -274,14 +280,4 @@ describe('Check beardie', function() {
         expect(data[2].innerHTML).toEqual("foo foo3");
     });
 
-//
-//    it('should update the values correctly', function () {
-//        // TODO
-//    });
-//
-//    it('should not replace unkown placeholder', function () {
-//        var data = mainNode.querySelector('#testExpressionStayIfNotExists').children;
-//        expect(data[0].innerHTML).toEqual("My name is Carlo");
-//        expect(data[1].innerHTML).toEqual("And this should stay {{message}}");
-//    });
 });
