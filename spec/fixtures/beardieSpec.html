@@ -3,15 +3,25 @@
     <!-- Load from object object -->
     <!-- instead of passing the scope here just register as string - expect a function to be returned which
         can call the callback with the scope name . E.g. it can call the callback with different scope names -->
-    <div id="loadFromObject" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.data3'}">
+    <div id="loadFromObject" canny-mod="beardie" canny-var="{'bind':'scope', 'to':'canny.beardieSample.data3'}">
         <p>Hello I'm <strong>{{scope.user.name}}</strong> and I'm <strong>{{scope.user.age}}</strong> years old.</p>
         <p>And this expression should stay: {{scopeX.foo}}.</p>
         <div canny-mod="beardie" canny-var="canny.beardieSample.data4">
             <p>Hello I'm {{scope2.name}} and I'm {{scope2.age}} years old.</p>
         </div>
     </div>
+    <!-- test static object in HTML -->
+    <div id="loadFromStaticObject" canny-mod="beardie" canny-var="{'bind':'scope','to':{'message':'my text'}}">
+        <p>DATA: {{scope.message}}</p>
+    </div>
 
-    <div id="checkAttributes" canny-mod="beardie" canny-var="{'bind':'scope', 'in':'canny.beardieSample.attributes'}">
+    <!-- test static object in HTML -->
+    <div id="checkIfPropertyIsUndefined" canny-mod="beardie" canny-var="canny.beardieSample.custom.beardie">
+        <p class="{{scope.attrUndefined}}">{{scope.messageUndefined}}</p>
+        <p class="{{scope.attr}}">{{scope.message}}</p>
+    </div>
+
+    <div id="checkAttributes" canny-mod="beardie" canny-var="{'bind':'scope', 'to':'canny.beardieSample.attributes'}">
         <div id="{{scope.id}}" class="{{scope.testClass}}"></div>
         <div canny-mod="beardie" canny-var="canny.beardieSample.attributes2">
             <p class="test {{scope2.testClass}}">test</p>

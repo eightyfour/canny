@@ -7,7 +7,7 @@
  * beardie to whisker.
  *
  * E.g. {{beardie}}:
- *  <div canny-mod="beardie" canny-var="{'message':'dynamic text'}">
+ *  <div canny-mod="beardie" canny-var="{'bind':'scope','to':{'message':'My text'}}">
  *     <p>DATA: {{message}})</p>
  *  </div>
  *
@@ -96,6 +96,10 @@
                             node.parentNode.insertBefore(el, node);
                         } else if (typeof val === 'function') {
                             el = document.createTextNode(val(node.parentNode));
+                            node.parentNode.insertBefore(el, node);
+                        } else if (tmp[0] === itemName) {
+                            // property is not exists but it is the same scope
+                            el = document.createTextNode('');
                             node.parentNode.insertBefore(el, node);
                         } else {
                             // restore the token... looks like is not mine
@@ -352,12 +356,12 @@
                 },
                 add : function (node, attr) {
                     var inPointer;
-                    if (typeof attr === 'object' && attr.in && attr.bind) {
-                        if (typeof attr.in === 'string') {
+                    if (typeof attr === 'object' && attr.to && attr.bind) {
+                        if (typeof attr.to === 'string') {
                             // TODO replace window with this and also other instances could use the magic as closure
-                            inPointer = getGlobalCall(attr.in, window);
+                            inPointer = getGlobalCall(attr.to, window);
                         } else {
-                            inPointer = attr.in;
+                            inPointer = attr.to;
                         }
                         exec(node, inPointer, attr.bind);
                     } else {

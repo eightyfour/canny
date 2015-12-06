@@ -9,13 +9,11 @@ canny.add('beardieSample', (function () {
                 name : 'beardie'
             };
         },
-        data3 = function (cb) {
-            cb({
-                user : {
-                    name: 'Peter',
-                    age: 30
-                }
-            });
+        data3 = {
+            user : {
+                name: 'Peter',
+                age: 30
+            }
         },
         inputs = (function () {
             var update = [];
@@ -65,6 +63,17 @@ canny.add('beardieSample', (function () {
                 testClass : 'bar'
             })
         },
+        custom : (function () {
+            var beardieCb;
+            return {
+                changeTo : function (scope, obj) {
+                    beardieCb(scope, obj);
+                },
+                beardie : function (fc) {
+                    beardieCb = fc;
+                }
+            }
+        }()),
         supportScopes : function (fc) {
             fc('scope1', {
                 id : 'foo1',
@@ -158,6 +167,19 @@ describe('Check beardie', function() {
         it('should have replaced the inner expression from a other scope correctly', function () {
             var data = node.children[2].children[0];
             expect(data.innerHTML).toEqual("Hello I'm birdy and I'm 0 years old.");
+        });
+    });
+
+    describe('loadFromStaticObject', function () {
+        var node;
+
+        beforeAll(function () {
+            node = mainNode.querySelector('#loadFromStaticObject');
+        });
+
+        it('should add the text correct', function () {
+            var data = node.children[0];
+            expect(data.innerHTML).toEqual("DATA: my text");
         });
     });
 
@@ -257,8 +279,26 @@ describe('Check beardie', function() {
 
     });
 
+    it('should load the data from a undefined property and leave the text empty', function () {
+        var data = mainNode.querySelector('#checkIfPropertyIsUndefined').children;
+        canny.beardieSample.custom.changeTo('scope', {
+            message : 'text'
+        })
+        expect(data[0].innerHTML).toEqual('');
+        expect(data[1].innerHTML).toEqual('text');
+    });
 
-    it('should load the data from a inline object', function () {
+    it('should replace the data text for a undefined property', function () {
+        var data = mainNode.querySelector('#checkIfPropertyIsUndefined').children;
+        canny.beardieSample.custom.changeTo('scope', {
+            message : 'text',
+            messageUndefined : 'text'
+        })
+        expect(data[0].innerHTML).toEqual('text');
+        expect(data[1].innerHTML).toEqual('text');
+    });
+
+    it('should load the data if the scope is defined in HTML', function () {
         var data = mainNode.querySelector('#checkAttributes').children;
         expect(data[0].getAttribute('id')).toEqual("idFoo");
         expect(data[0].className).toEqual("classFoo");
