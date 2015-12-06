@@ -222,6 +222,108 @@ TODO:
  * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
 
 
-whisker
+beardie
 =====
-like mustache but with much less functionality :)
+Beardie is a small template engine which supports flexible text and attribute changing. Only what beardie 
+needs is a source function where beardie can take the property object. 
+For example to render a simple text to your HTML you can do the following:
+```html
+<div canny-mod="beardie" canny-var="method">
+   <p>Hallo {{scope.name}}!</p>
+</div>
+```
+Only what you need  is to provide a function in the global scope and tell beardie the name space 'scope':
+```javascript
+var method = function (beardieCallback) {
+  beardieCallback('scope', {name: 'beardie'});
+}
+```
+The output of this will be
+```
+  Hallo beardie!
+```
+
+### change dynamically
+Only what you need is to save the callback from beardie and call it again:
+```javascript
+...
+  beardieCallback('scope', {name: 'user'});
+...
+```
+and beardie will change the HTML to:
+```
+Hallo user!
+```
+
+### attribute example
+You can use beardie to modifier and change attributes. For example a image tag:
+```html
+<div canny-mod="beardie" canny-var="method">
+  <img src="{{image.src}}" alt="{{image.alt}}"/>
+</div>
+```
+javascript:
+```javascript
+var method = function (beardieCallback) {
+  beardieCallback('image', {src: '/image/path/pic.png', alt: 'picture'});
+}
+```
+It will set the src and alt attribute like:
+```html
+<div canny-mod="beardie" canny-var="method">
+  <img src="/image/path/pic.png" alt="{{image.alt}}"/>
+</div>
+```
+If you call the beardie callback again you can load a different image.
+### scope
+If you don't want to tell beardie the scope every time you can configure it in the HTML:
+```html
+<div canny-mod="beardie" canny-var="{'bind':'scope',''}">
+  <img src="{{image.src}}" alt="{{image.alt}}"/>
+</div>
+```
+and then pass directly the object to the beardie callback:
+```javascript
+var method = function (beardieCallback) {
+  beardieCallback({text: 'txt'});
+}
+```
+### multiple scopes:
+Beardie support multiple scopes but this has also disadvantages for example you can do the following:
+```html
+<div canny-mod="beardie" canny-var="method1">
+    <div canny-mod="beardie" canny-var="method2">
+       <p>{{scope1.text}}!</p>
+       <p>{{scope2.text}}!</p>
+    </div>
+</div>
+```
+javascript
+```javascript
+var method1 = function (beardieCallback) {
+      beardieCallback('scope1',{text: 'Some text'});
+    },
+    method2 = function (beardieCallback) {
+      beardieCallback('scope2',{text: 'Different text in a different scope'});
+    }
+```
+The HTML will looks like:
+<div canny-mod="beardie" canny-var="method1">
+    <div canny-mod="beardie" canny-var="method2">
+       <p>Some text!</p>
+       <p>Different text in a different scope!</p>
+    </div>
+</div>
+```
+This works fine so far each callback will be called. If for example method2 doesn't call the beardie callback then
+the expression will stay in the HTML:
+```html
+<div canny-mod="beardie" canny-var="method1">
+    <div canny-mod="beardie" canny-var="method2">
+       <p>Some text!</p>
+       <p>{{scope2.text}}!</p>
+    </div>
+</div>
+```
+Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an 
+empty string.
