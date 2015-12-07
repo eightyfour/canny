@@ -5,10 +5,10 @@
  * * read anchors
  * * get request parameter from the URL
  */
-canny.add('url', (function () {
+(function () {
     'use strict';
 
-    return {
+    var url = {
         /**
          * Read Anchors passed by a hash (#)
          * Will be returned as array - hashes could be separated by comma (,)
@@ -38,4 +38,11 @@ canny.add('url', (function () {
             return value;
         }
     };
-}()));
+
+    // export as module or bind to global
+    if (typeof module !== 'undefined') {
+        module.exports = url;
+    } else {
+        canny.add('url', url);
+    }
+}());
