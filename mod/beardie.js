@@ -166,6 +166,13 @@
              *
              * loop though all children and check if a attribute has a expressions inside
              *
+             * TODO support string concat e.g.:
+             * class="item{{scope.number}} test" -> class="item1 test"
+             * * needs to save the complete string + expression as object property -> save: item{{scope.number}} and the prev value to replace the old one
+             * * use concat instead of array to avoid the .join(' ') at the end
+             * * keep in mind string concat has also to be support my{{scope.val}}some
+             * * and define a rules if scope.val is undefined
+             *
              * @param containerNode
              * @param obj
              * @param itemName
@@ -280,6 +287,8 @@
                     if (replaceText) {
                         token.attr.textContent = replaceText.replace(token.value, val);
                         token.value = val;
+                    } else {
+                        token.attr.textContent = replaceText + val;
                     }
                 } else if (typeof val === 'boolean') {
                     // TODO test
@@ -290,6 +299,8 @@
                 }
             }
             /**
+             *
+             * Call this to update the existing data's
              *
              * TODO test also boolean and function
              *

@@ -298,6 +298,28 @@ describe('Check beardie', function() {
         expect(data[1].innerHTML).toEqual('text');
     });
 
+    it('should load the data from a undefined property and leave the attribute empty', function () {
+        var data = mainNode.querySelector('#checkIfPropertyIsUndefined').children;
+        canny.beardieSample.custom.changeTo('scope', {
+            attr : 'cssClass'
+        })
+        // TODO
+        expect(data[0].getAttribute('class')).toEqual('');
+        expect(data[1].getAttribute('class')).toEqual('cssClass');
+    });
+
+    it('should replace the data attribute for a undefined property', function () {
+        var data = mainNode.querySelector('#checkIfPropertyIsUndefined').children;
+        canny.beardieSample.custom.changeTo('scope', {
+            attr : 'cssClass',
+            attrUndefined : 'cssClass'
+        })
+        expect(data[0].className).toEqual('cssClass');
+        // TODO
+//        expect(data[0].className).toEqual('other cssClass test');
+        expect(data[1].className).toEqual('cssClass');
+    });
+
     it('should load the data if the scope is defined in HTML', function () {
         var data = mainNode.querySelector('#checkAttributes').children;
         expect(data[0].getAttribute('id')).toEqual("idFoo");
