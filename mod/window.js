@@ -3,21 +3,20 @@
 /**
  * handle the window resize and calculate the window dimensions only once.
  */
-canny.add('window', (function () {
+(function () {
     'use strict';
+    var cannyWindow = (function () {
+        var resizeListenerQueue = [],
+            iosCheck = {
+                isIos7: navigator.userAgent.match(/iPad;.*CPU.*OS 7_\d/i),
+                isIos8: navigator.userAgent.match(/iPad;.*CPU.*OS 8_\d/i)
+            };
 
-    var resizeListenerQueue = [],
-        getBody = function () {
-            return document.body;
-        },
-        addResizeListener = function (fc) {
+        function addResizeListener(fc) {
             resizeListenerQueue.push(fc);
-        },
-        iosCheck = {
-            isIos7 : navigator.userAgent.match(/iPad;.*CPU.*OS 7_\d/i),
-            isIos8 : navigator.userAgent.match(/iPad;.*CPU.*OS 8_\d/i)
-        },
-        getDimension = function () {
+        }
+
+        function getDimension() {
             var ret = {
                     w: (document.documentElement.clientWidth || window.innerWidth),
                     h: (document.documentElement.clientHeight || window.innerHeight),
@@ -33,8 +32,8 @@ canny.add('window', (function () {
 
             // add remove to force redraw
             // some browsers may ignore workarounds like width=width
-            getBody().appendChild(dummyNode);
-            getBody().removeChild(dummyNode);
+            document.body.appendChild(dummyNode);
+            document.body.removeChild(dummyNode);
 
             return {
                 w: ret.w,
@@ -42,11 +41,11 @@ canny.add('window', (function () {
                 mx: ret.mx,
                 my: ret.my
             };
-        },
+        }
         /**
-        * IOS 8 Fix for returning wrong window height when more than one tab is open.
-        */
-        iOS8MultiTabFix = function () {
+         * IOS 8 Fix for returning wrong window height when more than one tab is open.
+         */
+        function iOS8MultiTabFix() {
             // PAGE VISIBILITY
             // Check if 'hidden' property exists in document.
             var hiddenProp = (function () {
@@ -61,16 +60,16 @@ canny.add('window', (function () {
                     return false;
                 }()),
 
-                // Return state of hidden property
+            // Return state of hidden property
                 isHidden = function () {
                     return hiddenProp ? document[hiddenProp] : false;
                 },
 
-                // Scroll window to top timeout wrapper
+            // Scroll window to top timeout wrapper
                 windowScrollToTop = function () {
                     window.scrollTo(0, 0);
                 },
-                // Visible / hidden state event handler
+            // Visible / hidden state event handler
                 visibleChangeHandler = function () {
                     if (!isHidden()) {
                         setTimeout(windowScrollToTop, 800);
@@ -82,24 +81,36 @@ canny.add('window', (function () {
                 evtname = hiddenProp.replace(/[H|h]idden/, '') + 'visibilitychange';
                 document.addEventListener(evtname, visibleChangeHandler);
             }
-        };
-
-    canny.ready(function () {
-        window.addEventListener('resize', function BrowserResizeListener() {
-            var dim = getDimension();
-            resizeListenerQueue.forEach(function (fc) {fc(dim); });
-        });
-        // Only add listener if iOS8
-        if (iosCheck.isIos8) {
-            iOS8MultiTabFix();
         }
-    });
 
-    return {
-        /**
-         * global helper functions for the dom
-         */
-        getDimension : getDimension,
-        addResizeListener : addResizeListener
-    };
-}()));
+        canny.ready(function () {
+            window.addEventListener('resize', function BrowserResizeListener() {
+                var dim = getDimension();
+                resizeListenerQueue.forEach(function (fc) {
+                    fc(dim);
+                });
+            });
+            // Only add listener if iOS8
+            if (iosCheck.isIos8) {
+                iOS8MultiTabFix();
+            }
+        });
+
+        return {
+            /**
+             * global helper functions for the dom
+             */
+            getDimension: getDimension,
+            /**
+             * register a resize listener to the window resize event.
+             */
+            addResizeListener: addResizeListener
+        };
+    }());
+    // export as module or bind to global
+    if (typeof module !== 'undefined') {
+        module.exports = cannyWindow;
+    } else {
+        canny.add('window', cannyWindow);
+    }
+}());
