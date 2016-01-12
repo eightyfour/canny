@@ -57,6 +57,8 @@
                             text : data.text
                         };
                     }());
+            var concatStringAttributesFc;
+
             return {
                 /**
                  * save it in scope BUT: if other scope is out of this scope but has the same name it should not be effected by changing this... so
@@ -89,6 +91,17 @@
                         id : 'hoo'
                     });
                 },
+                changeConcatStringAttributes : function (obj) {
+                    concatStringAttributesFc('scope',obj);
+                },
+                concatStringAttributes : function (fc) {
+                    concatStringAttributesFc = fc;
+                    fc('scope', {
+                        before: "before",
+                        middle: "middle",
+                        end: "end"
+                    })
+                },
                 add : function (node, attr) {}
             };
         }()));
@@ -96,22 +109,10 @@
 </head>
 <body>
 
-    <div id="dynamicallyChangeData" canny-mod="beardie" canny-var="canny.beardieSample.dynamicallyChangeData.beardieAPI">
-        <div id="{{scope.id}}">
-            <p class="test with {{scope.className}}"></p>
-        </div>
-        <p class="{{scope.className}}">the text: {{scope.text}} should be replaced correctly. Plus this text  {{scope.text}}.</p>
+    <div id="concatStringAttributes" canny-mod="beardie" canny-var="canny.beardieSample.concatStringAttributes">
+        <div class="{{scope.before}}{{scope.middle}}and{{scope.end}} test{{scope.before}}{{scope.before}}"></div>
+        <p>The text {{scope.before}}and{{scope.middle}}and{{scope.end}} test.</p>
     </div>
-
-
-    <!--<div id="supportMultipleScopes" canny-mod="beardie" canny-var="canny.beardieSample.supportScopes">-->
-        <!--<div id="{{scope1.id}}" class="{{scope1.testClass}}">foo {{scope1.text}}</div>-->
-        <!--<div id="{{scope2.id}}" class="{{scope2.testClass}}">foo {{scope2.text}}</div>-->
-        <!--<div id="{{scope3.id}}" class="{{scope3.testClass}}">foo {{scope3.text}}</div>-->
-    <!--</div>-->
-
-
-
 
 </body>
 </html>

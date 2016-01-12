@@ -354,36 +354,94 @@ describe('Check beardie', function() {
         expect(data[2].innerHTML).toEqual("foo foo3");
     });
 
-    //it('should concat attribute correctly if there are no spaces between the expressions', function () {
-    //    var data = mainNode.querySelector('#concatStringAttributes').children[0];
-    //    expect(data.className).toEqual("beforeandmiddleandend test");
-    //});
-    //
-    //it('should concat inner text correctly if there are no spaces between the expressions', function () {
-    //    var data = mainNode.querySelector('#concatStringAttributes').children[1];
-    //    expect(data.innerHTML).toEqual("The text beforeandmiddleandend test.");
-    //
-    //});
-    //
-    //describe('that after update the HTML view', function () {
-    //
-    //    beforeAll(function () {
-    //        canny.beardieSample.changeConcatStringAttributes({
-    //            before: "pre",
-    //            middle: "center",
-    //            end: "post"
-    //        });
-    //    });
-    //
-    //    it('should concat attribute correctly if there are no spaces between the expressions', function () {
-    //        var data = mainNode.querySelector('#concatStringAttributes').children[0];
-    //        expect(data.innerHTML).toEqual("The text preandcenterandpost test.");
-    //    });
-    //
-    //    it('should concat inner text correctly if there are no spaces between the expressions', function () {
-    //        var data = mainNode.querySelector('#concatStringAttributes').children[1];
-    //        expect(data.innerHTML).toEqual("The text preandcenterandpost test.");
-    //    });
-    //});
+    it('should concat attribute correctly if there are no spaces between the expressions', function () {
+        var data = mainNode.querySelector('#concatStringAttributes').children[0];
+        expect(data.className).toEqual("beforeandmiddleandend test");
+    });
+
+    it('should concat inner text correctly if there are no spaces between the expressions', function () {
+        var data = mainNode.querySelector('#concatStringAttributes').children[1];
+        expect(data.innerHTML).toEqual("The text beforeandmiddleandend test.");
+
+    });
+
+    describe('that after update the HTML view', function () {
+
+        beforeAll(function () {
+            canny.beardieSample.changeConcatStringAttributes({
+                before: "pre",
+                middle: "center",
+                end: "post"
+            });
+        });
+
+        it('should concat attribute correctly if there are no spaces between the expressions', function () {
+            var data = mainNode.querySelector('#concatStringAttributes').children[0];
+            expect(data.className).toEqual("preandcenterandpost test");
+        });
+
+        it('should concat inner text correctly if there are no spaces between the expressions', function () {
+            var data = mainNode.querySelector('#concatStringAttributes').children[1];
+            expect(data.innerHTML).toEqual("The text preandcenterandpost test.");
+        });
+    });
+
+//    describe('that it not failes after multiple updates with spaces in the string', function () {
+//
+//        it('should render with spaces', function () {
+//            var data = mainNode.querySelector('#concatStringAttributes').children;
+//            canny.beardieSample.changeConcatStringAttributes({
+//                before: "pre pre",
+//                middle: "center",
+//                end: "post"
+//            });
+//            expect(data[0].className).toEqual("pre preandcenterandpost test");
+//            expect(data[1].innerHTML).toEqual("The text pre preandcenterandpost test.");
+//        });
+//
+//        it('should re render with spaces', function () {
+//            var data = mainNode.querySelector('#concatStringAttributes').children;
+//            canny.beardieSample.changeConcatStringAttributes({
+//                before: "x",
+//                middle: "center",
+//                end: "post"
+//            });
+//            expect(data[0].className).toEqual("xandcenterandpost test");
+//            expect(data[1].innerHTML).toEqual("The text xandcenterandpost test.");
+//        });
+//
+//        it('should re render with spaces', function () {
+//            var data = mainNode.querySelector('#concatStringAttributes').children;
+//            canny.beardieSample.changeConcatStringAttributes({
+//                before: "x x x",
+//                middle: "center",
+//                end: "post"
+//            });
+//            expect(data[0].className).toEqual("x x xandcenterandpost test");
+//            expect(data[1].innerHTML).toEqual("The text x x xandcenterandpost test.");
+//        });
+//
+//        it('should re render with spaces', function () {
+//            var data = mainNode.querySelector('#concatStringAttributes').children;
+//            canny.beardieSample.changeConcatStringAttributes({
+//                before: "different x",
+//                middle: "center",
+//                end: "post"
+//            });
+//            expect(data[0].className).toEqual("different xandcenterandpost test");
+//            expect(data[1].innerHTML).toEqual("The text different xandcenterandpost test.");
+//        });
+//
+//        it('should re render with spaces', function () {
+//            var data = mainNode.querySelector('#concatStringAttributes').children;
+//            canny.beardieSample.changeConcatStringAttributes({
+//                before: "before",
+//                middle: "center",
+//                end: "post"
+//            });
+//            expect(data[0].className).toEqual("beforeandcenterandpost test");
+//            expect(data[1].innerHTML).toEqual("The text beforeandcenterandpost test.");
+//        });
+//    });
 
 });

@@ -38,17 +38,37 @@
                 whiskerUpdateMap = {};
             /**
              *  Parse a piece of text, return an array of tokens
+             *  TODO refactor method
              *  @param text
              *  @return [{key:String, html:boolean}]
              */
             function parse(text) {
                 if (!BINDING_RE.test(text)) {return null; }
-                var m, i, token, match, tokens = [];
+                var m, i, token, match, tokens = [], orig = {text: text, idx : 0}, textObject;
                 /* jshint boss: true */
                 while (m = text.match(BINDING_RE)) {
                     i = m.index;
-                    if (i > 0) {tokens.push(text.slice(0, i)); }
-                    token = { key: m[1].trim() };
+                    token = {concat : true};
+                    if (i > 0) {
+                        if (orig.idx === 0) {
+                            textObject = {
+                                concat : orig.text[orig.idx - 1] !== ' ',
+                                value : text.slice(0, i),
+                                text : true
+                            };
+                            orig.idx += i;
+                        } else {
+                            orig.idx += i;
+                            textObject = {
+                                concat : orig.text[orig.idx - 1] !== ' ',
+                                value : text.slice(0, i),
+                                text : true
+                            };
+                        }
+                        tokens.push(textObject);
+                    }
+                    orig.idx += i;
+                    token.key = m[1].trim();
                     match = m[0];
                     token.html =
                         match.charAt(2) === openChar &&
@@ -56,7 +76,9 @@
                     tokens.push(token);
                     text = text.slice(i + m[0].length);
                 }
-                if (text.length) {tokens.push(text); }
+                if (text.length) {
+                    tokens.push({value : text, text : true, concat: true});
+                }
                 return tokens;
             }
             /**
@@ -75,7 +97,7 @@
                 for (i = 0, l = tokens.length; i < l; i++) {
                     token = tokens[i];
 
-                    if (typeof token === 'object') {
+                    if (typeof token === 'object' && token.hasOwnProperty('key')) {
                         tmp = token.key.split('.');
                         if (tmp.length > 0 && tmp[0] === itemName) {
                             tokenObjectProperty = tmp.slice(1).join('.');
@@ -108,7 +130,7 @@
                         }
                         token.node = el;
                     } else {
-                        el = document.createTextNode(token);
+                        el = document.createTextNode(token.value);
                         // just normal string put back to view
                         node.parentNode.insertBefore(el, node);
                     }
@@ -194,7 +216,7 @@
                                 if (attr.name) {
                                     rTokens = (function () {
                                         var token = parse(attr.textContent),
-                                            endData = [], tmpToken, j, tmpTokenSplit;
+                                            endData = [], tmpToken, j, tmpTokenSplit, value;
                                         for (j = 0; j < token.length; j++) {
                                             tmpToken = token[j];
                                             // if token not itemName skipp all
@@ -209,25 +231,28 @@
                                                 if (typeof obj === 'object') {
                                                     tmpToken.value = getGlobalCall(tmpTokenSplit, obj);
                                                     if (typeof tmpToken.value === 'function') {
-                                                        endData.push(tmpToken.value());
+                                                        value = tmpToken.value();
                                                     } else {
-                                                        endData.push(tmpToken.value);
+                                                        value = tmpToken.value;
                                                     }
                                                 } else if (typeof obj === 'string') {
-                                                    endData.push(obj);
+                                                    value = obj;
                                                 } else if (typeof obj === 'function') {
-                                                    endData.push(obj(node));
+                                                    value = obj(node);
                                                 }
 
                                             } else if (tmpToken.hasOwnProperty('key')) {
                                                 // restore the expression - might be another beardie instance will
                                                 // needs this
-                                                endData.push('{{' + tmpToken.key + '}}');
+                                                value = '{{' + tmpToken.key + '}}';
                                             } else {
-                                                endData.push(tmpToken.trim());
+                                                value = tmpToken.value;
                                             }
+                                            endData.push({value : value, concat : tmpToken.concat});
                                         }
-                                        attr.textContent = endData.join(' ');
+                                        attr.textContent = endData.map(function (d) {
+                                            return d.concat ? d.value : ' ' + d.value;
+                                        }).join('');
                                         return token;
                                     }());
                                     returnTokens = returnTokens.concat(rTokens);
