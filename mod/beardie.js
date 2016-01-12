@@ -223,7 +223,7 @@
                                                 // restore the expression - might be another beardie instance will
                                                 // needs this
                                                 endData.push('{{' + tmpToken.key + '}}');
-                                            } else if (tmpToken.key === undefined) {
+                                            } else {
                                                 endData.push(tmpToken.trim());
                                             }
                                         }

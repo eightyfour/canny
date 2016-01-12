@@ -51,7 +51,19 @@ canny.add('beardieSample', (function () {
                 }
             };
         }());
+    var concatStringAttributesFc;
     return {
+        changeConcatStringAttributes : function (obj) {
+            concatStringAttributesFc('scope',obj);
+        },
+        concatStringAttributes : function (fc) {
+            concatStringAttributesFc = fc;
+            fc('scope', {
+                before: "before",
+                middle: "middle",
+                end: "end"
+            })
+        },
         attributes : function (fc) {
             fc({
                 id : 'idFoo',
@@ -341,5 +353,37 @@ describe('Check beardie', function() {
         expect(data[2].className).toEqual("classTest3");
         expect(data[2].innerHTML).toEqual("foo foo3");
     });
+
+    //it('should concat attribute correctly if there are no spaces between the expressions', function () {
+    //    var data = mainNode.querySelector('#concatStringAttributes').children[0];
+    //    expect(data.className).toEqual("beforeandmiddleandend test");
+    //});
+    //
+    //it('should concat inner text correctly if there are no spaces between the expressions', function () {
+    //    var data = mainNode.querySelector('#concatStringAttributes').children[1];
+    //    expect(data.innerHTML).toEqual("The text beforeandmiddleandend test.");
+    //
+    //});
+    //
+    //describe('that after update the HTML view', function () {
+    //
+    //    beforeAll(function () {
+    //        canny.beardieSample.changeConcatStringAttributes({
+    //            before: "pre",
+    //            middle: "center",
+    //            end: "post"
+    //        });
+    //    });
+    //
+    //    it('should concat attribute correctly if there are no spaces between the expressions', function () {
+    //        var data = mainNode.querySelector('#concatStringAttributes').children[0];
+    //        expect(data.innerHTML).toEqual("The text preandcenterandpost test.");
+    //    });
+    //
+    //    it('should concat inner text correctly if there are no spaces between the expressions', function () {
+    //        var data = mainNode.querySelector('#concatStringAttributes').children[1];
+    //        expect(data.innerHTML).toEqual("The text preandcenterandpost test.");
+    //    });
+    //});
 
 });
