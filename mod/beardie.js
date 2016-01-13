@@ -3,29 +3,18 @@
 
 /**
  *
- * beardie is a working name for the new whisker. So far I can keep the backward functionality I will rename,
- * beardie to whisker.
+ * beardie is a working name for the new whisker. It will not be backward compatible with the current whisker.
+ * So the next major change on canny will not support the old whisker syntax anymore.
  *
  * E.g. {{beardie}}:
  *  <div canny-mod="beardie" canny-var="{'bind':'scope','to':{'message':'My text'}}">
- *     <p>DATA: {{message}})</p>
+ *     <p>DATA: {{scope.message}})</p>
+ *  </div>
+ *  Or just pass the function pointer the default scope is 'scope'.
+ *  <div canny-mod="beardie" canny-var="mymodule.functionPointer">
+ *     <p>DATA: {{scope.message}})</p>
  *  </div>
  *
- *  TODO:
- *  Remove whiskerUpdate
- *   and just provide a function pointer for whisker - whisker will call the pointer with a
- *   update function pointer so that the external function has the control about the rendered data.
- *
- *   If there is not function pointer so do the same as before or just render the data (first will keep the backward compatibility).
- *
- *  Add attribute replace support
- *   so toggle classes will be so much easier ;-)
- *
- *  Global key usage
- *   So I can also use a global key inside my custom whisker
- *
- *  This is a major change and it should be implemented in a new module with the additional functionality:
- *  * update tag attribute properties
  */
 (function () {
     "use strict";
@@ -34,8 +23,7 @@
         endChar  = '}',
         ESCAPE_RE = /[-.*+?^${}()|[\]\/\\]/g,
         beardie = (function () {
-            var BINDING_RE = getRegex(),
-                whiskerUpdateMap = {};
+            var BINDING_RE = getRegex();
             /**
              *  Parse a piece of text, return an array of tokens
              *  TODO refactor method
@@ -187,13 +175,6 @@
              * Replaces expressions for all tag attributes
              *
              * loop though all children and check if a attribute has a expressions inside
-             *
-             * TODO support string concat e.g.:
-             * class="item{{scope.number}} test" -> class="item1 test"
-             * * needs to save the complete string + expression as object property -> save: item{{scope.number}} and the prev value to replace the old one
-             * * use concat instead of array to avoid the .join(' ') at the end
-             * * keep in mind string concat has also to be support my{{scope.val}}some
-             * * and define a rules if scope.val is undefined
              *
              * @param containerNode
              * @param obj
@@ -387,9 +368,6 @@
             }
 
             return {
-                getTextNodes : function () {
-                    return whiskerUpdateMap;
-                },
                 add : function (node, attr) {
                     var inPointer;
                     if (typeof attr === 'object' && attr.to && attr.bind) {
