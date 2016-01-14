@@ -1,8 +1,3 @@
-flowControlInstance 
-=====
-...
-
-___
 repeat
 =====
 The repeat module instantiates a template once per item from a collection. 
@@ -211,17 +206,6 @@ Generates:
 ```
 
 ___
-async
-=====
-Loads html files asynchron in to dom.
-
-require (work in progress)
-=====
-
-TODO:
- * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
-
-
 whisker
 =====
 
@@ -332,3 +316,28 @@ the expression will stay in the HTML:
 ```
 Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an 
 empty string.
+
+___
+async
+=====
+Loads html files asynchron in to dom.
+
+___
+require (work in progress)
+=====
+
+TODO:
+ * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
+
+___
+flowControl 
+===== 
+
+> Note: since canny version **0.1.0** flowControlInstance is renamed to flowControl.
+
+With the flowControl module you can easily manage different views in your browser. It supports:
+
+ * single views
+ * grouped views
+
+More description is coming soon...
