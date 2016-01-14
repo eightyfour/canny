@@ -222,77 +222,82 @@ TODO:
  * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
 
 
-beardie
+whisker
 =====
-Beardie is a small template engine which supports flexible text and attribute changing. Only what beardie 
-needs is a source function where beardie can take the property object. 
+
+> Note: since canny version **0.1.0** whisker is not backward compatible anymore. The **whiskerUpdate** method has been removed.
+Instead whisker pass the update callback directly to your function pointer. Please read the doc to understood the 
+new syntax.
+
+Whisker is a small template engine which supports flexible text and attribute changing. Only what whisker 
+needs is a source function where whisker can take the property object. 
 For example to render a simple text to your HTML you can do the following:
 ```html
-<div canny-mod="beardie" canny-var="method">
+<div canny-mod="whisker" canny-var="method">
    <p>Hallo {{scope.name}}!</p>
 </div>
 ```
-Only what you need  is to provide a function in the global scope and tell beardie the name space 'scope':
+Only what you need  is to provide a function in the global scope and tell whisker the name space 'scope':
 ```javascript
-var method = function (beardieCallback) {
-  beardieCallback('scope', {name: 'beardie'});
+var method = function (whiskerCallback) {
+  whiskerCallback('scope', {name: 'whisker'});
 }
 ```
 The output of this will be
 ```
-  Hallo beardie!
+  Hallo whisker!
 ```
 
 ### change dynamically
-Only what you need is to save the callback from beardie and call it again:
+Only what you need is to save the callback from whisker and call it again:
 ```javascript
 ...
-  beardieCallback('scope', {name: 'user'});
+  whiskerCallback('scope', {name: 'user'});
 ...
 ```
-and beardie will change the HTML to:
+and whisker will change the HTML to:
 ```
 Hallo user!
 ```
 
 ### attribute example
-You can use beardie to modifier and change attributes. For example a image tag:
+You can use whisker to modifier and change attributes. For example a image tag:
 ```html
-<div canny-mod="beardie" canny-var="method">
+<div canny-mod="whisker" canny-var="method">
   <img src="{{image.src}}" alt="{{image.alt}}"/>
 </div>
 ```
 javascript:
 ```javascript
-var method = function (beardieCallback) {
-  beardieCallback('image', {src: '/image/path/pic.png', alt: 'picture'});
+var method = function (whiskerCallback) {
+  whiskerCallback('image', {src: '/image/path/pic.png', alt: 'picture'});
 }
 ```
 It will set the src and alt attribute like:
 ```html
-<div canny-mod="beardie" canny-var="method">
+<div canny-mod="whisker" canny-var="method">
   <img src="/image/path/pic.png" alt="{{image.alt}}"/>
 </div>
 ```
-If you call the beardie callback again you can load a different image.
+If you call the whisker callback again you can load a different image.
 ### scope
-If you don't want to tell beardie the scope every time you can configure it in the HTML:
+If you don't want to tell whisker the scope every time you can configure it in the HTML:
 ```html
-<div canny-mod="beardie" canny-var="{'bind':'scope',''}">
+<div canny-mod="whisker" canny-var="{'bind':'scope',''}">
   <img src="{{image.src}}" alt="{{image.alt}}"/>
 </div>
 ```
-and then pass directly the object to the beardie callback:
+and then pass directly the object to the whisker callback:
 ```javascript
-var method = function (beardieCallback) {
-  beardieCallback({text: 'txt'});
+var method = function (whiskerCallback) {
+  whiskerCallback({text: 'txt'});
 }
 ```
 ### multiple scopes:
-Beardie support multiple scopes but this has also disadvantages for example you can do the following:
+Whisker support multiple scopes but this has also disadvantages for example you can do the following:
 ```html
-<div canny-mod="beardie" canny-var="method1">
-    <div canny-mod="beardie" canny-var="method2">
+<div canny-mod="whisker" canny-var="method1">
+    <div canny-mod="whisker" canny-var="method2">
        <p>{{scope1.text}}!</p>
        <p>{{scope2.text}}!</p>
     </div>
@@ -300,26 +305,26 @@ Beardie support multiple scopes but this has also disadvantages for example you 
 ```
 javascript
 ```javascript
-var method1 = function (beardieCallback) {
-      beardieCallback('scope1',{text: 'Some text'});
+var method1 = function (whiskerCallback) {
+      whiskerCallback('scope1',{text: 'Some text'});
     },
-    method2 = function (beardieCallback) {
-      beardieCallback('scope2',{text: 'Different text in a different scope'});
+    method2 = function (whiskerCallback) {
+      whiskerCallback('scope2',{text: 'Different text in a different scope'});
     }
 ```
 The HTML will looks like:
-<div canny-mod="beardie" canny-var="method1">
-    <div canny-mod="beardie" canny-var="method2">
+<div canny-mod="whisker" canny-var="method1">
+    <div canny-mod="whisker" canny-var="method2">
        <p>Some text!</p>
        <p>Different text in a different scope!</p>
     </div>
 </div>
 ```
-This works fine so far each callback will be called. If for example method2 doesn't call the beardie callback then
+This works fine so far each callback will be called. If for example method2 doesn't call the whisker callback then
 the expression will stay in the HTML:
 ```html
-<div canny-mod="beardie" canny-var="method1">
-    <div canny-mod="beardie" canny-var="method2">
+<div canny-mod="whisker" canny-var="method1">
+    <div canny-mod="whisker" canny-var="method2">
        <p>Some text!</p>
        <p>{{scope2.text}}!</p>
     </div>

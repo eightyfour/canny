@@ -1,53 +1,72 @@
-<div id="whisker">
-    <!-- Load from static data object -->
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.data1">
-        <p id="whisker_data1">Hello I'm {{name}} and I include some texts dynamical: {{text}}.</p>
-    </div>
-    <hr/>
-
-    <!-- Load from dynamic data object (object is return by function) -->
-    <ul id="whisker_data_function">
-        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
-        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
-        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
-        <li canny-mod="whisker" canny-var="canny.whiskerSample.data2">{{name}}</li>
-    </ul>
-    <hr/>
-
-    <!-- Load from dynamic data object with option to trigger data again -->
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.triggerWhiskerUpdate">
-        <p>
-            Hello I'm {{name}} and I take the data from a function.
-        </p>
-        <ul>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-            <li>{{text}}</li>
-        </ul>
-    </div>
-    <hr/>
-
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">
-        Here the input: {{value}}
-        <ul>
-            <li>{{value}}</li>
-            <li>{{value}}</li>
-        </ul>
-    </div>
-
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.inputs">And a second instance: {{value}}</div>
-    <hr/>
+<div id="whiskerb">
 
     <!-- Load from object object -->
-    <div canny-mod="whisker" canny-var="canny.whiskerSample.data3">
-        <p>Hello I'm <strong>{{user.name}}</strong> and I'm <strong>{{user.age}}</strong> years old.</p>
+    <!-- instead of passing the scope here just register as string - expect a function to be returned which
+        can call the callback with the scope name . E.g. it can call the callback with different scope names -->
+    <div id="loadFromObject" canny-mod="whisker" canny-var="{'bind':'scope', 'to':'canny.whiskerSample.data3'}">
+        <p>Hello I'm <strong>{{scope.user.name}}</strong> and I'm <strong>{{scope.user.age}}</strong> years old.</p>
+        <p>And this expression should stay: {{scopeX.foo}}.</p>
+        <div canny-mod="whisker" canny-var="canny.whiskerSample.data4">
+            <p>Hello I'm {{scope2.name}} and I'm {{scope2.age}} years old.</p>
+        </div>
     </div>
-    <hr/>
+    <!-- test static object in HTML -->
+    <div id="loadFromStaticObject" canny-mod="whisker" canny-var="{'bind':'scope','to':{'message':'my text'}}">
+        <p>DATA: {{scope.message}}</p>
+    </div>
 
-    <!-- Load direct as html JSON -->
-    <div canny-mod="whisker" canny-var="{'name':'Carlo','message':'...that could be the message...'}">
-        <p>My name is {{name}}</p>
-        <p>And here are my message: ({{message}}), Thanks in advance <span style="font-weight: bold">{{name}}</span></p>
+    <!-- test static object in HTML -->
+    <div id="checkIfPropertyIsUndefined" canny-mod="whisker" canny-var="canny.whiskerSample.custom.whisker">
+        <p class="{{scope.attrUndefined}}">{{scope.messageUndefined}}</p>
+        <!--TODO needs to be support too: -->
+        <!--<p class="other {{scope.attrUndefined}} test">{{scope.messageUndefined}}</p>-->
+        <p class="{{scope.attr}}">{{scope.message}}</p>
     </div>
+
+    <div id="checkAttributes" canny-mod="whisker" canny-var="{'bind':'scope', 'to':'canny.whiskerSample.attributes'}">
+        <div id="{{scope.id}}" class="{{scope.testClass}}"></div>
+        <div canny-mod="whisker" canny-var="canny.whiskerSample.attributes2">
+            <p class="test {{scope2.testClass}}">test</p>
+        </div>
+    </div>
+
+    <!-- call back function will be called with multiple scopes -->
+    <div id="supportMultipleScopes" canny-mod="whisker" canny-var="canny.whiskerSample.supportScopes">
+        <div id="{{scope1.id}}" class="{{scope1.testClass}}">foo {{scope1.text}}</div>
+        <div id="{{scope2.id}}" class="{{scope2.testClass}}">foo {{scope2.text}}</div>
+        <div id="{{scope3.id}}" class="{{scope3.testClass}}">foo {{scope3.text}}</div>
+    </div>
+
+    <!--
+        test that the dynamically change data works. If you call the callback again from whisker then it should update
+        the data in the DOM.
+     -->
+    <div id="dynamicallyChangeData" canny-mod="whisker" canny-var="canny.whiskerSample.dynamicallyChangeData.whiskerAPI">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
+        </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
+        <p>texts replace {{scope.text}} inside a text</p>
+
+    </div>
+
+    <!--
+        Example needed to test side effects from "dynamicallyChangeData" test. It has the same scope name
+        but it's not in the scope of "dynamicallyChangeData". So the data should NOT be updated if something
+        changed in "dynamicallyChangeData".
+    -->
+    <div id="sameScopeShouldNotEffected" canny-mod="whisker" canny-var="canny.whiskerSample.sameScopeShouldNotEffected">
+        <div id="{{scope.id}}">
+            <p class="test with {{scope.className}}"></p>
+        </div>
+        <p class="{{scope.className}}">{{scope.text}}</p>
+        <p>texts replace {{scope.text}} inside a text</p>
+    </div>
+
+    <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
+        <div class="{{scope.before}}and{{scope.middle}}and{{scope.end}} test"></div>
+        <p>The text {{scope.before}}and{{scope.middle}}and{{scope.end}} test.</p>
+    </div>
+
+
 </div>
