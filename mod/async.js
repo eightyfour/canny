@@ -36,11 +36,19 @@
          * @param script
          * @param cb
          */
-        function appendScript(script, cb) {
-            var node = document.createElement('script');
+        function appendScript(script, mediaURL, cb) {
+            var node = document.createElement('script'),
+                src = script.getAttribute('src');
+            // handle mediaURL and all relative script are loaded from the media URL string
+            if (mediaURL && src[0] !== '/') {
+                if (mediaURL[mediaURL.length - 1] !== '/') {
+                    mediaURL += '/';
+                }
+                src = mediaURL + src;
+            }
             node.type = "text/javascript";
             node.async = true;
-            node.setAttribute('src', script.getAttribute('src'));
+            node.setAttribute('src', src);
             node.addEventListener('load', cb, false);
             node.addEventListener('error', cb, true);
             document.head.appendChild(node);
@@ -51,7 +59,7 @@
          * @param scripts
          * @param cb
          */
-        function appendScriptsToHead(scripts, cb) {
+        function appendScriptsToHead(scripts, mediaURL, cb) {
             var script, i, includesScripts = false,
                 scriptCounter = (function () {
                     var count = 0;
@@ -71,7 +79,7 @@
                 if (script.getAttribute('src')) {
                     includesScripts = true;
                     scriptCounter.up();
-                    appendScript(script, scriptCounter.ready);
+                    appendScript(script, mediaURL, scriptCounter.ready);
                 } else {
                     console.warn('async: found inline script tag!!!');
                 }
@@ -122,7 +130,7 @@
                     scripts = div.getElementsByTagName('script');
                     childs = [].slice.call(div.childNodes);
                     console.log('async:load', attr);
-                    appendScriptsToHead(scripts, handleCannyParse.scriptReady);
+                    appendScriptsToHead(scripts, attr.mediaURL, handleCannyParse.scriptReady);
                     childs.forEach(function (child) {
                         if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
                             node.appendChild(child);
@@ -231,7 +239,10 @@
             /**
              *
              * @param node
-             * @param attr {{url:string}}
+             * @param attr {{
+             *  url:string,
+             *  mediaURL:string
+             * }}
              * @param cb
              */
             loadHTML : loadHTML,
