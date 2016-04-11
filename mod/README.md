@@ -267,14 +267,14 @@ If you call the whisker callback again you can load a different image.
 ### scope
 If you don't want to tell whisker the scope every time you can configure it in the HTML:
 ```html
-<div canny-mod="whisker" canny-var="{'bind':'scope',''}">
+<div canny-mod="whisker" canny-var="{'bind':'image','to':'method'}">
   <img src="{{image.src}}" alt="{{image.alt}}"/>
 </div>
 ```
 and then pass directly the object to the whisker callback:
 ```javascript
 var method = function (whiskerCallback) {
-  whiskerCallback({text: 'txt'});
+  whiskerCallback({src: 'img.png', alt: 'a image'});
 }
 ```
 ### multiple scopes:

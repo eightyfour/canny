@@ -13,6 +13,18 @@ canny.add('whiskerSample', (function () {
         concatStringAttributesFc;
 
     return {
+        changeScopeBindUpdate : (function () {
+            var wCb;
+            return {
+                update : function (obj) {wCb(obj)},
+                whiskerAPI : function (whiskerCb) {
+                    wCb = whiskerCb;
+                    wCb({
+                        text : 'text1'
+                    })
+                }
+            }
+        }()),
         changeConcatStringAttributes : function (obj) {
             concatStringAttributesFc('scope',obj);
         },
@@ -151,6 +163,25 @@ describe('Check whisker', function() {
         it('should add the text correct', function () {
             var data = node.children[0];
             expect(data.innerHTML).toEqual("DATA: my text");
+        });
+    });
+
+    describe('test scope bind update without telling scope again in update function', function () {
+        var nodeChild;
+
+        beforeAll(function () {
+            nodeChild = mainNode.querySelector('#testScopeBindUpdate').children[0];
+        });
+
+        it('should contain the initial text', function () {
+            expect(nodeChild.innerHTML).toEqual("DATA: text1");
+        });
+
+        it('should have updated the text', function () {
+            canny.whiskerSample.changeScopeBindUpdate.update({
+                text : 'text2'
+            });
+            expect(nodeChild.innerHTML).toEqual("DATA: text2");
         });
     });
 
