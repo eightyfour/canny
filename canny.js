@@ -29,7 +29,8 @@
             var s = string
                 .replace(/\{\s*\'/g,'{"').replace(/\'\s*\}/g,'"}')
                 .replace(/:\s*\'/g,':"').replace(/\'\s*:/g,'":')
-                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",');
+                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",')
+                .replace(/\[\s*\'/g,'["').replace(/\'\s*\]/g,'"]');
             return s;
         }
 

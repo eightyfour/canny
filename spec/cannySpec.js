@@ -53,6 +53,12 @@ describe('Check canny', function() {
                 }
         });
 
+        canny.add('testObjectWithArrayInside', {
+                add: function (node, attr) {
+                    this.list = attr.list;
+                }
+        });
+
         canny.add('notInDom', {
             add : function (node, attr) {},
             ready : function () { /* test if it is NOT called */ }
@@ -104,6 +110,10 @@ describe('Check canny', function() {
 
     it('should detect a string as a string', function () {
           expect(canny.testStringToBeNotAJSON2.text).toEqual('Foo{ bar : boo}  ');
+    });
+
+    it('should parse array in object correctly', function () {
+        expect(canny.testObjectWithArrayInside.list).toEqual(['foo','boo','jahuu']);
     });
 
     it('should call the add method from module with object', function () {
