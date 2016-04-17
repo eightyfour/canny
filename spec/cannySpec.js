@@ -59,6 +59,29 @@ describe('Check canny', function() {
                 }
         });
 
+        canny.add('testArrayDoubleQuotes', {
+            add: function (node, attr) {
+                this.list = attr;
+            }
+        });
+        canny.add('testArrayDoubleQuotesASCII', {
+            add: function (node, attr) {
+                this.list = attr;
+            }
+        });
+
+        canny.add('testArray', {
+            add: function (node, attr) {
+                this.list = attr;
+            }
+        });
+
+        canny.add('testArrayWithSingleQuoteInside', {
+            add: function (node, attr) {
+                this.list = attr;
+            }
+        });
+
         canny.add('notInDom', {
             add : function (node, attr) {},
             ready : function () { /* test if it is NOT called */ }
@@ -114,6 +137,22 @@ describe('Check canny', function() {
 
     it('should parse array in object correctly', function () {
         expect(canny.testObjectWithArrayInside.list).toEqual(['foo','boo','jahuu']);
+    });
+
+    it('should parse array in object correctly', function () {
+        expect(canny.testArray.list).toEqual(['foo','boo','jahuu']);
+    });
+
+    it('should parse array in object correctly', function () {
+        expect(canny.testArrayDoubleQuotes.list).toEqual(['foo','boo','jahuu']);
+    });
+
+    it('should parse array in object correctly', function () {
+        expect(canny.testArrayDoubleQuotesASCII.list).toEqual(['foo','boo','jahuu']);
+    });
+
+    it('should parse array in object correctly', function () {
+        expect(canny.testArrayWithSingleQuoteInside.list).toEqual(['foo\'s','boo\'s','jahuu\'s']);
     });
 
     it('should call the add method from module with object', function () {
