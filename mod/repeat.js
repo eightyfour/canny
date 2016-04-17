@@ -357,7 +357,9 @@
                         } else {
                             inPointer = attr.in;
                         }
-                        execRepeat(node, attr.for, inPointer);
+                        execRepeat(node, attr.for || 'item', inPointer);
+                    } else if (Object.prototype.toString.call(attr) === '[object Array]') {
+                        execRepeat(node, 'item', attr);
                     } else {
                         console.warn('repeat:add none acceptable attributes', attr);
                     }
