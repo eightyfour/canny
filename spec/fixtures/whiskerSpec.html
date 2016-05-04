@@ -23,6 +23,11 @@
         <p class="{{scope.attr}}">{{scope.message}}</p>
     </div>
 
+    <!-- test configured scope is not needed to tell again if update is called -->
+    <div id="testScopeBindUpdate" canny-mod="whisker" canny-var="{'bind':'custom','to': 'canny.whiskerSample.changeScopeBindUpdate.whiskerAPI'}">
+        <p>DATA: {{custom.text}}</p>
+    </div>
+
     <div id="checkAttributes" canny-mod="whisker" canny-var="{'bind':'scope', 'to':'canny.whiskerSample.attributes'}">
         <div id="{{scope.id}}" class="{{scope.testClass}}"></div>
         <div canny-mod="whisker" canny-var="canny.whiskerSample.attributes2">

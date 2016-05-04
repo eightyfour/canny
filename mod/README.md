@@ -5,17 +5,39 @@ Each template instance gets its own scope, where the given loop variable
 is set to the current collection item.
 
 ### canny-var attributes
-* **for:** configure the loop variable name.
+**JSON Object:**
+* **for:** configure the loop variable name (default is **item**).
 * **in**: is the source where repeat can find the collection.
  It accepts functions and collections:
    * **collection:** accepts Objects, strings or functions (see on-click)  
    * **function:** repeat will call it with a callback function as parameter. The callback function can be called with the collection
+
+**JSON Array:**
+* pass and array instead of an JSON object (the default iterator name is **item**)
    
 E.g.:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'scope.to.collectionOrFunction'}">...</div>
 ```
-> **Protip:** same for all canny modules you can also instantiate the repeat module from the javscript by passing the variables directly to the add method (repeat.add(node, obj **node** contains the template as children(s), **obj** needs the **for** and **in** property)
+> **Pro tip:** same for all canny modules you can also instantiate the repeat module from the javascript 
+by passing the variables directly to the add method (repeat.add(node, obj **node** contains the template 
+as children(s), **obj** needs the **for** and **in** property)
+
+### Static List:
+You can pass a static JSON array direct to canny-var. The default iterator name is **item**.
+```html
+<ul canny-mod="repeat" canny-var="['item 1','item 1','item 3']">
+    <li>{{item}}</li>
+</ul>
+```
+Generates:
+```html
+<ul canny-mod="repeat" canny-var="['item 1','item 1','item 3']">
+    <li>item 1</li>
+    <li>item 2</li>
+    <li>item 3</li>
+</ul>
+```
 
 ### List of strings:
 It excepts list of strings.
@@ -267,14 +289,14 @@ If you call the whisker callback again you can load a different image.
 ### scope
 If you don't want to tell whisker the scope every time you can configure it in the HTML:
 ```html
-<div canny-mod="whisker" canny-var="{'bind':'scope',''}">
+<div canny-mod="whisker" canny-var="{'bind':'image','to':'method'}">
   <img src="{{image.src}}" alt="{{image.alt}}"/>
 </div>
 ```
 and then pass directly the object to the whisker callback:
 ```javascript
 var method = function (whiskerCallback) {
-  whiskerCallback({text: 'txt'});
+  whiskerCallback({src: 'img.png', alt: 'a image'});
 }
 ```
 ### multiple scopes:

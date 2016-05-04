@@ -29,7 +29,15 @@
             var s = string
                 .replace(/\{\s*\'/g,'{"').replace(/\'\s*\}/g,'"}')
                 .replace(/:\s*\'/g,':"').replace(/\'\s*:/g,'":')
-                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",');
+                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",')
+                .replace(/\[\s*\'/g,'["').replace(/\'\s*\]/g,'"]');
+            return s;
+        }
+
+        function escapeStringForJSONArray(string) {
+            var s = string
+                .replace(/,\s*\'/g,',"').replace(/\'\s*,/g,'",')
+                .replace(/\[\s*\'/g,'["').replace(/\'\s*\]/g,'"]');
             return s;
         }
 
@@ -66,6 +74,13 @@
                                 if (/\{\s*\'|\".*:.*\}/.test(cannyVar)) {
                                     attr = escapeStringForJSON(cannyVar);
                                     // could be a JSON
+                                    try {
+                                        viewPart = JSON.parse(attr);
+                                    } catch (ex) {
+                                        console.error("canny can't parse passed JSON for module: " + moduleName, node);
+                                    }
+                                } else if (/\[\s*\'|\".*\'|\"\]/.test(cannyVar)) {
+                                    attr = escapeStringForJSONArray(cannyVar);
                                     try {
                                         viewPart = JSON.parse(attr);
                                     } catch (ex) {

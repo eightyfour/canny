@@ -119,6 +119,14 @@ describe("Test repeat", function () {
         expect(li[2].innerHTML).toEqual( "1 : 2.001");
     });
 
+    it("dom list string", function () {
+        var links = div.querySelector('#qunitStaticList').children;
+
+        expect(links[0].innerHTML).toEqual( "foo");
+        expect(links[1].innerHTML).toEqual( "bu");
+        expect(links[2].innerHTML).toEqual( "babuhh");
+    });
+
     it("dom list object", function () {
         var links = div.querySelector('#qunitListObject').children;
 
