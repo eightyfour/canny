@@ -73,7 +73,7 @@
                         }
                     };
                 }());
-            console.log('async:detect script', scripts);
+
             for (i = 0; i < scripts.length; i++) {
                 script = scripts[i];
                 if (script.getAttribute('src')) {
@@ -163,6 +163,7 @@
          *   method:string|POST(default),
          *   data:object|string,
          *   path:string,
+         *   async:boolean|true(default),
          *   onFailure:function,
          *   onSuccess:function,
          *   contentType:string|Content-Type(default),
@@ -181,7 +182,7 @@
                 url = url + ((/\?/).test(url) ? "&" : "?") + "ts=" + (new Date()).getTime();
             }
             params.method = params.method || 'POST';
-            call.open(params.method, url, true);
+            call.open(params.method, url, params.async !== false);
             call.onreadystatechange = function () {
                 // TODO use === is this string or number ?
                 if (call.readyState == 4) {
