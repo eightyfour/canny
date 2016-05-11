@@ -242,6 +242,17 @@ describe("Test repeat", function () {
 
     });
 
+    it("dom list object with multiple custom attributes", function () {
+        var links = div.querySelector("#qunitListTestCustomAttributesConcat").children;
+
+        expect(links[0].className).toEqual("foo1");
+        expect(links[1].className).toEqual("testfoo1_bar1 foo");
+
+        expect(links[2].className).toEqual("foo2");
+        expect(links[3].className).toEqual("testfoo2_bar2 foo");
+
+    });
+
     it("it should render the DOM for all attributes for each callback function", function () {
         var li;
         canny.repeatSpecs.functionTest.changeValues([

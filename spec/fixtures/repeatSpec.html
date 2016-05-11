@@ -38,6 +38,11 @@
     <li class="{{item.attr1}} {{item.attr2}}" id="{{item.attr1}}">{{item.attr2}}</li>
 </ul>
 
+<ul id="qunitListTestCustomAttributesConcat" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.customAttributes'}">
+    <li class="{{item.attr1}}" id="{{item.attr1}}">{{item.attr2}}</li>
+    <li class="test{{item.attr1}}_{{item.attr2}} foo" id="{{item.attr1}}">{{item.attr2}}</li>
+</ul>
+
 <div id="qunitListObjectImages" canny-mod="repeat" canny-var="{'for':'img','in':'canny.repeatSpecs.imageSrc'}">
     <img src="{{img}}" alt=""/>
 </div>
