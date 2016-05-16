@@ -77,10 +77,10 @@ describe('Check async', function() {
     });
 
 
-    describe('check if loads and initialize correct a a HTML snippet with script tag', function() {
-        var mainNode;
+    describe('check if loads and initialize correct a HTML snippet with script tag', function() {
+
         beforeAll(function (done) {
-            mainNode = canny.async.loadHTML(
+            canny.async.loadHTML(
                 document.body, {
                     url: '/base/spec/fixtures/asyncSpecScripts.html'
                 }, function () {
@@ -100,5 +100,33 @@ describe('Check async', function() {
             expect(canny.asyncSpecScripts.getState().ready).toEqual(true);
         });
     });
+
+    describe('check if loads and initialize correct a HTML snippet with script tag and different mediaURL', function() {
+
+        it('if module asyncTestScripts it available', function () {
+            expect(canny.asyncSpecScripts_mediaURL).toBeDefined();
+        });
+
+        it('should have initialized the add method', function () {
+            expect(canny.asyncSpecScripts_mediaURL.getState().add).toEqual(true);
+        });
+
+        it('should have called the ready method', function () {
+            expect(canny.asyncSpecScripts_mediaURL.getState().ready).toEqual(true);
+        });
+
+        it('if module asyncTestScripts it available', function () {
+            expect(canny.asyncSpecScripts_mediaURL2).toBeDefined();
+        });
+
+        it('should have initialized the add method', function () {
+            expect(canny.asyncSpecScripts_mediaURL2.getState().add).toEqual(true);
+        });
+
+        it('should have called the ready method', function () {
+            expect(canny.asyncSpecScripts_mediaURL2.getState().ready).toEqual(true);
+        });
+    });
+
 
 });
