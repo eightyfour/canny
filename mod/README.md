@@ -387,7 +387,7 @@ If you pass a **mediaURL** property to the async module than all relative url's 
 ```
 Both URL's will be prefixed with /base/relativeURL/... . All absolute URL's like / or http:// or https:// won't be touched.
 
-Note: actually it's not supporting ./ ../ and so on and any other tag URL's like img, iFrames and so on. If you need this please ask for it or send me a pull request ;)
+Note: actually it's only supporting link and script tags. Tags like img, iFrames and so on are not supported. If you need this please ask for it or send me a pull request ;)
 
 ### POST/GET
 To make a simple POST call the the server you can use the **doAjax** method.
