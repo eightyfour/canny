@@ -75,8 +75,7 @@ describe('Check async', function() {
             }
         })
     });
-
-
+    
     describe('check if loads and initialize correct a HTML snippet with script tag', function() {
 
         beforeAll(function (done) {
@@ -128,5 +127,33 @@ describe('Check async', function() {
         });
     });
 
+    describe('check if replace the link href URL with the correct mediaURL', function() {
+        var mainNode;
 
+        beforeAll(function (done) {
+            mainNode = document.createElement('div');
+            canny.async.loadHTML(
+                mainNode, {
+                    url: '/base/spec/fixtures/asyncSpecLink_mediaURL.html'
+                }, function () {
+                    done();
+                });
+        });
+
+        it('should not modifier the absolute URL', function () {
+            var links = mainNode.querySelectorAll('link');
+            // http://localhost:9876/base/spec/css/asyncSpecScripts.css
+            console.log("asyncSpec:link mediaURL 0:",links[0].href);
+            expect(/http:\/\/.*:\d*\/base\/spec\/css\/asyncSpecScripts.css/.test(links[0].href)).toBeTruthy();
+        });
+
+        it('should modifier the relative URL', function () {
+            var links = mainNode.querySelectorAll('link');
+            // http://localhost:9876/base/spec/css/asyncSpecScripts.css
+            console.log("asyncSpec:link mediaURL 0:",links[1].href);
+            expect(/http:\/\/.*:\d*\/base\/spec\/css\/asyncSpecScripts.css/.test(links[1].href)).toBeTruthy();
+        });
+
+    });
+    
 });

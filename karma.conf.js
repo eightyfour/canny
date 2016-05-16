@@ -20,6 +20,7 @@ module.exports = function(config) {
             {pattern: 'spec/fixtures/*.html', watched: true, included: false, served: true},
             {pattern: 'spec/json/*.json', watched: true, included: false, served: true},
             {pattern: 'spec/scripts/*.js', watched: true, included: false, served: true},
+            {pattern: 'spec/css/*.js', watched: true, included: false, served: true},
             'canny.js',
             'mod/*.js',
             'spec/helper/fixture.js',
