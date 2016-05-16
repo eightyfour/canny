@@ -34,7 +34,7 @@ describe('Check async', function() {
                     // needs a small delay - otherwise the test will fail
                     setTimeout(function() {
                         done();
-                    }, 10);
+                    }, 200);
                 },
                 success: undefined
             });
@@ -59,7 +59,7 @@ describe('Check async', function() {
         });
 
         it('tracks that many is called twice', function () {
-            expect(pushCB.many.calls.count()).toEqual(2);
+            expect(pushCB.many.calls.count()).toEqual(3);
         });
     });
 
@@ -134,6 +134,7 @@ describe('Check async', function() {
             mainNode = document.createElement('div');
             canny.async.loadHTML(
                 mainNode, {
+                    mediaURL : '/base/spec/css',
                     url: '/base/spec/fixtures/asyncSpecLink_mediaURL.html'
                 }, function () {
                     done();
@@ -143,16 +144,24 @@ describe('Check async', function() {
         it('should not modifier the absolute URL', function () {
             var links = mainNode.querySelectorAll('link');
             // http://localhost:9876/base/spec/css/asyncSpecScripts.css
-            console.log("asyncSpec:link mediaURL 0:",links[0].href);
             expect(/http:\/\/.*:\d*\/base\/spec\/css\/asyncSpecScripts.css/.test(links[0].href)).toBeTruthy();
         });
 
         it('should modifier the relative URL', function () {
             var links = mainNode.querySelectorAll('link');
             // http://localhost:9876/base/spec/css/asyncSpecScripts.css
-            console.log("asyncSpec:link mediaURL 0:",links[1].href);
             expect(/http:\/\/.*:\d*\/base\/spec\/css\/asyncSpecScripts.css/.test(links[1].href)).toBeTruthy();
         });
+
+        it('should ignore absolute URLs form http', function () {
+            var links = mainNode.querySelectorAll('link');
+            expect(links[2].href).toEqual('http://domain.tld/css/styles.css');
+        })
+        it('should ignore absolute URLs form https', function () {
+            var links = mainNode.querySelectorAll('link');
+            expect(links[3].href).toEqual('https://domain.tld/css/styles.css');
+
+        })
 
     });
     

@@ -34,6 +34,7 @@
         /**
          *
          * @param script
+         * @param mediaURL
          * @param cb
          */
         function appendScript(script, mediaURL, cb) {
@@ -57,6 +58,7 @@
         /**
          *
          * @param scripts
+         * @param mediaURL
          * @param cb
          */
         function appendScriptsToHead(scripts, mediaURL, cb) {
@@ -89,6 +91,30 @@
                 cb();
             }
 
+        }
+
+        /**
+         * Parse the complete given DOM and prefix all relative href URL's with the given URL
+         * All URL's are handled as relative if there starts not with a / or http:// or https://
+         * TODO add support for URL's with a ./ or ../ and so on
+         *
+         * @param node
+         */
+        function handleLinks(node, mediaURL) {
+            Array.prototype.slice.call(node.getElementsByTagName('link')).forEach(function (link) {
+                var href = link.getAttribute('href');
+                if (link.getAttribute('type') === 'text/css' && 
+                        href !== undefined && 
+                        href[0] !== '/' &&
+                        !/^http:\/\/.*/.test(href) &&
+                        !/^https:\/\/.*/.test(href)) {
+                    if (mediaURL[mediaURL.length - 1] !== '/') {
+                        mediaURL += '/';
+                    }
+                    href = mediaURL + href;
+                    link.setAttribute('href', href);
+                }
+            })
         }
 
         /**
@@ -129,13 +155,15 @@
                     div.innerHTML = src;
                     scripts = div.getElementsByTagName('script');
                     childs = [].slice.call(div.childNodes);
-                    console.log('async:load', attr);
                     appendScriptsToHead(scripts, attr.mediaURL, handleCannyParse.scriptReady);
                     childs.forEach(function (child) {
                         if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
                             node.appendChild(child);
                         }
                     });
+                    if (attr.mediaURL) {
+                        handleLinks(node, attr.mediaURL);
+                    }
                     handleCannyParse.htmlReady();
                 } else {
                     console.warn('async: Loading async HTML failed');
