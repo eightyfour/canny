@@ -229,6 +229,7 @@
              *   noCache:boolean,
              *   method:string|POST(default),
              *   data:object,string,
+             *   async:boolean|true(default),
              *   path:string,
              *   onFailure:function,
              *   onSuccess:function,
