@@ -18,15 +18,17 @@
     "module"
   ],
   "scripts": {
-    "test": "karma start karma.conf.js"
+    "test": "karma start karma.conf.js",
+    "install": "bower install"
   },
   "license": "MIT",
   "devDependencies": {
+    "bower": "^1.7.9",
     "jasmine": "^2.3.2",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.9",
     "karma-coverage": "^0.5.0",
-    "karma-jasmine": "^0.3.6",
+    "karma-jasmine": "^0.3.8",
     "karma-phantomjs-launcher": "^0.2.1",
     "phantomjs": "^1.9.18"
   }
