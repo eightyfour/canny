@@ -319,6 +319,8 @@ var method1 = function (whiskerCallback) {
     }
 ```
 The HTML will looks like:
+
+```html
 <div canny-mod="whisker" canny-var="method1">
     <div canny-mod="whisker" canny-var="method2">
        <p>Some text!</p>
@@ -326,8 +328,10 @@ The HTML will looks like:
     </div>
 </div>
 ```
+
 This works fine so far each callback will be called. If for example method2 doesn't call the whisker callback then
 the expression will stay in the HTML:
+
 ```html
 <div canny-mod="whisker" canny-var="method1">
     <div canny-mod="whisker" canny-var="method2">
@@ -336,24 +340,76 @@ the expression will stay in the HTML:
     </div>
 </div>
 ```
+
 Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an 
 empty string.
 
 ___
 async
 =====
-Loads html files asynchron in to dom.
+The main purpose of this module is to attach asynchonous loaded HTML snippets to the DOM and apply the canny logic on it. 
+You can also use it to do simple GET or POST calls to the server.
 
-___
-require (work in progress)
-=====
+### load async HTML
 
-TODO:
- * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
+You can add async as canny module direct in the DOM to load asynchrounous HTML files
+
+```html
+<div canny-mod="async" canny-var="{'url' : '/asyncFiles/content.html'}">
+    <!-- all conent will be added in here -->
+</div>
+```
+
+Async will automatically add all scripts to the head of the page and will trigger the canny parse for the loaded HTML DOM.
+
+You can also use it directly from your JS with calling:
+```js
+canny.async.loadHTML(document.getElementById('loadInHere'), {url : '/asyncFiles/content.html'});
+```
+
+> You can combine the async module with the flowControl module in a way that the async load of 
+the HTML file will only be triggered if the view is active. Further information see **flowControl async**.
+
+#### realtive URL's
+
+You can configure the relative URL from which the resources will be loaded. 
+
+If you pass a **mediaURL** property to the async module than all relative url's will be loaded from them.
+```html
+<div canny-mod="async" canny-var="{'url' : '/asyncFiles/content.html','mediaURL':'/base/'}">
+    <!-- all conent will be added in here -->
+</div>
+```
+**content.html**
+```html
+<script type="text/javascript" src="relativeURL/script.js"></script>
+<link rel="stylesheet" href="relativeURL/style.css" type="text/css"/>
+```
+Both URL's will be prefixed with /base/relativeURL/... . All absolute URL's like / or http:// or https:// won't be touched.
+
+Note: actually it's not supporting ./ ../ and so on and any other tag URL's like img, iFrames and so on. If you need this please ask for it or send me a pull request ;)
+
+### POST/GET
+To make a simple POST call the the server you can use the **doAjax** method.
+
+>  noCache:boolean,
+>  method:string|POST(default),
+>  data:object,string,
+>  path:string,
+>  async:boolean|true(default),
+>  onFailure:function,
+>  onSuccess:function,
+>  contentType:string|Content-Type(default),
+>  mimeType:string|text plain(default)
+
+
+```
+canny.async.doAjax({path : '/rest/endpoint', data : 'mydata', onSuccess : function () {console.log('POST done')}});
+```
 
 ___
 flowControl 
-===== 
+=========== 
 
 > Note: since canny version **0.1.0** flowControlInstance is renamed to flowControl.
 
@@ -363,3 +419,30 @@ With the flowControl module you can easily manage different views in your browse
  * grouped views
 
 More description is coming soon...
+
+### flowControl async
+
+You can combine the functionality of flowControl with the asynchrounous load of HTML content. To make this happen you can configure a 
+async property with the URL of the HTML snippet you want to add.
+
+```html
+<div canny-mod="flowControl" canny-var="{'view': 'showAsyncHTML', 'async' : '/asyncFiles/content.html'}" style="display: none">
+    <!-- all conent will be added in here -->
+</div>
+```
+
+If you call:
+
+```js
+canny.flowControl.show('showAsyncHTML');
+```
+
+Then flowControl uses the canny.async module to trigger the HTML file load and after this flowControl will show the view. If you cann the show method again flowControl will **not** trigger the load again and will only activate the view.
+
+___
+require (work in progress)
+==========================
+
+
+TODO:
+ * is there an space in the canny-mod attribute like: canny-mod="moduleName " -> than require tries to load a 'empty' script.
