@@ -3,7 +3,7 @@
   "auth": "eightyfour",
   "email": "eightyfour@thinkuseful.de",
   "description": "Simple dom module manager with basic view support.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "browserify": "canny.js",
   "engines": {
     "node": ">= v0.10.0"
@@ -19,7 +19,8 @@
   ],
   "scripts": {
     "test": "karma start karma.conf.js",
-    "install": "bower install"
+    "dev": "npm run bower",
+    "bower" : "bower install"
   },
   "license": "MIT",
   "devDependencies": {
