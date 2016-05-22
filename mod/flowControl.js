@@ -106,6 +106,13 @@
                         }
                         if (!async && attr.hasOwnProperty('async')) {
                             canny.async.loadHTML(node, {url : attr.async}, function () {
+                                if (attr.whisker) {
+                                    if (canny.whisker !== undefined) {
+                                        canny.whisker.add(node, attr.whisker);
+                                    } else {
+                                        console.error("flowControl:try execute whisker but no whisker module is registered on canny.")
+                                    }
+                                }
                                 node.style.display = '';
                                 cb();
                             });
@@ -133,6 +140,13 @@
                         }
                         if (!async && attr.hasOwnProperty('async')) {
                             canny.async.loadHTML(node, {url : attr.async}, function () {
+                                if (attr.whisker) {
+                                    if (canny.whisker !== undefined) {
+                                        canny.whisker.add(node, attr.whisker);
+                                    } else {
+                                        console.error("flowControl:try execute whisker but no whisker module is registered on canny.");
+                                    }
+                                }
                                 fc.fadeIn(node,  cb || function () {});
                             });
                             async = true;
