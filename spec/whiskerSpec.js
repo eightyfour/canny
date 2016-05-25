@@ -279,6 +279,121 @@ describe('Check whisker', function() {
             });
         });
 
+        describe('test update with empty string and spaces', function () {
+            // stress test ;)
+
+            // it('should update the view if empty string is passed', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : 'test',
+            //         text : ''
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with test',
+            //         className2 : 'test',
+            //         text1 : '',
+            //         text2 : 'texts replace  inside a text' // remove double space it's wrong
+            //     })
+            //
+            // });
+            //
+            // it('should update the view if empty string is passed', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : 'with',
+            //         text : ''
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with with',
+            //         className2 : 'with',
+            //         text1 : '',
+            //         text2 : 'texts replace  inside a text' // remove double space it's wrong
+            //     })
+            //
+            // });
+
+            // it('should update the view if empty string is passed', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : '',
+            //         text : ''
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with ',
+            //         className2 : '',
+            //         text1 : '',
+            //         text2 : 'texts replace  inside a text' // remove double space it's wrong
+            //     })
+            //
+            // });
+            //
+            // it('should update the view with spaces', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : ' ',
+            //         text : ' '
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with  ',
+            //         className2 : ' ',
+            //         text1 : ' ',
+            //         text2 : 'texts replace   inside a text' // remove double space it's wrong
+            //     })
+            // });
+            //
+            // it('should update the view again with if empty strings', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : '',
+            //         text : ''
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with ',
+            //         className2 : '',
+            //         text1 : '',
+            //         text2 : 'texts replace  inside a text' // remove double space it's wrong
+            //     });
+            // });
+
+            // it('should update the view with some values', function () {
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : 'fooClass',
+            //         text : 'fooClass'
+            //     });
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with fooClass',
+            //         className2 : 'fooClass',
+            //         text1 : 'fooClass',
+            //         text2 : 'texts replace fooClass inside a text' // remove double space it's wrong
+            //     })
+            // });
+
+            // it('should update the view with empty string correctly', function () {
+            //
+            //     canny.whiskerSample.dynamicallyChangeData.changeData({
+            //         id : 'id',
+            //         className : '',
+            //         text : ''
+            //     });
+            //
+            //     checkDOM(nodeDynamic, {
+            //         id : 'id',
+            //         className1 : 'test with ',
+            //         className2 : '',
+            //         text1 : '',
+            //         text2 : 'texts replace  inside a text' // remove double space it's wrong
+            //     })
+            //
+            // });
+        });
+
     });
 
     it('should load the data from a undefined property and leave the text empty', function () {

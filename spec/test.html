@@ -97,9 +97,7 @@
                 concatStringAttributes : function (fc) {
                     concatStringAttributesFc = fc;
                     fc('scope', {
-                        before: "before",
-                        middle: "middle",
-                        end: "end"
+                        value: "before"
                     })
                 },
                 add : function (node, attr) {}
@@ -108,10 +106,16 @@
     </script>
 </head>
 <body>
+<style>
+    #concatStringAttributes div:before {
+        content: attr(class);
+        color: black;
+    }
+</style>
 
     <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
-        <div class="{{scope.before}}{{scope.middle}}and{{scope.end}} test{{scope.before}}{{scope.before}}"></div>
-        <p>The text {{scope.before}}and{{scope.middle}}and{{scope.end}} test.</p>
+        <div class="test {{scope.value}}"></div>
+        <div class="{{scope.value}}"></div>
     </div>
 
 </body>
