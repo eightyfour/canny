@@ -65,6 +65,17 @@ describe("Test repeat", function () {
                 {foo : 'click me 1', clickMe : function () { console.log('canny-repeat: foo1 clicked'); }},
                 {foo : 'click me 2', clickMe : function () { console.log('canny-repeat: foo2 clicked');}}
             ],
+            rpBind : (function () {
+                var repeatRegister;
+                return {
+                    update : function (obj) {
+                        repeatRegister(obj);
+                    },
+                    data : function (fc) {
+                        repeatRegister = fc;
+                    }
+                }
+            }()),
             addClasses : [
                 {className : 'itemClass0 foo'},
                 {className : 'itemClass1 foo'}
@@ -312,4 +323,31 @@ describe("Test repeat", function () {
         expect(links[1].innerHTML).toEqual( "if bar: barFoo");
 
     });
+
+    describe('it should handle the control attribute correctly and', function () {
+        
+        var node3;
+        beforeAll(function () {
+            canny.repeatSpecs.rpBind.update([
+                {controller : function (node) {node.className = 'foo1';}, elem : 'elem1'},
+                {controller : function (node) {return false;}, elem : 'elem2'},
+                {controller : function (node) {node3 = node}, elem : 'elem3'}
+            ])
+        });
+
+        it("check if first node has correct className", function () {
+            var child = div.querySelector('#controlAttribute').children[0] ;
+            expect(child.className).toEqual('foo1');
+        });
+
+        it("check if second node is removed from DOM", function () {
+            var length = div.querySelector('#controlAttribute').children.length ;
+            expect(length).toEqual(2);
+        });
+        
+        it("check if third node has correct content", function () {
+            var child = div.querySelector('#controlAttribute').children[1] ;
+            expect(node3).toEqual(child);
+        });
+    })
 });

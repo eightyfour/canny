@@ -194,7 +194,9 @@
 
             /**
              * register click events
-             *
+             * 
+             * @deprecated use rp-bind attribute
+             * 
              * @param clone
              * @param item
              * @param itemName
@@ -208,6 +210,35 @@
                             node.addEventListener('click', val);
                         } else {
                             console.log('repeat:can not register click listener without a function', node);
+                        }
+                    });
+                });
+            }
+
+            /**
+             * register rp-bind handler
+             * 
+             * With help of this the if and if-not and onClick attribute is deprecated - you can just pass a function pointer to rp-bind and 
+             * do all the required logic by your own.
+             * 
+             * If you return false then the node will be removed from the DOM
+             *
+             * @param clone
+             * @param item
+             * @param itemName
+             */
+            function handleRPBindAttribute(clone, obj, itemName) {
+                var attrName = 'rp-bind';
+                // check children of clone
+                [].slice.call(clone.querySelectorAll('[' + attrName + ']')).forEach(function (node) {
+                    getLoopValueFromAttribute(node, obj, itemName, attrName, function (val) {
+                        if (typeof val === 'function') {
+                            if (val(node) === false) {
+                                // remove node if function returns false
+                               node.parentNode.removeChild(node); 
+                            }
+                        } else {
+                            console.error('repeat:can not register control function without a function pointer', node);
                         }
                     });
                 });
@@ -286,6 +317,9 @@
 
             /**
              * handle the if conditions if and if-not
+             * 
+             * @deprecated use rp-bind attribute
+             * 
              * @param clone
              * @param obj
              * @param itemName
@@ -337,8 +371,13 @@
 //                                var fragment = document.createDocumentFragment();
                                 var fragment = document.createElement('div');
                                 fragment.appendChild(childTpl.cloneNode(true));
-                                // if conditions can remove elements from clone - it's important that this is executed first
+                                
                                 handleIfCondition(fragment, item, itemName);
+                                // if conditions can remove elements from clone - it's important that this is executed first
+                                if (fragment.children && fragment.children.length === 1) {
+                                    handleRPBindAttribute(fragment, item, itemName);
+                                }
+                                // rp-bind attribute can also remove elements so need to check again if node exists
                                 if (fragment.children && fragment.children.length === 1) {
                                     handleEvents(fragment, item, itemName);
                                     handleAttributes(fragment, item, itemName);

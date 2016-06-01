@@ -134,7 +134,28 @@ Generates:
   <p>DATA: bar</p>
 </div>
 ```
-### handle click events
+### rp-bind attribute
+With rp-bind you can bind a function to the rendered element. The function will be called with the registered node as parameter.
+If you return false the element will be removed from the DOM.
+```javascript
+var path = {
+  objectList : [{control : function (node) {node.className = 'foo';}, {control : function (node) {node.className = 'bar';}]     
+}
+```
+Can be used like this:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
+  <p control="item.control">click me</p>
+</div>
+```
+Generates:
+```html
+<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+  <p control="item.control">click me</p> <!-- click on element will log 'foo' -->
+  <p control="item.control">click me</p> <!-- click on element will log 'bar' -->
+</div>
+```
+### handle click events (deprecated instead of use control)
 If you want to register a click event you can use the **on-click** attribute.
 ```javascript
 var path = {
@@ -177,7 +198,7 @@ Generates:
 ```
 This works for all kind of attributes. Like id, src, href... and so on.
 
-### if conditions
+### if conditions (deprecated instead of use control)
 With the if condition you can decide which part of you template should be rendered and which not.
 There are two attributes: **if** and **if-not**. 
 

@@ -26,6 +26,10 @@
     <li on-click="item.clickMe">{{item.foo}}</li>
 </ul>
 
+<ul id="controlAttribute" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.rpBind.data'}">
+    <li rp-bind="item.controller">{{item.elem}}</li>
+</ul>
+
 <ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
     <li class="{{item.className}}">{{item.className}}</li>
 </ul>
