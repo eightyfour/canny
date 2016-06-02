@@ -1,7 +1,7 @@
 repeat
 =====
-The repeat module instantiates a template once per item from a collection. 
-Each template instance gets its own scope, where the given loop variable 
+The repeat module instantiates a template once per item from a collection.
+Each template instance gets its own scope, where the given loop variable
 is set to the current collection item.
 
 ### canny-var attributes
@@ -14,13 +14,13 @@ is set to the current collection item.
 
 **JSON Array:**
 * pass and array instead of an JSON object (the default iterator name is **item**)
-   
+
 E.g.:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'scope.to.collectionOrFunction'}">...</div>
 ```
-> **Pro tip:** same for all canny modules you can also instantiate the repeat module from the javascript 
-by passing the variables directly to the add method (repeat.add(node, obj **node** contains the template 
+> **Pro tip:** same for all canny modules you can also instantiate the repeat module from the javascript
+by passing the variables directly to the add method (repeat.add(node, obj **node** contains the template
 as children(s), **obj** needs the **for** and **in** property)
 
 ### Static List:
@@ -86,7 +86,7 @@ Generates:
 
 ### List of functions
 It excepts list of functions. Each function will called from canny.repeat with the actual DOM node.
-<br/>Important to know is that Functions can only return strings! 
+<br/>Important to know is that Functions can only return strings!
 ```javascript
 var obj = {
   functionList : [
@@ -111,8 +111,8 @@ Generates:
 ```
 
 ### Accepts also functions
-If you need to generate the data at later time you can pass repeat a function pointer. The **renderRepeatFc** can be 
-executed at later time or directly. The advantage of the function is that if the data has changed you can call 
+If you need to generate the data at later time you can pass repeat a function pointer. The **renderRepeatFc** can be
+executed at later time or directly. The advantage of the function is that if the data has changed you can call
 the function again to render the data again. If you do this all old data will be removed and replaced by the new one.
 ```javascript
 var path = {
@@ -145,17 +145,17 @@ var path = {
 Can be used like this:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
-  <p control="item.control">click me</p>
+  <p rp-bind="item.control">click me</p>
 </div>
 ```
 Generates:
 ```html
 <div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
-  <p control="item.control">click me</p> <!-- click on element will log 'foo' -->
-  <p control="item.control">click me</p> <!-- click on element will log 'bar' -->
+  <p rp-bind="item.control">click me</p> <!-- click on element will log 'foo' -->
+  <p rp-bind="item.control">click me</p> <!-- click on element will log 'bar' -->
 </div>
 ```
-### handle click events (deprecated instead of use control)
+### handle click events (deprecated instead of use rp-bind)
 If you want to register a click event you can use the **on-click** attribute.
 ```javascript
 var path = {
@@ -177,7 +177,7 @@ Generates:
 ```
 
 ### modifier attributes
-To add a specific attribute to a template instance you can just add the "expression" to the attribute. 
+To add a specific attribute to a template instance you can just add the "expression" to the attribute.
 ```javascript
 var path = {
   objectList : [{className : 'foo foo1'}, {className : 'bar'}]     
@@ -198,9 +198,9 @@ Generates:
 ```
 This works for all kind of attributes. Like id, src, href... and so on.
 
-### if conditions (deprecated instead of use control)
+### if conditions (deprecated instead of use rp-bind)
 With the if condition you can decide which part of you template should be rendered and which not.
-There are two attributes: **if** and **if-not**. 
+There are two attributes: **if** and **if-not**.
 
 Note: maybe later it could also contain more complex logic. E.g. pass directly a conditional statement like if="item.foo === 'foo'". But actually this logic could also be implemented in the javascript file. Currently there is no reasion to move logic like this to the DOM level.
 ```javascript
@@ -222,8 +222,8 @@ Generates:
   <p if-not="item.foo">foo if not false</p>
 </diV>
 ```
-To avoid none existing property exceptions you can also use the if attribute to check if a property 
-of an object exists or not. For example the **barFoo** property only exists for the second element. 
+To avoid none existing property exceptions you can also use the if attribute to check if a property
+of an object exists or not. For example the **barFoo** property only exists for the second element.
 And instead of four elements it will only render two :
 ```javascript
 var path = {
@@ -253,11 +253,11 @@ whisker
 =====
 
 > Note: since canny version **0.1.0** whisker is not backward compatible anymore. The **whiskerUpdate** method has been removed.
-Instead whisker pass the update callback directly to your function pointer. Please read the doc to understood the 
+Instead whisker pass the update callback directly to your function pointer. Please read the doc to understood the
 new syntax.
 
-Whisker is a small template engine which supports flexible text and attribute changing. Only what whisker 
-needs is a source function where whisker can take the property object. 
+Whisker is a small template engine which supports flexible text and attribute changing. Only what whisker
+needs is a source function where whisker can take the property object.
 For example to render a simple text to your HTML you can do the following:
 ```html
 <div canny-mod="whisker" canny-var="method">
@@ -362,13 +362,13 @@ the expression will stay in the HTML:
 </div>
 ```
 
-Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an 
+Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an
 empty string.
 
 ___
 async
 =====
-The main purpose of this module is to attach asynchonous loaded HTML snippets to the DOM and apply the canny logic on it. 
+The main purpose of this module is to attach asynchonous loaded HTML snippets to the DOM and apply the canny logic on it.
 You can also use it to do simple GET or POST calls to the server.
 
 ### load async HTML
@@ -388,12 +388,12 @@ You can also use it directly from your JS with calling:
 canny.async.loadHTML(document.getElementById('loadInHere'), {url : '/asyncFiles/content.html'});
 ```
 
-> You can combine the async module with the flowControl module in a way that the async load of 
+> You can combine the async module with the flowControl module in a way that the async load of
 the HTML file will only be triggered if the view is active. Further information see **flowControl async**.
 
 #### realtive URL's
 
-You can configure the relative URL from which the resources will be loaded. 
+You can configure the relative URL from which the resources will be loaded.
 
 If you pass a **mediaURL** property to the async module than all relative url's will be loaded from them.
 ```html
@@ -429,8 +429,8 @@ canny.async.doAjax({path : '/rest/endpoint', data : 'mydata', onSuccess : functi
 ```
 
 ___
-flowControl 
-=========== 
+flowControl
+===========
 
 > Note: since canny version **0.1.0** flowControlInstance is renamed to flowControl.
 
@@ -443,7 +443,7 @@ More description is coming soon...
 
 ### flowControl async
 
-You can combine the functionality of flowControl with the asynchrounous load of HTML content. To make this happen you can configure a 
+You can combine the functionality of flowControl with the asynchrounous load of HTML content. To make this happen you can configure a
 async property with the URL of the HTML snippet you want to add.
 
 ```html
