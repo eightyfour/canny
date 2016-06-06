@@ -3,7 +3,7 @@
   "auth": "eightyfour",
   "email": "eightyfour@thinkuseful.de",
   "description": "Simple dom module manager with basic view support.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "browserify": "canny.js",
   "engines": {
     "node": ">= v0.10.0"

@@ -9,6 +9,7 @@ describe('Check async', function() {
 
         var mainNode,
             pushCB,
+            onRequest,
             addCallback;
 
         beforeAll(function (done) {
@@ -64,10 +65,39 @@ describe('Check async', function() {
     });
 
 
+    describe('and the onRequest', function() {
+
+        var onRequest = {
+            called : function (xmlHTTPRequest) {}
+        };
+
+        beforeAll(function () {
+
+            spyOn(onRequest, 'called');
+
+            canny.async.doAjax({
+                method : 'GET',
+                path : 'base/spec/json/asyncTest.json',
+                onRequest : onRequest.called
+            });
+        });
+
+        it('it should have been called', function () {
+            expect(onRequest.called.calls.count()).toEqual(1);
+        });
+
+        it('it should have been called with the XMLHttpRequest instance', function () {
+            expect(onRequest.called).toHaveBeenCalledWith(jasmine.any(XMLHttpRequest));
+        });
+    });
+
     it('should load a json file', function (done) {
         canny.async.doAjax({
             method : 'GET',
             path : 'base/spec/json/asyncTest.json',
+            onRequest : function (xmlHTTPRequest) {
+                expect(xmlHTTPRequest).toBeDefined();
+            },
             onSuccess : function (json) {
                 var data = JSON.parse(json.response);
                 expect(data.async).toEqual("success");

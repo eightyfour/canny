@@ -192,6 +192,7 @@
          *   data:object|string,
          *   path:string,
          *   async:boolean|true(default),
+         *   onRequest:function (will be called with the xmlHTTPRequest object quite close before the send method is called),
          *   onFailure:function,
          *   onSuccess:function,
          *   contentType:string|Content-Type(default),
@@ -225,7 +226,14 @@
                     }
                 }
             };
+            
             call.setRequestHeader(params.contentType || "Content-Type", params.mimeType || "text/plain");
+
+            // allow the caller to do some extra stuff on the request object
+            if (params.onRequest && typeof params.onRequest === 'function') {
+                params.onRequest(call);
+            }
+            
             if (params.method === 'POST') {
                 call.send(params.data);
             } else {
@@ -259,6 +267,7 @@
              *   data:object,string,
              *   async:boolean|true(default),
              *   path:string,
+             *   onRequest:function (will be called with the xmlHTTPRequest object quite close before the send method is called),
              *   onFailure:function,
              *   onSuccess:function,
              *   contentType:string|Content-Type(default),
