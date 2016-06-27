@@ -475,3 +475,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * repeat
    * supports *rp-bind* attribute
    * mark *if*, *if-not* and *on-click* attribute as deprecated
+
+**0.1.10**
+  * flowControl
+    * fix issues that views as anchor are not shown because of 'this' is undefined (function is called out of context)

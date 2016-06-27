@@ -298,7 +298,7 @@
              *
              * @type {{mod: {}, createNewInstance: createNewInstance, ready: ready, add: add, show: show, fadeIn: fadeIn, showImmediately: showImmediately, overlay: overlay}}
              */
-                api = {
+            api = {
                 mod : modViews, // part of api
                 /**
                  * this method could be used to create new instances of flowControl (only needed if you
@@ -316,7 +316,7 @@
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
                             if (showInitialView.indexOf(modNames[i]) !== -1) {
-                                this.showImmediately.apply(null, showInitialView);
+                                api.showImmediately.apply(null, showInitialView);
                                 break;
                             }
                         }
