@@ -98,7 +98,8 @@
          * All URL's are handled as relative if there starts not with a / or http:// or https://
          * TODO add support for URL's with a ./ or ../ and so on
          *
-         * @param node
+         * @param node parent element
+         * @param mediaURL mediaPath to another server
          */
         function handleLinks(node, mediaURL) {
             Array.prototype.slice.call(node.getElementsByTagName('link')).forEach(function (link) {
@@ -156,14 +157,15 @@
                     scripts = div.getElementsByTagName('script');
                     childs = [].slice.call(div.childNodes);
                     appendScriptsToHead(scripts, attr.mediaURL, handleCannyParse.scriptReady);
+
+                    if (attr.mediaURL) {
+                        handleLinks(div, attr.mediaURL);
+                    }
                     childs.forEach(function (child) {
                         if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
                             node.appendChild(child);
                         }
                     });
-                    if (attr.mediaURL) {
-                        handleLinks(node, attr.mediaURL);
-                    }
                     handleCannyParse.htmlReady();
                 } else {
                     console.warn('async: Loading async HTML failed');
