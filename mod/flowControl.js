@@ -41,14 +41,35 @@
 
     var flowControlInstance = function (fcInstanceName) {
         var instanceName = fcInstanceName,
+            // modViews is a dictionary storing instances of flowControlModule, e.g.
+            // <div canny-mod="flowControl" canny-var="{'view': 'view1'}">Content1</div>
+            // <div canny-mod="flowControl" canny-var="{'view': 'view1'}">Content2</div>
+            // stores both flowControl-instances into modViews['view1']
             modViews = {}, // saves module views
             getViewAnchor = function () {
-                var hash = location.hash || null, hashSub;
+                var hash = location.hash || null, hashSub, params, result;
                 if (hash) {
                     hashSub = hash.substr(1);
-                    return hashSub.split(',');
+                    params = hashSub.split('|');
+                    hashSub = params.shift().split(',');
+                    result = {
+                        views : hashSub
+                    };
+
+                    if (params.length > 0) {
+                        result.params = {};
+                        params = params.toString().split(',');
+                        params.forEach(function(keyAndValue, index) {
+                            var keyValue = keyAndValue.split('=');
+                            if (keyValue[1]) {
+                                result.params[keyValue[0]] = keyValue[1];
+                            } else {
+                                result.params[index] = keyValue[0];
+                            }
+                        });
+                    }
                 }
-                return hash;
+                return result;
             },
             getAllModuleChildrens = function (cNode) {
                 // TODO test selector if we have more than one module in canny-mod
@@ -315,8 +336,18 @@
                         l = modNames.length;
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
-                            if (showInitialView.indexOf(modNames[i]) !== -1) {
-                                api.showImmediately.apply(null, showInitialView);
+                            if (showInitialView.views.indexOf(modNames[i]) !== -1) {
+                                if (showInitialView.params) {
+                                    showInitialView.views.push(function transmitParameters() {
+                                        postMessage && postMessage({
+                                            type: 'message_request',
+                                            view: modNames[i],
+                                            params: showInitialView.params
+                                        },
+                                        location.protocol + '//' + location.host);
+                                    });
+                                }
+                                api.showImmediately.apply(null, showInitialView.views);
                                 break;
                             }
                         }
@@ -392,10 +423,9 @@
                  * @deprecated use show instead
                  * @param name
                  */
-                showImmediately : function (name) {    // module specific
+                showImmediately : function () {    // module specific
                     var showMods = [].slice.call(arguments),
                         queue = Object.keys(modViews),
-                        queueCount = 0,
                         countCb = (function () {
                             var cb, length = 0;
                             // if last param is function than handle it as callback
@@ -427,17 +457,13 @@
                     showMods = fc.addParents(showMods);
                     // hide all (except incoming)
                     queue.forEach(function (view) {
-                        queueCount += modViews[view].length;
                         modViews[view].forEach(function (obj) {
-                            queueCount--;
                             if (showMods.indexOf(obj) === -1) {
                                 obj.hide();
                             }
-                            if (queueCount <= 0) {
-                                show();
-                            }
                         });
                     });
+                    show();
                 },
                 overlay : function (name) {
                     var node;
