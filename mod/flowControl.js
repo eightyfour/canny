@@ -322,7 +322,7 @@
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
                             if (showInitialView.indexOf(modNames[i]) !== -1) {
-                                showInitialView.push(function transmitParameters() {
+                                showInitialView.push(function () {
                                     onShowInitialViewComplete.forEach(function(fc) {
                                         fc();
                                     });
