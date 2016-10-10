@@ -374,13 +374,15 @@
                             inPointer = attr.to;
                         }
                         exec(node, inPointer, attr.bind);
-                    } else {
+                    } else if (typeof attr === 'string') {
                         inPointer = getGlobalCall(attr, window);
                         if (typeof inPointer === 'function') {
                             exec(node, inPointer);
                         } else {
                             console.warn('whisker:add none acceptable attributes', attr);
                         }
+                    } else {
+                        exec(node, attr);
                     }
                 }
             };

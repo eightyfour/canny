@@ -487,5 +487,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
   * flowControl
     * add onShowInitialViewComplete - calls the given function after loading all initial views.
- 
+  * whisker
+    * accepts also function pointer in add method (instead of string only) e.g.
+```js
+canny.whisker.add(node, function (whiskerCb) {
+    whiskerCb('scopeName', res);
+});
+```    
    
