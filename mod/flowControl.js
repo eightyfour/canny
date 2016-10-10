@@ -41,6 +41,8 @@
 
     var flowControlInstance = function (fcInstanceName) {
         var instanceName = fcInstanceName,
+            // flag to save if the initial queue is already initialized or not
+            showInitialViewComplete = false,
             onShowInitialViewComplete = [],
             modViews = {}, // saves module views
             getViewAnchor = function () {
@@ -315,26 +317,46 @@
                     return flowControl(name);
                 },
                 ready : function () {
-                    var modNames, i, l;
-                    if (showInitialView) {
+                    var modNames, i, l, callInitialViewCompleteQueue = true;
+                    if (showInitialView && modNames.length > 0) {
                         modNames = Object.keys(modViews);
                         l = modNames.length;
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
+                            // check for existing name in showInitialView
                             if (showInitialView.indexOf(modNames[i]) !== -1) {
                                 showInitialView.push(function () {
                                     onShowInitialViewComplete.forEach(function(fc) {
+                                        showInitialViewComplete = true;
                                         fc();
                                     });
                                 });
+                                callInitialViewCompleteQueue = false;
                                 api.showImmediately.apply(null, showInitialView);
                                 break;
                             }
                         }
                     }
+
+                    if (callInitialViewCompleteQueue) {
+                        onShowInitialViewComplete.forEach(function(fc) {
+                            showInitialViewComplete = true;
+                            fc();
+                        });
+                    }
                 },
+                /**
+                 * Calls the given function after loading all initial views.
+                 *
+                 * @param fc
+                 */
                 onShowInitialViewComplete : function(fc) {
-                    onShowInitialViewComplete.push(fc);
+                    // make sure that the passed function will be called also after initialisation
+                    if (!showInitialViewComplete) {
+                        onShowInitialViewComplete.push(fc);
+                    } else {
+                        fc();
+                    }
                 },
                 /**
                  *

@@ -470,12 +470,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 **0.1.8**
 
  * flowControl 
+ 
    * has whisker support for re rendering view
    
  * repeat
+ 
    * supports *rp-bind* attribute
    * mark *if*, *if-not* and *on-click* attribute as deprecated
 
 **0.1.10**
+
   * flowControl
     * fix issues that views as anchor are not shown because of 'this' is undefined (function is called out of context)
+    
+**0.1.12**
+
+  * flowControl
+    * add onShowInitialViewComplete - calls the given function after loading all initial views.
+ 
+   
