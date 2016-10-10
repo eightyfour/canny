@@ -41,13 +41,19 @@
 
     var flowControlInstance = function (fcInstanceName) {
         var instanceName = fcInstanceName,
+            onShowInitialViewComplete = [],
             modViews = {}, // saves module views
             getViewAnchor = function () {
-                var hash = location.hash || null, hashSub;
+                var hash = location.hash || null,
+                    rx = new RegExp('[^a-zA-Z-_,]', 'g'),
+                    hashSub;
+
                 if (hash) {
                     hashSub = hash.substr(1);
+                    hashSub = hashSub.substring(0, hashSub.search(rx));
                     return hashSub.split(',');
                 }
+
                 return hash;
             },
             getAllModuleChildrens = function (cNode) {
@@ -316,11 +322,19 @@
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
                             if (showInitialView.indexOf(modNames[i]) !== -1) {
+                                showInitialView.push(function () {
+                                    onShowInitialViewComplete.forEach(function(fc) {
+                                        fc();
+                                    });
+                                });
                                 api.showImmediately.apply(null, showInitialView);
                                 break;
                             }
                         }
                     }
+                },
+                onShowInitialViewComplete : function(fc) {
+                    onShowInitialViewComplete.push(fc);
                 },
                 /**
                  *
@@ -392,10 +406,9 @@
                  * @deprecated use show instead
                  * @param name
                  */
-                showImmediately : function (name) {    // module specific
+                showImmediately : function () {    // module specific
                     var showMods = [].slice.call(arguments),
                         queue = Object.keys(modViews),
-                        queueCount = 0,
                         countCb = (function () {
                             var cb, length = 0;
                             // if last param is function than handle it as callback
@@ -427,17 +440,13 @@
                     showMods = fc.addParents(showMods);
                     // hide all (except incoming)
                     queue.forEach(function (view) {
-                        queueCount += modViews[view].length;
                         modViews[view].forEach(function (obj) {
-                            queueCount--;
                             if (showMods.indexOf(obj) === -1) {
                                 obj.hide();
                             }
-                            if (queueCount <= 0) {
-                                show();
-                            }
                         });
                     });
+                    show();
                 },
                 overlay : function (name) {
                     var node;
