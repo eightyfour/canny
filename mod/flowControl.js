@@ -41,35 +41,20 @@
 
     var flowControlInstance = function (fcInstanceName) {
         var instanceName = fcInstanceName,
-            // modViews is a dictionary storing instances of flowControlModule, e.g.
-            // <div canny-mod="flowControl" canny-var="{'view': 'view1'}">Content1</div>
-            // <div canny-mod="flowControl" canny-var="{'view': 'view1'}">Content2</div>
-            // stores both flowControl-instances into modViews['view1']
+            onShowInitialViewComplete = [],
             modViews = {}, // saves module views
             getViewAnchor = function () {
-                var hash = location.hash || null, hashSub, params, result;
+                var hash = location.hash || null,
+                    rx = new RegExp('[^a-zA-Z-_,]', 'g'),
+                    hashSub;
+
                 if (hash) {
                     hashSub = hash.substr(1);
-                    params = hashSub.split('|');
-                    hashSub = params.shift().split(',');
-                    result = {
-                        views : hashSub
-                    };
-
-                    if (params.length > 0) {
-                        result.params = {};
-                        params = params.toString().split(',');
-                        params.forEach(function(keyAndValue, index) {
-                            var keyValue = keyAndValue.split('=');
-                            if (keyValue[1]) {
-                                result.params[keyValue[0]] = keyValue[1];
-                            } else {
-                                result.params[index] = keyValue[0];
-                            }
-                        });
-                    }
+                    hashSub = hashSub.substring(0, hashSub.search(rx));
+                    return hashSub.split(',');
                 }
-                return result;
+
+                return hash;
             },
             getAllModuleChildrens = function (cNode) {
                 // TODO test selector if we have more than one module in canny-mod
@@ -336,22 +321,20 @@
                         l = modNames.length;
                         // check if showInitialView contains a registered module
                         for (i = 0; i < l; i++) {
-                            if (showInitialView.views.indexOf(modNames[i]) !== -1) {
-                                if (showInitialView.params) {
-                                    showInitialView.views.push(function transmitParameters() {
-                                        postMessage && postMessage({
-                                            type: 'message_request',
-                                            view: modNames[i],
-                                            params: showInitialView.params
-                                        },
-                                        location.protocol + '//' + location.host);
+                            if (showInitialView.indexOf(modNames[i]) !== -1) {
+                                showInitialView.push(function transmitParameters() {
+                                    onShowInitialViewComplete.forEach(function(fc) {
+                                        fc();
                                     });
-                                }
-                                api.showImmediately.apply(null, showInitialView.views);
+                                });
+                                api.showImmediately.apply(null, showInitialView);
                                 break;
                             }
                         }
                     }
+                },
+                onShowInitialViewComplete : function(fc) {
+                    onShowInitialViewComplete.push(fc);
                 },
                 /**
                  *
