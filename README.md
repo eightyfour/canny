@@ -494,4 +494,8 @@ canny.whisker.add(node, function (whiskerCb) {
     whiskerCb('scopeName', res);
 });
 ```    
+
+**0.1.13**
    
+   * async
+     * fixes double file loading issues in loadHTML when URL rewrite is needed - resources will only be loaded if the file is appended to the DOM

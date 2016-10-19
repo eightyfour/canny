@@ -102,7 +102,7 @@
          * @param mediaURL mediaPath to another server
          */
         function handleLinks(node, mediaURL) {
-            Array.prototype.slice.call(node.getElementsByTagName('link')).forEach(function (link) {
+            Array.prototype.slice.call(node.querySelectorAll('link')).forEach(function (link) {
                 var href = link.getAttribute('href');
                 if (link.getAttribute('type') === 'text/css' && 
                         href !== undefined && 
@@ -121,11 +121,13 @@
         /**
          *
          * @param node
-         * @param attr {{url:string}}
+         * @param attr {{url:string, mediaURL: string}}
          * @param cb
          */
         function loadHTML(node, attr, cb) {
-            var div = document.createElement('div'),
+            var template = document.createElement('template'),
+                div = ('content' in template ? template : document.implementation.createHTMLDocument('main').body),
+                body,
                 scripts,
                 // only parse if html and scripts are loaded (scripts has callbacks because there are needs to loaded asynchronous)
                 handleCannyParse = (function (cb) {
@@ -154,12 +156,14 @@
                 var childs;
                 if (src) {
                     div.innerHTML = src;
-                    scripts = div.getElementsByTagName('script');
-                    childs = [].slice.call(div.childNodes);
+                    // if it is a template we need the content
+                    body = 'content' in div ? div.content : div;
+                    scripts = body.querySelectorAll('script');
+                    childs = [].slice.call(body.childNodes);
                     appendScriptsToHead(scripts, attr.mediaURL, handleCannyParse.scriptReady);
 
                     if (attr.mediaURL) {
-                        handleLinks(div, attr.mediaURL);
+                        handleLinks(body, attr.mediaURL);
                     }
                     childs.forEach(function (child) {
                         if (!(child.tagName === 'SCRIPT' && child.getAttribute('src'))) {
