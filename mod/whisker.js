@@ -142,6 +142,76 @@
                 }
                 return tokens.length > 0 ? tokens : undefined;
             }
+
+
+            /**
+             * helper function to do the read variable from string magic.
+             * The cb will called with the property value - in case of undefined the variable does not exists
+             *
+             * TODO why a callback and not return - method name is get...() ?
+             * 
+             * @param node
+             * @param attributeName
+             * @param cb
+             */
+            function getLoopValueFromAttribute(node, obj, itemName, attributeName, cb) {
+                var tmp = node.getAttribute(attributeName).split('.'), tokenObjectProperty;
+                if (tmp.length > 0 && tmp[0] === itemName) {
+                    tokenObjectProperty = tmp.slice(1).join('.');
+                    cb(getGlobalCall(tokenObjectProperty, obj));
+                } else {
+                    // TODO handle this correctly
+                    console.error('repeat:getLoopValueFromAttribute has problems');
+                }
+            }
+
+            /**
+             * register rp-bind handler
+             *
+             * With help of this the if and if-not and onClick attribute is deprecated - you can just pass a function pointer to rp-bind and
+             * do all the required logic by your own.
+             *
+             * If you return false then the node will be removed from the DOM
+             *
+             * @param node
+             * @param obj
+             * @param itemName
+             */
+            function handleRPBindAttribute(node, obj, itemName) {
+                var attrName = 'wk-bind',
+                    token;
+                // check children of clone
+                // TODO check if the itemName matches the attrName
+                // if () {
+                //      return if itemName doesn't match
+                // }
+                getLoopValueFromAttribute(node, obj, itemName, attrName, function (val) {
+                    var shadow,
+                        hidden = false;
+                    if (typeof val === 'function') {
+                        shadow = document.createElement('div');
+                        shadow.style.display = 'none';
+                        if (val(node) === false) {
+                            // remove node if function returns false
+                            node = node.parentNode.replaceChild(shadow, node);
+                            hidden = true;
+                        }
+                        token = {
+                            hidden : hidden,
+                            node : node,
+                            shadowNode : shadow,
+                            isWkBindToken : true,
+                            // check if key is needed because it has the wkBind function pointer
+                            key : node.getAttribute('wk-bind')
+                        }
+
+                    } else {
+                        console.error('repeat:can not register control function without a function pointer', node);
+                    }
+                });
+                return token;
+            }
+
             /**
              *  Compile a DOM node (recursive)
              * @param node
@@ -236,6 +306,12 @@
                                 }
                             }
                         }
+                        // if (node.hasAttribute('wk-bind')) {
+                        //     var tmpToken = handleRPBindAttribute(node, obj, itemName);
+                        //     if (tmpToken) {
+                        //         returnTokens.push(tmpToken);
+                        //     }
+                        // }
                     });
                 }(containerNode.children));
                 return returnTokens;
@@ -253,8 +329,25 @@
                 if (typeof data === 'object') {
                     // handleEvents(node, data, scopeName);
                     tokens = tokens.concat(handleAttributes(node, data, scopeName));
+                    // make sure that the compiler also updates the hidden element
+                    tokens = tokens.concat(compile(node, data, scopeName));
+
+                    // TODO move into handleRPBindAttribute
+                    tokens = tokens.concat((function () {
+                        var attrName = 'wk-bind',
+                            tokens = [];
+                        // check children of clone
+                        [].slice.call(node.querySelectorAll('[' + attrName + ']')).forEach(function (child) {
+                            var tmpToken = handleRPBindAttribute(child, data, scopeName);
+                            if (tmpToken) {
+                                tokens.push(tmpToken);
+                            }
+                        });
+                        return tokens
+                    }()));
+
                     // replace texts:
-                    return tokens.concat(compile(node, data, scopeName));
+                    return tokens;
                 } else {
                     console.error('whisker:handleAttributes detect none acceptable data argument', data);
                 }
@@ -326,6 +419,22 @@
                                 if (token.hasOwnProperty('attr')) {
                                     // handle attribute
                                     updateAttributes(token, val);
+                                } else if (token.isWkBindToken) {
+                                    (function () {
+                                        var removeMeIfImFalse;
+                                        if (val) {
+                                            removeMeIfImFalse = val(token.node);
+                                        }
+                                        if (removeMeIfImFalse === false && token.hidden === false) {
+                                            // remove node
+                                            token.hidden = true;
+                                            token.node.parentNode.replaceChild(token.shadowNode, token.node);
+                                        } else if (removeMeIfImFalse !== false && token.hidden) {
+                                            token.hidden = false;
+                                            token.shadowNode.parentNode.replaceChild(token.node, token.shadowNode);
+                                            // restore node
+                                        }
+                                    }());
                                 } else {
                                     updateText(token, val);
                                 }

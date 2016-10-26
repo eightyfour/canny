@@ -57,7 +57,8 @@
                             text : data.text
                         };
                     }());
-            var concatStringAttributesFc;
+            var concatStringAttributesFc,
+                fcCallIndex = 0;
 
             return {
                 /**
@@ -97,10 +98,30 @@
                 concatStringAttributes : function (fc) {
                     concatStringAttributesFc = fc;
                     fc('scope', {
-                        value: "before"
+                        value: "before",
+                        bind : function (node) {
+//                            node.innerHTML = fcCallIndex;
+                            if (node.getAttribute('data') === '1')
+                                return false;
+                        }
+                    })
+                    fc('otherScope', {
+                        value: "tada"
                     })
                 },
-                add : function (node, attr) {}
+                add : function (node, attr) {
+                    node.addEventListener('click', function () {
+                        fcCallIndex ++;
+                        concatStringAttributesFc('scope', {
+                            value: "index count: " + fcCallIndex,
+                            bind : function (node) {
+//                            node.innerHTML = fcCallIndex;
+                                if (node.getAttribute('data') === '0' && fcCallIndex % 2)
+                                    return false;
+                            }
+                        })
+                    })
+                }
             };
         }()));
     </script>
@@ -115,8 +136,13 @@
 
     <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
         <div class="test {{scope.value}}"></div>
-        <div class="{{scope.value}}"></div>
+        <div wk-bind="scope.bind" data="0">{{scope.value}}</div>
+        <div wk-bind="scope.bind" data="1">
+            <p>Here some data from another whisker scope can be find anymore if this part has been removed: {{otherScope.value}}</p>
+        </div>
     </div>
+
+    <button canny-mod="whiskerSample">trigger render</button>
 
 </body>
 </html>
