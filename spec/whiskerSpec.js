@@ -99,6 +99,21 @@ canny.add('whiskerSample', (function () {
                 }
             }
         }()),
+        dynamicallyChangeDataWithInitialMissingProperties : (function () {
+            var updateWhisker;
+            return {
+                // call this to change the data and update the DOM
+                changeData : function (obj) {
+                    updateWhisker('scope', obj);
+                },
+                // pass this as reference to whisker
+                whiskerAPI : function (fc) {
+                    updateWhisker = fc;
+                    // callfirst empty
+                    updateWhisker('scope', {});
+                }
+            }
+        }()),
         sameScopeShouldNotEffected : function (fc) {
             fc('scope', {
                 className : 'foo',
@@ -184,6 +199,43 @@ describe('Check whisker', function() {
             expect(nodeChild.innerHTML).toEqual("DATA: text2");
         });
     });
+
+    describe('test that dynamically change data with missing initial properties works fine', function () {
+        var nodeDynamic;
+
+        beforeAll(function () {
+            nodeDynamic = mainNode.querySelector('#dynamicallyChangeDataWithInitialMissingProperties');
+        });
+
+        it('should have no initial data', function () {
+            expect(nodeDynamic.children[0].className).toEqual('');
+            expect(nodeDynamic.children[1].className).toEqual('test ');
+            expect(nodeDynamic.children[2].innerHTML).toEqual('');
+            expect(nodeDynamic.children[3].innerHTML).toEqual('');
+
+        });
+
+        it('should update all data\'s correctly', function () {
+
+            canny.whiskerSample.dynamicallyChangeDataWithInitialMissingProperties.changeData({
+                attr1 : 'newClass',
+                attr2 : 'newClass',
+                value : 'value',
+                wkBind : function (node) {
+                    node.innerHTML = 'wkBind'
+                }
+            });
+
+            expect(nodeDynamic.children[0].className).toEqual('newClass');
+            // TODO make it work
+            // expect(nodeDynamic.children[1].className).toEqual('test newClass');
+            expect(nodeDynamic.children[2].innerHTML).toEqual('value');
+            // TODO make it work
+            // expect(nodeDynamic.children[3].innerHTML).toEqual('wkBind');
+
+        })
+    });
+
 
     describe('test that dynamically update data works fine so', function () {
         var nodeDynamic, nodeNotEffected;

@@ -56,6 +56,17 @@
     </div>
 
     <!--
+       test that the dynamically change data works. If you call the callback initial without parameter and then again
+       with the properties it should update the data
+    -->
+    <div id="dynamicallyChangeDataWithInitialMissingProperties" canny-mod="whisker" canny-var="canny.whiskerSample.dynamicallyChangeDataWithInitialMissingProperties.whiskerAPI">
+        <div class="{{scope.attr1}}"></div>
+        <div class="test {{scope.attr2}}"></div>
+        <p>{{scope.value}}</p>
+        <p wk-bind="scope.wkBind"></p>
+    </div>
+
+    <!--
         Example needed to test side effects from "dynamicallyChangeData" test. It has the same scope name
         but it's not in the scope of "dynamicallyChangeData". So the data should NOT be updated if something
         changed in "dynamicallyChangeData".
