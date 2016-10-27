@@ -499,3 +499,8 @@ canny.whisker.add(node, function (whiskerCb) {
    
    * async
      * fixes double file loading issues in loadHTML when URL rewrite is needed - resources will only be loaded if the file is appended to the DOM
+
+**0.1.14**
+
+   * whisker
+     * add the wk-bind functionality - makes possible to execute a funciton pointer for each rendered node
