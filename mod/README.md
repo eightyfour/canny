@@ -365,6 +365,56 @@ the expression will stay in the HTML:
 Make sure that all of them are called. If only a property is not exists then the expression will be replaced by an
 empty string.
 
+### wk-bind attribute
+With wk-bind you can bind a function to the rendered element. The function will be called with the registered node as parameter.
+If you return false the element will be removed\* from the DOM.
+
+Note: try to avoid the return false if you 
+ * want modify other elements inside the removed container
+ * if you have other scope whisker placeholder which needs to be rendered 
+
+Syntax: **wk-bind="scope.functionPointer"**
+
+> \* it will be replaced by an placeholder div with display:none. If you execute the 
+>  function again without returning explicit false the original node will be restored. 
+
+```javascript
+var registerWhisker = function (fc) {
+    fc('scope', {
+      functionPointer1 : function (node) {return false;},     
+      functionPointer2 : function (node) {node.style.color = 'red'; node.innerHTML = "I'm red"},     
+    });
+}
+```
+
+The initial HTML looks like:
+```html
+<div canny-mod="whisker" canny-var="registerWhisker">
+    <div wk-bind="functionPointer1">first sample</div>
+    <div wk-bind="functionPointer2">second sample</div>
+</div>
+```
+and after executing:
+```html
+<div canny-mod="whisker" canny-var="registerWhisker">
+    <div style="display:none" />
+    <div wk-bind="functionPointer2" style="color:red">I'm red</div>
+</div>
+```
+If you save the fc pointer you can execute it again with:
+```javascript
+fc('scope', {
+  functionPointer1 : function (node) {return true;}, // restore the node    
+  functionPointer2 : function (node) {node.style.color = 'green'; node.innerHTML = "I'm gree"},     
+});
+```
+and the HTML will look like:
+```html
+<div canny-mod="whisker" canny-var="registerWhisker">
+    <div wk-bind="functionPointer1">first sample</div>
+    <div wk-bind="functionPointer2" style="color:green">I'm green</div>
+</div>
+```
 ___
 async
 =====
