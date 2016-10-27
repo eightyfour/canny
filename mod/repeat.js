@@ -218,13 +218,13 @@
             /**
              * register rp-bind handler
              * 
-             * With help of this the if and if-not and onClick attribute is deprecated - you can just pass a function pointer to rp-bind and 
-             * do all the required logic by your own.
+             * With help of this the if and if-not and onClick attribute is deprecated - you can just pass a function 
+             * pointer to rp-bind and do all the required logic by your own.
              * 
              * If you return false then the node will be removed from the DOM
              *
              * @param clone
-             * @param item
+             * @param obj
              * @param itemName
              */
             function handleRPBindAttribute(clone, obj, itemName) {
