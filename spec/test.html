@@ -1,148 +1,169 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-    <script src="../canny.js"></script>
-    <script src="../mod/whisker.js"></script>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="../canny.js"></script>
+  <script src="../mod/whisker.js"></script>
 
-    <script>
-        canny.add('whiskerSample', (function () {
-            var node,
-                    data1 = {
-                        name : 'whisker',
-                        text : 'Dynamical included text'
-                    },
-                    data2 = function () {
-                        return {
-                            name : 'whisker'
-                        };
-                    },
-                    data3 = function (cb) {
-                         cb({
-                             user : {
-                                 name: 'Peter',
-                                 age: 30
-                             }
-                         });
-                    },
-                    inputs = (function () {
-                        var update = [];
-                        return {
-                            value : '',
-                            notifierWhisker : function (value) {
-                                update.forEach(function (fc) {
-                                    fc({value: value});
-                                });
-                            },
-                            whiskerUpdate : function (cb) {
-                                update.push(cb);
-                            }
-                        };
-                    }()),
-                    triggerWhiskerUpdate = (function () {
-                        var whiskerUpdate = function () {},
-                                data = data2();
-                        return {
-                            // trigger this to update the data
-                            updateData : function () {
-                                whiskerUpdate(data2());
-                            },
-                            // part of api to whisker
-                            whiskerUpdate : function (cb) {
-                                whiskerUpdate = cb;
-                            },
-                            // object
-                            name : data.name,
-                            text : data.text
-                        };
-                    }());
-            var concatStringAttributesFc,
-                fcCallIndex = 0;
-
+  <script>
+    canny.add('whiskerSample', (function () {
+      var node,
+          data1 = {
+            name: 'whisker',
+            text: 'Dynamical included text'
+          },
+          data2 = function () {
             return {
-                /**
-                 * save it in scope BUT: if other scope is out of this scope but has the same name it should not be effected by changing this... so
-                 * save also the node and parse from there.
-                 *
-                 * @returns {{changeData: changeData, whiskerAPI: whiskerAPI}}
-                 */
-                dynamicallyChangeData : (function () {
-                    var updateWhisker;
-                    return {
-                        // call this to change the data and update the DOM
-                        changeData : function (obj) {
-                            updateWhisker('scope', obj);
-                        },
-                        // pass this as reference to whisker
-                        whiskerAPI : function (fc) {
-                            updateWhisker = fc;
-                            updateWhisker('scope', {
-                                className : 'init',
-                                text : 'initial text',
-                                id : 'main'
-                            });
-                        }
-                    }
-                }()),
-                sameScopeShouldNotEffected : function (fc) {
-                    fc('scope', {
-                        className : 'foo',
-                        text : 'bar',
-                        id : 'hoo'
-                    });
-                },
-                changeConcatStringAttributes : function (obj) {
-                    concatStringAttributesFc('scope',obj);
-                },
-                concatStringAttributes : function (fc) {
-                    concatStringAttributesFc = fc;
-                    fc('scope', {
-                        value: "before",
-                        bind : function (node) {
-//                            node.innerHTML = fcCallIndex;
-                            if (node.getAttribute('data') === '1')
-                                return false;
-                        }
-                    })
-                    fc('otherScope', {
-                        value: "tada"
-                    })
-                },
-                add : function (node, attr) {
-                    node.addEventListener('click', function () {
-                        fcCallIndex ++;
-                        concatStringAttributesFc('scope', {
-                            value: "index count: " + fcCallIndex,
-                            bind : function (node) {
-//                            node.innerHTML = fcCallIndex;
-                                if (node.getAttribute('data') === '0' && fcCallIndex % 2)
-                                    return false;
-                            }
-                        })
-                    })
-                }
+              name: 'whisker'
             };
-        }()));
-    </script>
+          },
+          data3 = function (cb) {
+            cb({
+              user: {
+                name: 'Peter',
+                age: 30
+              }
+            });
+          },
+          inputs = (function () {
+            var update = [];
+            return {
+              value: '',
+              notifierWhisker: function (value) {
+                update.forEach(function (fc) {
+                  fc({value: value});
+                });
+              },
+              whiskerUpdate: function (cb) {
+                update.push(cb);
+              }
+            };
+          }()),
+          triggerWhiskerUpdate = (function () {
+            var whiskerUpdate = function () {
+                },
+                data = data2();
+            return {
+              // trigger this to update the data
+              updateData: function () {
+                whiskerUpdate(data2());
+              },
+              // part of api to whisker
+              whiskerUpdate: function (cb) {
+                whiskerUpdate = cb;
+              },
+              // object
+              name: data.name,
+              text: data.text
+            };
+          }());
+      var concatStringAttributesFc,
+          fcCallIndex = 0;
+
+      return {
+        /**
+         * save it in scope BUT: if other scope is out of this scope but has the same name it should not be effected by changing this... so
+         * save also the node and parse from there.
+         *
+         * @returns {{changeData: changeData, whiskerAPI: whiskerAPI}}
+         */
+        dynamicallyChangeData: (function () {
+          var updateWhisker;
+          return {
+            // call this to change the data and update the DOM
+            changeData: function (obj) {
+              updateWhisker('scope', obj);
+            },
+            // pass this as reference to whisker
+            whiskerAPI: function (fc) {
+              updateWhisker = fc;
+              updateWhisker('scope', {
+                className: 'init',
+                text: 'initial text',
+                id: 'main'
+              });
+            }
+          }
+        }()),
+        sameScopeShouldNotEffected: function (fc) {
+          fc('scope', {
+            className: 'foo',
+            text: 'bar',
+            id: 'hoo'
+          });
+        },
+        changeConcatStringAttributes: function (obj) {
+          concatStringAttributesFc('scope', obj);
+        },
+        concatStringAttributes: function (fc) {
+          concatStringAttributesFc = fc;
+          fc('scope', {
+//            value: "before",
+            bind: function (node) {
+//                            node.innerHTML = fcCallIndex;
+//                            if (node.getAttribute('data') === '1')
+//                            return false;
+            },
+            innerBind: function (node) {
+//                            node.innerHTML = fcCallIndex;
+//                            if (node.getAttribute('data') === '1')
+//                            return false;
+            }
+          });
+          fc('otherScope', {
+            value: "tada"
+          })
+        },
+        add: function (node, attr) {
+          if (attr === 'btn-1') {
+            node.addEventListener('click', function () {
+              fcCallIndex++;
+              concatStringAttributesFc('scope', {
+                value: "outer " + fcCallIndex,
+                bind: function (node) {
+                  if (fcCallIndex % 2)
+                    return false;
+                }
+              })
+            })
+          } else if (attr === 'btn-2') {
+            node.addEventListener('click', function () {
+              fcCallIndex++;
+              concatStringAttributesFc('scope', {
+                value: "inner" + fcCallIndex,
+                innerBind: function (node) {
+                  if (fcCallIndex % 2)
+                    return false;
+                }
+              })
+            })
+          }
+        }
+      };
+    }()));
+  </script>
 </head>
 <body>
 <style>
-    #concatStringAttributes div:before {
-        content: attr(class);
-        color: black;
-    }
+  #concatStringAttributes div:before {
+    content: attr(class);
+    color: black;
+  }
 </style>
 
-    <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
-        <div class="test {{scope.value}}"></div>
-        <div wk-bind="scope.bind" data="0">{{scope.value}}</div>
-        <div wk-bind="scope.bind" data="1">
-            <p>Here some data from another whisker scope can be find anymore if this part has been removed: {{otherScope.value}}</p>
-        </div>
-    </div>
+<div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
+  <div class="test {{scope.value}}"></div>
+  <div wk-bind="scope.value" data="0">{{scope.value}}</div>
+  <div wk-bind="scope.bind" data="1">
+    <h4>bind with inner:</h4>
+    <p wk-bind="scope.innerBind">Here some data from another whisker scope can be find anymore if this part has been
+      removed: {{otherScope.value}}</p>
+  </div>
+</div>
 
-    <button canny-mod="whiskerSample">trigger render</button>
+<button canny-mod="whiskerSample" canny-var="btn-1">trigger out</button>
+<button canny-mod="whiskerSample" canny-var="btn-2">trigger inner</button>
 
 </body>
 </html>

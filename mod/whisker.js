@@ -147,22 +147,21 @@
             /**
              * helper function to do the read variable from string magic.
              * The cb will called with the property value - in case of undefined the variable does not exists
-             *
-             * TODO why a callback and not return - method name is get...() ?
              * 
              * @param node
+             * @param obj
+             * @param itemName
              * @param attributeName
-             * @param cb
+             * 
+             * @return {function} | false if it is not a function or not available 
              */
-            function getLoopValueFromAttribute(node, obj, itemName, attributeName, cb) {
+            function getWkBindValue(node, obj, itemName, attributeName) {
                 var tmp = node.getAttribute(attributeName).split('.'), tokenObjectProperty;
                 if (tmp.length > 0 && tmp[0] === itemName) {
                     tokenObjectProperty = tmp.slice(1).join('.');
-                    cb(getGlobalCall(tokenObjectProperty, obj));
-                } else {
-                    // TODO handle this correctly
-                    console.error('repeat:getLoopValueFromAttribute has problems');
+                    return getGlobalCall(tokenObjectProperty, obj) || false;
                 }
+                return false;
             }
 
             /**
@@ -175,41 +174,56 @@
              *
              * @param node
              * @param obj
-             * @param itemName
+             * @param scopeName
              */
-            function handleRPBindAttribute(node, obj, itemName) {
-                var attrName = 'wk-bind',
-                    token;
-                // check children of clone
-                // TODO check if the itemName matches the attrName
-                // if () {
-                //      return if itemName doesn't match
-                // }
-                getLoopValueFromAttribute(node, obj, itemName, attrName, function (val) {
-                    var shadow,
-                        hidden = false;
-                    if (typeof val === 'function') {
-                        shadow = document.createElement('div');
-                        shadow.style.display = 'none';
-                        if (val(node) === false) {
-                            // remove node if function returns false
-                            node = node.parentNode.replaceChild(shadow, node);
-                            hidden = true;
-                        }
-                        token = {
-                            hidden : hidden,
-                            node : node,
-                            shadowNode : shadow,
-                            isWkBindToken : true,
-                            // check if key is needed because it has the wkBind function pointer
-                            key : node.getAttribute('wk-bind')
-                        }
+            function handleWKBindAttribute(node, obj, scopeName) {
 
+                function parseChildAttribute(child, data, scopeName) {
+                    var attrName = 'wk-bind',
+                        key = child.getAttribute('wk-bind'),
+                        token,
+                        fc = getWkBindValue(child, data, scopeName, attrName);
+                    if (fc) {
+                        (function (fc) {
+                            var shadow,
+                                hidden = false;
+                            if (typeof fc === 'function') {
+                                shadow = document.createElement('div');
+                                shadow.style.display = 'none';
+                                if (fc(child) === false) {
+                                    // remove node if function returns false
+                                    child = child.parentNode.replaceChild(shadow, child);
+                                    hidden = true;
+                                }
+                                token = {
+                                    hidden : hidden,
+                                    node : child,
+                                    shadowNode : shadow,
+                                    isWkBindToken : true,
+                                    // check if key is needed because it has the wkBind function pointer
+                                    key : child.getAttribute('wk-bind')
+                                }
+
+                            } else {
+                                console.error('whisker:can not register control function without a function pointer', child);
+                            }
+                        }(fc));
                     } else {
-                        console.error('repeat:can not register control function without a function pointer', node);
+                        // valid in case of there is a different scope variable or
+                    }
+                    return token;
+                }
+
+                var attrName = 'wk-bind',
+                    tokens = [];
+                // check children of clone
+                [].slice.call(node.querySelectorAll('[' + attrName + ']')).forEach(function (child) {
+                    var tmpToken = parseChildAttribute(child, obj, scopeName);
+                    if (tmpToken) {
+                        tokens.push(tmpToken);
                     }
                 });
-                return token;
+                return tokens
             }
 
             /**
@@ -306,12 +320,6 @@
                                 }
                             }
                         }
-                        // if (node.hasAttribute('wk-bind')) {
-                        //     var tmpToken = handleRPBindAttribute(node, obj, itemName);
-                        //     if (tmpToken) {
-                        //         returnTokens.push(tmpToken);
-                        //     }
-                        // }
                     });
                 }(containerNode.children));
                 return returnTokens;
@@ -319,6 +327,9 @@
 
             /**
              * do the magic for attributes or text nodes
+             * 
+             * TODO: bug if property doesn't exists in first execution it want work anymore for attributes and wk-bind
+             *  See: whiskerSpecs.js > dynamicallyChangeDataWithInitialMissingProperties
              *
              * @param node
              * @param scopeName
@@ -332,19 +343,7 @@
                     // make sure that the compiler also updates the hidden element
                     tokens = tokens.concat(compile(node, data, scopeName));
 
-                    // TODO move into handleRPBindAttribute
-                    tokens = tokens.concat((function () {
-                        var attrName = 'wk-bind',
-                            tokens = [];
-                        // check children of clone
-                        [].slice.call(node.querySelectorAll('[' + attrName + ']')).forEach(function (child) {
-                            var tmpToken = handleRPBindAttribute(child, data, scopeName);
-                            if (tmpToken) {
-                                tokens.push(tmpToken);
-                            }
-                        });
-                        return tokens
-                    }()));
+                    tokens = tokens.concat(handleWKBindAttribute(node, data, scopeName));
 
                     // replace texts:
                     return tokens;
