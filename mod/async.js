@@ -218,32 +218,30 @@
             }
             params.method = params.method || 'POST';
             call.open(params.method, url, params.async !== false);
-            call.onreadystatechange = function () {
-                // TODO use === is this string or number ?
-                if (call.readyState == 4) {
-                    if (call.status >= 400) {
-                        if (params.onFailure) {
-                            params.onFailure(call);
-                        }
-                    } else {
-                        if (params.onSuccess) {
-                            params.onSuccess(call);
-                        }
-                    }
-                }
-            };
-            
+
+            if (params.onSuccess) {
+                call.addEventListener("load", function (s) {
+                    params.onSuccess(s.target);
+                });
+            }
+
+            if (params.onFailure) {
+                call.addEventListener("error", function (s) {
+                    params.onFailure(s.target);
+                });
+            }
+
             call.setRequestHeader(params.contentType || "Content-Type", params.mimeType || "text/plain");
 
             // allow the caller to do some extra stuff on the request object
             if (params.onRequest && typeof params.onRequest === 'function') {
                 params.onRequest(call);
             }
-            
+
             if (params.method === 'POST') {
                 call.send(params.data);
             } else {
-                call.send();
+                call.send(null);
             }
         }
 

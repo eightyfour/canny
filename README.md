@@ -496,11 +496,13 @@ canny.whisker.add(node, function (whiskerCb) {
 ```    
 
 **0.1.13**
-   
-   * async
-     * fixes double file loading issues in loadHTML when URL rewrite is needed - resources will only be loaded if the file is appended to the DOM
+* async
+  * fixes double file loading issues in loadHTML when URL rewrite is needed - resources will only be loaded if the file is appended to the DOM
 
 **0.1.14**
+* whisker
+  * add the wk-bind functionality - makes possible to execute a funciton pointer for each rendered node
 
-   * whisker
-     * add the wk-bind functionality - makes possible to execute a funciton pointer for each rendered node
+**0.1.15**
+* async
+  * improve error handling for async module add error listener event and call success in load phase
