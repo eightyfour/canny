@@ -5,6 +5,7 @@
   <title></title>
   <script src="../canny.js"></script>
   <script src="../mod/whisker.js"></script>
+  <script src="../mod/repeat.js"></script>
 
   <script>
     canny.add('whiskerSample', (function () {
@@ -164,6 +165,45 @@
 
 <button canny-mod="whiskerSample" canny-var="btn-1">trigger out</button>
 <button canny-mod="whiskerSample" canny-var="btn-2">trigger inner</button>
+
+
+<script>
+  canny.add('repeatSample', (function () {
+      'use strict';
+      var node,
+          brain = {};
+      return {
+        listWithDeepObjectMap : [
+          {
+            data : {
+              foo : 'foo1',
+              bar : 'bar1'
+            }
+          },
+          {
+            data : {
+              foo : 'foo2',
+              bar : 'bar2'
+            }
+          }
+        ],
+          add : function (elem, attr) {
+              node = elem;
+              if (brain.hasOwnProperty(attr)) {
+                  brain[attr].init(elem);
+              }
+          },
+          ready : function () {
+              console.log('repeatSample ready!');
+          }
+      };
+  }()));
+</script>
+
+<ul id="listWithDeepObjectMap" canny-mod="repeat" canny-var="canny.repeatSample.listWithDeepObjectMap">
+  <li>{{item.data.foo}}</li>
+  <li>{{item.data.bar}}</li>
+</ul>
 
 </body>
 </html>

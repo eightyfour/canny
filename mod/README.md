@@ -15,7 +15,7 @@ The default loop variable scope is *item*
 
 E.g.:
 ```html
-<div canny-mod="repeat" canny-var="scope.to.collectionOrFunctionPointer">{{item}}</div>
+<div canny-mod="repeat" canny-var="scope.to.collectionOrFunctionPointer"><span>{{item}}</span></div>
 ```
 
 **JSON Object:** (Prefer the string variant above - this might be deprecated in future)
@@ -27,7 +27,7 @@ E.g.:
 
 E.g.:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'customScope', 'in':'scope.to.collectionOrFunctionPointer'}">{{customScope}}</div>
+<div canny-mod="repeat" canny-var="{'for':'customScope', 'in':'scope.to.collectionOrFunctionPointer'}"><span>{{customScope}}</span></div>
 ```
    
 ##### initialize from javascript

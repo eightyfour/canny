@@ -11,7 +11,9 @@
   "dependencies": {},
   "readmeFilename": "README.md",
   "main": "canny.js",
-  "repository": "",
+  "repository": {
+    "url" : "https://github.com/eightyfour/canny"
+  },
   "keywords": [
     "dom",
     "html",

@@ -134,6 +134,12 @@ describe("Test repeat", function () {
         expect(links[2].innerHTML).toEqual( "item2");
     });
 
+    // TODO make this work
+    // it("dom list string", function () {
+    //     var node = div.querySelector('#qunitListPlain');
+    //     expect(node.innerHTML).toEqual("item0item1item2");
+    // });
+
     it("dom list string", function () {
         var links = div.querySelector('#qunitListWithoutScope').children;
 
@@ -193,6 +199,16 @@ describe("Test repeat", function () {
 
     it("dom list object", function () {
         var links = div.querySelector('#listWithDeepObjectMap').children;
+
+        expect(links[0].innerHTML).toEqual( "foo1");
+        expect(links[1].innerHTML).toEqual( "bar1");
+
+        expect(links[2].innerHTML).toEqual( "foo2");
+        expect(links[3].innerHTML).toEqual( "bar2");
+    });
+
+    it("dom list object", function () {
+        var links = div.querySelector('#listWithDeepObjectMap_legacy').children;
 
         expect(links[0].innerHTML).toEqual( "foo1");
         expect(links[1].innerHTML).toEqual( "bar1");
@@ -301,6 +317,17 @@ describe("Test repeat", function () {
 
     });
 
+    it("dom list object with multiple custom attributes", function () {
+        var links = div.querySelector("#qunitListTestCustomAttributesConcat_legacy").children;
+
+        expect(links[0].className).toEqual("foo1");
+        expect(links[1].className).toEqual("testfoo1_bar1 foo");
+
+        expect(links[2].className).toEqual("foo2");
+        expect(links[3].className).toEqual("testfoo2_bar2 foo");
+
+    });
+
     it("it should render the DOM for all attributes for each callback function", function () {
         var li;
         canny.repeatSpecs.functionTest.changeValues([
@@ -345,6 +372,15 @@ describe("Test repeat", function () {
 
     it("Test the if and if-not condition statement", function () {
         var links = div.querySelector('#qunitIfConditionCollection').children;
+
+        expect(links.length).toEqual( 2);
+        expect(links[0].innerHTML).toEqual( "foo if true");
+        expect(links[1].innerHTML).toEqual( "foo if not false");
+
+    });
+
+    it("Test the if and if-not condition statement", function () {
+        var links = div.querySelector('#qunitIfConditionCollection_legacy').children;
 
         expect(links.length).toEqual( 2);
         expect(links[0].innerHTML).toEqual( "foo if true");

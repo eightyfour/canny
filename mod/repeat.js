@@ -460,7 +460,7 @@
                         execRepeat(node, 'item', attr);
                     } else if (typeof attr === 'string') {
                         inPointer = getGlobalCall(attr, window);
-                        execRepeat(node, inPointer || 'item', inPointer);
+                        execRepeat(node, 'item', inPointer);
                     } else {
                         console.warn('repeat:add none acceptable attributes', attr);
                     }

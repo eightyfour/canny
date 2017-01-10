@@ -68,11 +68,11 @@
                     });
                     return returns;
                 },
-                getPathNames : function (scriptsObj, path) {
+                getPathNames : function (scriptsObj, path, filePrefix) {
                     var names = Object.keys(scriptsObj),
                         urls = [];
                     names.forEach(function (name) {
-                        urls.push(path + '/' + name + '.js');
+                        urls.push(path + '/' + filePrefix + name + '.js');
                     });
                     return urls;
                 }
@@ -84,7 +84,8 @@
                         fc.appendScriptsToHead(
                             fc.getPathNames(
                                 fc.searchForNoneRegisteredModules(node),
-                                attr.ext
+                                attr.ext,
+                                attr.scriptPrefix || ''
                             ),
                             function () {
                                 console.log('REQUIRE START CANNY PARSE AGAIN', node);

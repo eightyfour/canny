@@ -1,7 +1,9 @@
 
-<ul id="qunitList" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.list'}">
+<ul id="qunitList" canny-mod="repeat" canny-var="canny.repeatSpecs.list">
     <li>{{item}}</li>
 </ul>
+
+<ul id="qunitListPlain" canny-mod="repeat" canny-var="canny.repeatSpecs.list">{{item}}</ul>
 
 <ul id="qunitListWithoutScope" canny-mod="repeat" canny-var="canny.repeatSpecs.list">
     <li>{{item}}</li>
@@ -15,17 +17,22 @@
     <li>{{customScope}}</li>
 </ul>
 
-<ul id="qunitStaticList" canny-mod="repeat" canny-var="{'for':'item','in':['foo','bu','babuhh']}">
+<ul id="qunitStaticList" canny-mod="repeat" canny-var="['foo','bu','babuhh']">
     <li>{{item}}</li>
 </ul>
 
-<ul id="qunitListObject" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listObj'}">
+<ul id="qunitListObject" canny-mod="repeat" canny-var="canny.repeatSpecs.listObj">
     <li>{{item.main}}</li>
     <li>{{item.bar.foo1}}</li>
     <li>With before text {{item.bar.bar1}} and after text.</li>
 </ul>
 
-<ul id="listWithDeepObjectMap" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listWithDeepObjectMap'}">
+<ul id="listWithDeepObjectMap" canny-mod="repeat" canny-var="canny.repeatSpecs.listWithDeepObjectMap">
+    <li>{{item.data.foo}}</li>
+    <li>{{item.data.bar}}</li>
+</ul>
+
+<ul id="listWithDeepObjectMap_legacy" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listWithDeepObjectMap'}">
     <li>{{item.data.foo}}</li>
     <li>{{item.data.bar}}</li>
 </ul>
@@ -34,27 +41,32 @@
     <li>{{item.foo}}</li>
 </ul>
 
-<ul id="qunitListObjectClickListener" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.clickListener'}">
+<ul id="qunitListObjectClickListener" canny-mod="repeat" canny-var="canny.repeatSpecs.clickListener">
     <li on-click="item.clickMe">{{item.foo}}</li>
 </ul>
 
-<ul id="controlAttribute" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.rpBind.data'}">
+<ul id="controlAttribute" canny-mod="repeat" canny-var="canny.repeatSpecs.rpBind.data">
     <li rp-bind="item.controller">{{item.elem}}</li>
 </ul>
 
-<ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
+<ul id="qunitListObjectAddClass" canny-mod="repeat" canny-var="canny.repeatSpecs.addClasses">
     <li class="{{item.className}}">{{item.className}}</li>
 </ul>
 
-<ul id="qunitListObjectAddClass2" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.addClasses'}">
+<ul id="qunitListObjectAddClass2" canny-mod="repeat" canny-var="canny.repeatSpecs.addClasses">
     <li class="prevClass {{item.className}} nextClass">{{item.className}}</li>
 </ul>
 
-<ul id="qunitListTestCustomAttributes" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.customAttributes'}">
+<ul id="qunitListTestCustomAttributes" canny-mod="repeat" canny-var="canny.repeatSpecs.customAttributes">
     <li class="{{item.attr1}} {{item.attr2}}" id="{{item.attr1}}">{{item.attr2}}</li>
 </ul>
 
-<ul id="qunitListTestCustomAttributesConcat" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.customAttributes'}">
+<ul id="qunitListTestCustomAttributesConcat" canny-mod="repeat" canny-var="canny.repeatSpecs.customAttributes">
+    <li class="{{item.attr1}}" id="{{item.attr1}}">{{item.attr2}}</li>
+    <li class="test{{item.attr1}}_{{item.attr2}} foo" id="{{item.attr1}}">{{item.attr2}}</li>
+</ul>
+
+<ul id="qunitListTestCustomAttributesConcat_legacy" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.customAttributes'}">
     <li class="{{item.attr1}}" id="{{item.attr1}}">{{item.attr2}}</li>
     <li class="test{{item.attr1}}_{{item.attr2}} foo" id="{{item.attr1}}">{{item.attr2}}</li>
 </ul>
@@ -63,23 +75,28 @@
     <img src="{{img}}" alt=""/>
 </div>
 
-<ul id="qunitListFunction" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.functionTest.functionPointer'}">
+<ul id="qunitListFunction" canny-mod="repeat" canny-var="canny.repeatSpecs.functionTest.functionPointer">
     <li class="{{item.attr}} staticClass" id="{{item.id}}">{{item.id}}</li>
 </ul>
 
-<ul id="qunitListOfFunctions" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listOfFunctions'}">
+<ul id="qunitListOfFunctions" canny-mod="repeat" canny-var="canny.repeatSpecs.listOfFunctions">
     <li class="{{item}}">{{item}}</li>
 </ul>
 
-<ul id="qunitIfConditionCollection" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditions'}">
+<ul id="qunitIfConditionCollection" canny-mod="repeat" canny-var="canny.repeatSpecs.conditions">
     <li if="item.foo">foo if {{item.foo}}</li>
     <li if-not="item.foo">foo if not {{item.foo}}</li>
 </ul>
-<ul id="qunitIfConditionObjectExists" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditionsWithMissingProperties'}">
+<ul id="qunitIfConditionCollection_legacy" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.conditions'}">
+    <li if="item.foo">foo if {{item.foo}}</li>
+    <li if-not="item.foo">foo if not {{item.foo}}</li>
+</ul>
+
+<ul id="qunitIfConditionObjectExists" canny-mod="repeat" canny-var="canny.repeatSpecs.conditionsWithMissingProperties">
     <li if="item.bar">if bar: {{item.bar.barFoo}}</li>
     <li if-not="item.bar">there is no item bar only foo: {{item.foo}}</li>
 </ul>
 
-<ul id="qunitRenderPlainNumbers" canny-mod="repeat" canny-var="{'for':'item','in':'canny.repeatSpecs.listOfObjectsWithNumbers'}">
+<ul id="qunitRenderPlainNumbers" canny-mod="repeat" canny-var="canny.repeatSpecs.listOfObjectsWithNumbers">
     <li>{{item.var1}} : {{item.var2}}</li>
 </ul>
