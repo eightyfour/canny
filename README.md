@@ -506,3 +506,7 @@ canny.whisker.add(node, function (whiskerCb) {
 **0.1.15**
 * async
   * improve error handling for async module add error listener event and call success in load phase
+  
+**0.1.15**
+* whisker
+  * fix issues in tag attribute - it doesn't remember the initial value correctly

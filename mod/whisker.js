@@ -380,10 +380,10 @@
                     var replaceText = token.attr.textContent;
                     if (replaceText) {
                         token.attr.textContent = replaceText.replace(token.value, val);
-                        token.value = val;
                     } else {
                         token.attr.textContent = replaceText + val;
                     }
+                    token.value = val;
                 } else if (typeof val === 'boolean') {
                     // TODO test
                     token.node.nodeValue = val.toString();
