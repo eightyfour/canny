@@ -5,6 +5,19 @@ describe("Test repeat", function () {
 
     beforeAll(function () {
         canny.add('repeatSpecs', {
+            add : function (node, attr) {
+                // test to initialize the the repeat module from another module with function pointer
+                if (attr === 'initializeByFunctionPointer') {
+                    canny.repeat.add(node, function (rp) {
+                        rp(['item0', 'item1', 'item2']);
+                    })
+                }
+                if (attr === 'initializeByFunctionPointerAndCustomScope') {
+                    canny.repeat.add(node, function (rp) {
+                        rp('customScope', ['item0', 'item1', 'item2']);
+                    })
+                }
+            },
             list : ['item0', 'item1', 'item2'],
             listObj : [{
                 main:'main1',
@@ -115,6 +128,30 @@ describe("Test repeat", function () {
 
     it("dom list string", function () {
         var links = div.querySelector('#qunitList').children;
+
+        expect(links[0].innerHTML).toEqual( "item0");
+        expect(links[1].innerHTML).toEqual( "item1");
+        expect(links[2].innerHTML).toEqual( "item2");
+    });
+
+    it("dom list string", function () {
+        var links = div.querySelector('#qunitListWithoutScope').children;
+
+        expect(links[0].innerHTML).toEqual( "item0");
+        expect(links[1].innerHTML).toEqual( "item1");
+        expect(links[2].innerHTML).toEqual( "item2");
+    });
+
+    it("initialized by function pointer with default (item) scope", function () {
+        var links = div.querySelector('#initializeByFunctionPointer').children;
+
+        expect(links[0].innerHTML).toEqual( "item0");
+        expect(links[1].innerHTML).toEqual( "item1");
+        expect(links[2].innerHTML).toEqual( "item2");
+    });
+
+    it("initialized by function pointer with custom scope", function () {
+        var links = div.querySelector('#initializeByFunctionPointerAndCustomScope').children;
 
         expect(links[0].innerHTML).toEqual( "item0");
         expect(links[1].innerHTML).toEqual( "item1");

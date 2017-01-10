@@ -507,6 +507,13 @@ canny.whisker.add(node, function (whiskerCb) {
 * async
   * improve error handling for async module add error listener event and call success in load phase
   
-**0.1.15**
+**0.1.16**
 * whisker
   * fix issues in tag attribute - it doesn't remember the initial value correctly
+* repeat (reduce usage complexity)
+  * allow to use module without specify the scope (default scope is item)
+  * call repeat.add directly with function pointer to avoid global scope wasting
+  * repeat function pointer can be called with custom scope
+  * repeat function pointer can be called without any scope (default scope is item)
+  * remove on-click attribute from README
+  * mark object {for:..., in:...} as "legacy" and force to use string instead

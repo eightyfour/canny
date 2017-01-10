@@ -5,23 +5,56 @@ Each template instance gets its own scope, where the given loop variable
 is set to the current collection item.
 
 ### canny-var attributes
-**JSON Object:**
+**String**
+* pass the global reference (repeat will resolve the string on the window object) which can be a
+  * function pointer (best choice - also to configure the scope variable name)
+  * directly the collection of items
+  * or directly the array of items as string (see examples)
+  
+The default loop variable scope is *item*
+
+E.g.:
+```html
+<div canny-mod="repeat" canny-var="scope.to.collectionOrFunctionPointer">{{item}}</div>
+```
+
+**JSON Object:** (Prefer the string variant above - this might be deprecated in future)
 * **for:** configure the loop variable name (default is **item**).
 * **in**: is the source where repeat can find the collection.
  It accepts functions and collections:
    * **collection:** accepts Objects, strings or functions (see on-click)  
    * **function:** repeat will call it with a callback function as parameter. The callback function can be called with the collection
 
+E.g.:
+```html
+<div canny-mod="repeat" canny-var="{'for':'customScope', 'in':'scope.to.collectionOrFunctionPointer'}">{{customScope}}</div>
+```
+   
+##### initialize from javascript
+ You can also initialize the repeat module from you custom function via calling the repeat.add -method directly:
+```js
+...
+canny.repeat.add(document.getElementById('sampleList'), function (repeatCB) {
+  // save callback to call it again for render again your list
+  renderDOMListAgain = repeatCB;
+  // call the repeat callback with a simple list
+  repeatCB(['one', 'two', 'three']);
+})
+```
+Your initial HTML could look like:
+```html
+<ul id="sampleList">
+ <li>Number: {{item}}</li>
+</ul> 
+```
+
 **JSON Array:**
 * pass and array instead of an JSON object (the default iterator name is **item**)
 
 E.g.:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'scope.to.collectionOrFunction'}">...</div>
+<div canny-mod="repeat" canny-var="scope.to.collectionOrFunctionPointer">...</div>
 ```
-> **Pro tip:** same for all canny modules you can also instantiate the repeat module from the javascript
-by passing the variables directly to the add method (repeat.add(node, obj **node** contains the template
-as children(s), **obj** needs the **for** and **in** property)
 
 ### Static List:
 You can pass a static JSON array direct to canny-var. The default iterator name is **item**.
@@ -48,13 +81,13 @@ var path = {
 ```
 Can be used in HTML like:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.list'}">
+<div canny-mod="repeat" canny-var="path.list">
   <p>DATA: {{item}})</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.list'}">
+<div canny-mod="repeat" canny-var="path.list">
   <p>DATA: foo</p>
   <p>DATA: bar</p>
 </div>
@@ -69,14 +102,14 @@ var path = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'objectItem', 'in':'path.objectList'}">
-  <p>DATA FOO: {{objectItem.foo}})</p>
-  <p>DATA BAR: {{objectItem.bar}})</p>
+<div canny-mod="repeat" canny-var="path.objectList">
+  <p>DATA FOO: {{item.foo}})</p>
+  <p>DATA BAR: {{item.bar}})</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.list'}">
+<div canny-mod="repeat" canny-var="path.list">
   <p>DATA FOO: foo1</p>
   <p>DATA BAR: bar1</p>
   <p>DATA FOO: foo2</p>
@@ -97,14 +130,14 @@ var obj = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'retValue', 'in':'obj.functionList'}">
-  <p>return value 1: {{retValue}})</p>
-  <p>return value 2: {{retValue}})</p>
+<div canny-mod="repeat" canny-var="obj.functionList">
+  <p>return value 1: {{item}})</p>
+  <p>return value 2: {{item}})</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'retValue', 'in':'obj.functionList'}">
+<div canny-mod="repeat" canny-var="obj.functionList">
   <p>return value 1: retValue1</p>
   <p>return value 2: retValue2</p>
 </div>
@@ -123,13 +156,13 @@ var path = {
 ```
 Can be used in HTML like:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+<div canny-mod="repeat" canny-var="path.functionPointer">
   <p>DATA: {{item}})</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+<div canny-mod="repeat" canny-var="path.functionPointer">
   <p>DATA: foo</p>
   <p>DATA: bar</p>
 </div>
@@ -144,35 +177,15 @@ var path = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
+<div canny-mod="repeat" canny-var="path.objectList">
   <p rp-bind="item.control">click me</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+<div canny-mod="repeat" canny-var="path.functionPointer">
   <p rp-bind="item.control">click me</p> <!-- click on element will log 'foo' -->
   <p rp-bind="item.control">click me</p> <!-- click on element will log 'bar' -->
-</div>
-```
-### handle click events (deprecated instead of use rp-bind)
-If you want to register a click event you can use the **on-click** attribute.
-```javascript
-var path = {
-  objectList : [{clickMe : function () {console.log('foo')}, {clickMe : function () {console.log('bar')}]     
-}
-```
-Can be used like this:
-```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
-  <p on-click="item.clickMe">click me</p>
-</div>
-```
-Generates:
-```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
-  <p on-click="item.clickMe">click me</p> <!-- click on element will log 'foo' -->
-  <p on-click="item.clickMe">click me</p> <!-- click on element will log 'bar' -->
 </div>
 ```
 
@@ -185,13 +198,13 @@ var path = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
+<div canny-mod="repeat" canny-var="path.objectList">
   <p class="{{item.className}}">I have the class {{item.className}}</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.objectList'}">
+<div canny-mod="repeat" canny-var="path.objectList">
   <p class="foo foo1">I have the class foo and foo1</p>
   <p class="bar">I have the class bar</p>
 </diV>
@@ -210,14 +223,14 @@ var path = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.conditionCollection'}">
+<div canny-mod="repeat" canny-var="path.conditionCollection">
   <p if="item.foo">foo if {{item.foo}}</p>
   <p if-not="item.foo">foo if not {{item.foo}}</p>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+<div canny-mod="repeat" canny-var="path.functionPointer">
   <p if="item.foo">foo if true</p>
   <p if-not="item.foo">foo if not false</p>
 </diV>
@@ -235,14 +248,14 @@ var path = {
 ```
 Can be used like this:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.conditionCollection'}">
+<div canny-mod="repeat" canny-var="path.conditionCollection">
   <h1 if="item.bar">if bar: {{item.bar.barFoo}}</h1>
   <h2 if-not="item.bar">there is no item bar only foo: {{item.foo}}</h2>
 </div>
 ```
 Generates:
 ```html
-<div canny-mod="repeat" canny-var="{'for':'item', 'in':'path.functionPointer'}">
+<div canny-mod="repeat" canny-var="path.functionPointer">
   <h2 if-not="item.bar">there is no item bar only foo: foo</h2>
   <h1 if="item.bar">if bar: barFoo</h1>
 </diV>

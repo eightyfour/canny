@@ -100,10 +100,16 @@
 
                 for (i = 0, l = tokens.length; i < l; i++) {
                     token = tokens[i];
-
                     if (typeof token === 'object' && token.hasOwnProperty('key')) {
                         tmp = token.key.split('.');
+
                         if (tmp.length > 0 && tmp[0] === itemName) {
+
+                            if (tmp[0] !== itemName) {
+                                // TODO implement error handling if key doesn't match with itemName
+                                console.error('repeat:compileTextNode hups something is wrong which needs to be fixed!!! Token with name', token.key, 'doesn\'t match with scope name: ', itemName , ' Repeat will continue but be carefully this "bug" will be removed in next version of repeat!!!');
+                            }
+
                             tokenObjectProperty = tmp.slice(1).join('.');
                             if (typeof obj === 'object') {
                                 val = getGlobalCall(tokenObjectProperty, obj);
@@ -403,7 +409,7 @@
              * Create a new repeat instance and do the "magic".
              * @param node
              * @param scopeName
-             * @param data
+             * @param data {[], function}
              */
             function execRepeat(node, scopeName, data) {
                 var template = [];
@@ -412,7 +418,12 @@
                 });
 
                 if (typeof data === 'function') {
-                    data(function (data) {
+                    data(function (name, data) {
+                        if (data) {
+                            scopeName = name;
+                        } else {
+                            data = name;
+                        }
                         // better would be a update children but this is much effort to detect
                         [].slice.call(node.children).forEach(function (child) {
                             node.removeChild(child);
@@ -445,6 +456,11 @@
                         execRepeat(node, attr.for || 'item', inPointer);
                     } else if (Object.prototype.toString.call(attr) === '[object Array]') {
                         execRepeat(node, 'item', attr);
+                    } else if (typeof attr === 'function') {
+                        execRepeat(node, 'item', attr);
+                    } else if (typeof attr === 'string') {
+                        inPointer = getGlobalCall(attr, window);
+                        execRepeat(node, inPointer || 'item', inPointer);
                     } else {
                         console.warn('repeat:add none acceptable attributes', attr);
                     }
