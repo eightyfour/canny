@@ -277,7 +277,7 @@ For example to render a simple text to your HTML you can do the following:
    <p>Hallo {{scope.name}}!</p>
 </div>
 ```
-Only what you need  is to provide a function in the global scope and tell whisker the name space 'scope':
+Only what you need is to provide a function in the global scope and tell whisker the name space 'scope':
 ```javascript
 var method = function (whiskerCallback) {
   whiskerCallback('scope', {name: 'whisker'});
@@ -320,6 +320,34 @@ It will set the src and alt attribute like:
 </div>
 ```
 If you call the whisker callback again you can load a different image.
+
+### object structure
+The Object you pass to whisker can contain properties as:
+
+**string:**
+```javascript
+whiskerCallback('item', {value: 'string to render'}); 
+```
+
+**Object:**
+```javascript
+whiskerCallback('item', {myObject: {value : 'string to render'}}); 
+```
+
+**function:**
+Function will be called with the actual dom node instance (default these are textNodes -> functions can also return HTMLElement)
+```javascript
+whiskerCallback('item', {myFunction: function (node) {return 'string to render'}}); 
+```
+
+**HTMLElement:**
+If you return a DOMElement then whisker will add it to the placeholder.
+```javascript
+var div = document.createElement('div');
+div.innerHTML = 'string to render';
+whiskerCallback('item', {node: div}); 
+```
+
 ### scope
 If you don't want to tell whisker the scope every time you can configure it in the HTML:
 ```html

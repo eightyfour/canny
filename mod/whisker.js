@@ -353,20 +353,34 @@
             }
 
             /**
+             * helper function for updateData to update the DOM Elements
+             * @param token
+             * @param domElement DOMElement
+             */
+            function updateDOMElement(token, domElement) {
+                token.node.parentNode.insertBefore(domElement, token.node);
+                token.node.parentNode.removeChild(token.node);
+                token.node = domElement;
+            }
+            /**
              * helper function for updateData to update the text nodes
              * @param token
              * @param val
              */
             function updateText(token, val) {
-
+                var textNode;
+                if (token.node instanceof HTMLElement) {
+                    // convert back to textNode
+                    textNode = document.createTextNode('');
+                    token.node.parentNode.insertBefore(textNode, token.node);
+                    token.node.parentNode.removeChild(token.node);
+                    token.node = textNode;
+                }
                 if (typeof val === 'string' || typeof val === 'number') {
                     token.node.nodeValue = val;
                 } else if (typeof val === 'boolean') {
                     // TODO test
                     token.node.nodeValue = val.toString();
-                } else if (typeof val === 'function') {
-                    // TODO test and implement
-                    //    token.node.nodeValue = val(token.node.parentNode);
                 }
             }
 
@@ -435,7 +449,15 @@
                                         }
                                     }());
                                 } else {
-                                    updateText(token, val);
+                                    (function () {
+                                        // a return result could also be a HTMLElement
+                                        var res = typeof val === 'function' ? val(token.node) : val;
+                                        if (res instanceof HTMLElement) {
+                                            updateDOMElement(token, res);
+                                        } else {
+                                            updateText(token, res);
+                                        }
+                                    }(val))
                                 }
                             }
                         }

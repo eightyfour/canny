@@ -510,6 +510,8 @@ canny.whisker.add(node, function (whiskerCb) {
 **0.1.16**
 * whisker
   * fix issues in tag attribute - it doesn't remember the initial value correctly
+  * add function support for single properties (will be called with the create textElement instance or HTMLElement)
+  * add HTMLElement support for properties (you can add complete HTML elements inside a text)
 * repeat (reduce usage complexity)
   * allow to use module without specify the scope (default scope is item)
   * call repeat.add directly with function pointer to avoid global scope wasting
