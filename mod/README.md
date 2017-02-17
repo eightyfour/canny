@@ -322,7 +322,7 @@ It will set the src and alt attribute like:
 If you call the whisker callback again you can load a different image.
 
 ### object structure
-The Object you pass to whisker can contain properties as:
+The Object you pass to whisker can contain properties as following:
 
 **string:**
 ```javascript
@@ -335,13 +335,14 @@ whiskerCallback('item', {myObject: {value : 'string to render'}});
 ```
 
 **function:**
-Function will be called with the actual dom node instance (default these are textNodes -> functions can also return HTMLElement)
+Function will be called with the actual dom node instance (default these are textNodes) The return value will be rendered 
+ as placeholder (functions can also return a HTMLElement)
 ```javascript
 whiskerCallback('item', {myFunction: function (node) {return 'string to render'}}); 
 ```
 
 **HTMLElement:**
-If you return a DOMElement then whisker will add it to the placeholder.
+If you return a DOMElement then whisker will replace the placeholder with it.
 ```javascript
 var div = document.createElement('div');
 div.innerHTML = 'string to render';
