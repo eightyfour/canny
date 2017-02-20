@@ -145,7 +145,7 @@ canny.add('whiskerSample', (function () {
                         }
                     })
                 },
-                triggerUpdate : function () {
+                triggerUpdate1 : function () {
                     whiskerFc('item', {
                         functionPointerText : function (node) {
                             return 'updated text';
@@ -155,6 +155,19 @@ canny.add('whiskerSample', (function () {
                         },
                         functionPointerIMGName : function (node) {
                             return 'http://someURLDifferentURL/ToAnotherImage.png';
+                        }
+                    });
+                },
+                triggerUpdate2 : function () {
+                    whiskerFc('item', {
+                        functionPointerText : function (node) {
+                            return 'again updated text';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'againNewClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://pic.png';
                         }
                     });
                 }
@@ -583,13 +596,13 @@ describe('Check whisker', function() {
         it('returns a string as expected for a tag attribute', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[2];
             console.log('whiskerSpec:data', data);
-            expect(data.src).toEqual("http://someURL/ToImage.png");
+            expect(data.getAttribute('src')).toEqual("http://someURL/ToImage.png");
         });
 
         describe('that functions after trigger update still working', function () {
 
             beforeAll(function () {
-                canny.whiskerSample.functionReturnStatement.triggerUpdate();
+                canny.whiskerSample.functionReturnStatement.triggerUpdate1();
             });
 
             it('returns a string as expected for a text element', function () {
@@ -604,7 +617,31 @@ describe('Check whisker', function() {
 
             it('returns a string as expected for a tag attribute', function () {
                 var data = mainNode.querySelector('#functionReturnStatement').children[2];
-                expect(data.src).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
+                expect(data.getAttribute('src')).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
+            });
+
+        });
+
+        describe('that functions after trigger update still working', function () {
+
+            beforeAll(function () {
+                canny.whiskerSample.functionReturnStatement.triggerUpdate2();
+            });
+
+            it('returns a string as expected for a text element', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[0];
+                expect(data.innerHTML).toEqual("The text again updated text test.");
+            });
+
+            it('returns a string as expected for a class attribute', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[1];
+                expect(data.className).toEqual("add againNewClassName");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[2];
+                console.log('whiskerSpec:data', data);
+                expect(data.getAttribute('src')).toEqual("http://pic.png");
             });
 
         });
