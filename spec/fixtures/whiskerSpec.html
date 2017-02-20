@@ -84,5 +84,14 @@
         <p>The text {{scope.before}}and{{scope.middle}}and{{scope.end}} test.</p>
     </div>
 
+    <div id="functionReturnStatement" canny-mod="whisker" canny-var="canny.whiskerSample.functionReturnStatement.wkInit">
+        <p>The text {{item.functionPointerText}} test.</p>
+        <p class="add {{item.functionPointerClassName}}">sample</p>
+        <img src="{{item.functionPointerIMGName}}"/>
+    </div>
+    <!-- doesn't work because looks like jasmine doesn't support append dom operations -->
+    <!--<div id="returnDomNode" canny-mod="whisker" canny-var="canny.whiskerSample.returnDomNode">-->
+        <!--<p>The text {{item.domNode}} test.</p>-->
+    <!--</div>-->
 
 </div>

@@ -277,7 +277,7 @@
                                 if (attr.name) {
                                     rTokens = (function () {
                                         var token = parse(attr.textContent),
-                                            endData = [], tmpToken, j, tmpTokenSplit, value;
+                                            endData = [], tmpToken, j, tmpTokenSplit, value, tmpValue;
                                         for (j = 0; j < token.length; j++) {
                                             tmpToken = token[j];
                                             // if token not itemName skipp all
@@ -290,12 +290,14 @@
                                                     tmpTokenSplit = tmpToken.key;
                                                 }
                                                 if (typeof obj === 'object') {
-                                                    tmpToken.value = getGlobalCall(tmpTokenSplit, obj);
-                                                    if (typeof tmpToken.value === 'function') {
-                                                        value = tmpToken.value();
+                                                    tmpValue = getGlobalCall(tmpTokenSplit, obj);
+                                                    if (typeof tmpValue === 'function') {
+                                                        tmpToken.value = tmpValue(node);
+                                                        tmpToken.node = node;
                                                     } else {
-                                                        value = tmpToken.value;
+                                                        tmpToken.value = tmpValue;
                                                     }
+                                                    value = tmpToken.value;
                                                 } else if (typeof obj === 'string') {
                                                     value = obj;
                                                 } else if (typeof obj === 'function') {
@@ -387,9 +389,15 @@
             /**
              * helper function for updateData to update the attributes for a node
              * @param token
-             * @param val
+             * @param value
              */
-            function updateAttributes(token, val) {
+            function updateAttributes(token, value) {
+                var val;
+                if (typeof value === 'function') {
+                    val = value(token.node);
+                } else {
+                    val = value;
+                }
                 if (typeof val === 'string' || typeof val === 'number') {
                     var replaceText = token.attr.textContent;
                     if (replaceText) {
@@ -399,11 +407,8 @@
                     }
                     token.value = val;
                 } else if (typeof val === 'boolean') {
-                    // TODO test
+                    // TODO test (makes no sense for an attribute but needs to be handled correctly (think about what to do in this case)
                     token.node.nodeValue = val.toString();
-                } else if (typeof val === 'function') {
-                    // TODO test and implement
-                    //    token.node.nodeValue = val(token.node.parentNode);
                 }
             }
             /**

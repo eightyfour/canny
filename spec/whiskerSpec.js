@@ -128,6 +128,48 @@ canny.add('whiskerSample', (function () {
                 age : 0
             })
         },
+        functionReturnStatement : (function (fc) {
+            var whiskerFc;
+            return {
+                wkInit : function (fc) {
+                    whiskerFc = fc;
+                    whiskerFc('item', {
+                        functionPointerText : function (node) {
+                            return 'foo bar';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'fooClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://someURL/ToImage.png';
+                        }
+                    })
+                },
+                triggerUpdate : function () {
+                    whiskerFc('item', {
+                        functionPointerText : function (node) {
+                            return 'updated text';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'newClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://someURLDifferentURL/ToAnotherImage.png';
+                        }
+                    });
+                }
+            }
+
+        }()),
+        // doesn't work because looks like jasmine doesn't support append dom operations
+        // returnDomNode : function (fc) {
+        //     var node = document.createElement('div');
+        //     node.className = 'className';
+        //     node.innerHTML = 'foo bar';
+        //     fc('item', {
+        //         domNode : node
+        //     })
+        // },
         add : function (node, attr) {}
     };
 }()));
@@ -521,6 +563,63 @@ describe('Check whisker', function() {
         expect(data.innerHTML).toEqual("The text beforeandmiddleandend test.");
 
     });
+
+    describe('that function properties are working', function () {
+        
+        it('returns a string as expected for a text element', function () {
+            var data = mainNode.querySelector('#functionReturnStatement').children[0];
+            console.log('whiskerSpec:data', data);
+
+            expect(data.innerHTML).toEqual("The text foo bar test.");
+        });
+
+        it('returns a string as expected for a class attribute', function () {
+            var data = mainNode.querySelector('#functionReturnStatement').children[1];
+            console.log('whiskerSpec:data', data);
+
+            expect(data.className).toEqual("add fooClassName");
+        });
+
+        it('returns a string as expected for a tag attribute', function () {
+            var data = mainNode.querySelector('#functionReturnStatement').children[2];
+            console.log('whiskerSpec:data', data);
+            expect(data.src).toEqual("http://someURL/ToImage.png");
+        });
+
+        describe('that functions after trigger update still working', function () {
+
+            beforeAll(function () {
+                canny.whiskerSample.functionReturnStatement.triggerUpdate();
+            });
+
+            it('returns a string as expected for a text element', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[0];
+                expect(data.innerHTML).toEqual("The text updated text test.");
+            });
+
+            it('returns a string as expected for a class attribute', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[1];
+                expect(data.className).toEqual("add newClassName");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = mainNode.querySelector('#functionReturnStatement').children[2];
+                expect(data.src).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
+            });
+
+        });
+
+    });
+
+    // doesn't work because looks like jasmine doesn't support append dom operations
+    // describe('that domNode properties are working', function () {
+    //     it('returns a string as expected for a text element', function () {
+    //         var data = mainNode.querySelector('#returnDomNode').children[0];
+    //         console.log('whiskerSpec:', mainNode.querySelector('#returnDomNode'));
+    //         expect(data.innerHTML).toEqual('foo bar');
+    //         expect(data.className).toEqual('className');
+    //     })
+    // });
 
     describe('that after update the HTML view', function () {
 
