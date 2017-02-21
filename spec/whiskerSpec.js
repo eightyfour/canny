@@ -174,6 +174,67 @@ canny.add('whiskerSample', (function () {
             }
 
         }()),
+        defaultScope : (function (fc) {
+            var whiskerFc;
+            return {
+                wkInit : function (fc) {
+                    whiskerFc = fc;
+                    whiskerFc({
+                        functionPointerText : function (node) {
+                            return 'foo bar';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'fooClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://someURL/ToImage.png';
+                        },
+                        wkBind : function (node) {
+                            node.className = 'update'
+                        },
+                        value : 'update text',
+                        data : 'updateClass'
+                    })
+                },
+                triggerUpdate1 : function () {
+                    whiskerFc({
+                        functionPointerText : function (node) {
+                            return 'updated text';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'newClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://someURLDifferentURL/ToAnotherImage.png';
+                        },
+                        wkBind : function (node) {
+                            node.className = 'update1'
+                        },
+                        value : 'update1 text1',
+                        data : 'updateClass1'
+                    });
+                },
+                triggerUpdate2 : function () {
+                    whiskerFc({
+                        functionPointerText : function (node) {
+                            return 'again updated text';
+                        },
+                        functionPointerClassName : function (node) {
+                            return 'againNewClassName';
+                        },
+                        functionPointerIMGName : function (node) {
+                            return 'http://pic.png';
+                        },
+                        wkBind : function (node) {
+                            node.className = 'update2'
+                        },
+                        value : 'update2 text2',
+                        data : 'updateClass2'
+                    });
+                }
+            }
+
+        }()),
         // doesn't work because looks like jasmine doesn't support append dom operations
         // returnDomNode : function (fc) {
         //     var node = document.createElement('div');
@@ -232,6 +293,11 @@ describe('Check whisker', function() {
 
         it('should add the text correct', function () {
             var data = node.children[0];
+            expect(data.innerHTML).toEqual("DATA: my text");
+        });
+
+        it('should work also with default scope', function () {
+            var data = mainNode.querySelector('#defaultScope_loadFromStaticObject').children[0];
             expect(data.innerHTML).toEqual("DATA: my text");
         });
     });
@@ -636,6 +702,99 @@ describe('Check whisker', function() {
             it('returns a string as expected for a tag attribute', function () {
                 var data = mainNode.querySelector('#functionReturnStatement').children[2];
                 expect(data.getAttribute('src')).toEqual("http://pic.png");
+            });
+
+        });
+
+    });
+
+
+    describe('that default scope is working with', function () {
+        
+        var node;
+
+        beforeAll(function () {
+            node = mainNode.querySelector('#defaultScope_check');
+        })
+
+        it('returns a string as expected for a text element', function () {
+            var data = node.children[0];
+            expect(data.innerHTML).toEqual("The text foo bar test.");
+        });
+
+        it('returns a string as expected for a class attribute', function () {
+            var data = node.children[1];
+            expect(data.className).toEqual("add fooClassName");
+        });
+
+        it('returns a string as expected for a tag attribute', function () {
+            var data = node.children[2];
+            expect(data.getAttribute('src')).toEqual("http://someURL/ToImage.png");
+        });
+
+        it('returns a string as expected for a tag attribute', function () {
+            var data = node.children[3];
+            expect(data.getAttribute('data')).toEqual("test updateClass");
+            expect(data.className).toEqual("update");
+            expect(data.innerHTML).toEqual("Some text update text in here.");
+        });
+
+        describe('that functions after trigger update still working', function () {
+
+            beforeAll(function () {
+                canny.whiskerSample.defaultScope.triggerUpdate1();
+            });
+
+            it('returns a string as expected for a text element', function () {
+                var data = node.children[0];
+                expect(data.innerHTML).toEqual("The text updated text test.");
+            });
+
+            it('returns a string as expected for a class attribute', function () {
+                var data = node.children[1];
+                expect(data.className).toEqual("add newClassName");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = node.children[2];
+                expect(data.getAttribute('src')).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = node.children[3];
+                expect(data.getAttribute('data')).toEqual("test updateClass1");
+                expect(data.className).toEqual("update1");
+                expect(data.innerHTML).toEqual("Some text update1 text1 in here.");
+            });
+
+        });
+
+        describe('that functions after trigger update still working', function () {
+
+            beforeAll(function () {
+                canny.whiskerSample.defaultScope.triggerUpdate2();
+            });
+
+            it('returns a string as expected for a text element', function () {
+                var data = node.children[0];
+                expect(data.innerHTML).toEqual("The text again updated text test.");
+            });
+
+            it('returns a string as expected for a class attribute', function () {
+                var data = node.children[1];
+                expect(data.className).toEqual("add againNewClassName");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = node.children[2];
+                expect(data.getAttribute('src')).toEqual("http://pic.png");
+            });
+
+            it('returns a string as expected for a tag attribute', function () {
+                var data = node.children[3];
+                expect(data.getAttribute('data')).toEqual("test updateClass2");
+                expect(data.className).toEqual("update2");
+                expect(data.innerHTML).toEqual("Some text update2 text2 in here.");
             });
 
         });

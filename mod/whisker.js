@@ -478,19 +478,22 @@
              * @param data
              */
             function exec(node, data, scopeName) {
-                var currentScope = scopeName,
+                var currentScope = scopeName || 'item',
                     keyValueholder = {};
                 if (typeof data === 'function') {
                     data(function (scope, data) {
+                        var renderScope;
                         if (data !== undefined) {
-                            currentScope  = scope;
+                            renderScope  = scope || currentScope;
                         } else {
                             data = scope;
+                            // otherwise use the scope from the initialisation
+                            renderScope = currentScope;
                         }
                         if (keyValueholder.hasOwnProperty(scope)) {
-                            updateData(keyValueholder[scope], currentScope, data);
+                            updateData(keyValueholder[scope], renderScope, data);
                         } else {
-                            keyValueholder[scope] = fillData(node, currentScope, data);
+                            keyValueholder[scope] = fillData(node, renderScope, data);
                         }
                     });
                 } else {
@@ -501,14 +504,18 @@
             return {
                 add : function (node, attr) {
                     var inPointer;
-                    if (typeof attr === 'object' && attr.to && attr.bind) {
-                        if (typeof attr.to === 'string') {
-                            // TODO replace window with this and also other instances could use the magic as closure
-                            inPointer = getGlobalCall(attr.to, window);
+                    if (typeof attr === 'object') {
+                        if (attr.to && attr.bind) {
+                            if (typeof attr.to === 'string') {
+                                // TODO replace window with this and also other instances could use the magic as closure
+                                inPointer = getGlobalCall(attr.to, window);
+                            } else {
+                                inPointer = attr.to;
+                            }
                         } else {
-                            inPointer = attr.to;
+                            inPointer = attr;
                         }
-                        exec(node, inPointer, attr.bind);
+                        exec(node, inPointer, attr.bind || 'item');
                     } else if (typeof attr === 'string') {
                         inPointer = getGlobalCall(attr, window);
                         if (typeof inPointer === 'function') {

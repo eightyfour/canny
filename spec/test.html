@@ -74,12 +74,12 @@
           return {
             // call this to change the data and update the DOM
             changeData: function (obj) {
-              updateWhisker('scope', obj);
+              updateWhisker(obj);
             },
             // pass this as reference to whisker
             whiskerAPI: function (fc) {
               updateWhisker = fc;
-              updateWhisker('scope', {
+              updateWhisker({
                 className: 'init',
                 text: 'initial text',
                 id: 'main'
@@ -95,11 +95,11 @@
           });
         },
         changeConcatStringAttributes: function (obj) {
-          concatStringAttributesFc('scope', obj);
+          concatStringAttributesFc(obj);
         },
         concatStringAttributes: function (fc) {
           concatStringAttributesFc = fc;
-          fc('scope', {
+          fc({
 //            value: "before",
             attribute : function (node) {
               console.log('test:attribute', node);
@@ -124,7 +124,7 @@
           if (attr === 'btn-1') {
             node.addEventListener('click', function () {
               fcCallIndex++;
-              concatStringAttributesFc('scope', {
+              concatStringAttributesFc({
                 attribute : function (node) {
                   console.log('test:attribute1', node);
                    return 'newClassName' + fcCallIndex;
@@ -157,7 +157,7 @@
           } else if (attr === 'btn-2') {
             node.addEventListener('click', function () {
               fcCallIndex++;
-              concatStringAttributesFc('scope', {
+              concatStringAttributesFc({
                 value: "inner" + fcCallIndex,
                 tagSample : "me a string again"
               })
@@ -178,7 +178,7 @@
 
 <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
   <!--<div class="test {{scope.value}}"></div>-->
-  <div class="foo {{scope.attribute}}"></div>
+  <div class="foo {{item.attribute}}"></div>
   <!--<div>deep {{scope.deep.inside}}</div>-->
   <!--<div>deepFC {{scope.deep.insideFc}}</div>-->
   <!--<div>ADN HERE THE MIX "{{scope.mix}}" :)</div>-->

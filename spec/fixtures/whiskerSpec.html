@@ -16,6 +16,11 @@
     </div>
 
     <!-- test static object in HTML -->
+    <div id="defaultScope_loadFromStaticObject" canny-mod="whisker" canny-var="{'message':'my text'}">
+        <p>DATA: {{item.message}}</p>
+    </div>
+
+    <!-- test static object in HTML -->
     <div id="checkIfPropertyIsUndefined" canny-mod="whisker" canny-var="canny.whiskerSample.custom.whisker">
         <p class="{{scope.attrUndefined}}">{{scope.messageUndefined}}</p>
         <!--TODO needs to be support too: -->
@@ -88,6 +93,13 @@
         <p>The text {{item.functionPointerText}} test.</p>
         <p class="add {{item.functionPointerClassName}}">sample</p>
         <img src="{{item.functionPointerIMGName}}"/>
+    </div>
+
+    <div id="defaultScope_check" canny-mod="whisker" canny-var="canny.whiskerSample.defaultScope.wkInit">
+        <p>The text {{item.functionPointerText}} test.</p>
+        <p class="add {{item.functionPointerClassName}}">sample</p>
+        <img src="{{item.functionPointerIMGName}}"/>
+        <p wk-bind="item.wkBind" data="test {{item.data}}">Some text {{item.value}} in here.</p>
     </div>
     <!-- doesn't work because looks like jasmine doesn't support append dom operations -->
     <!--<div id="returnDomNode" canny-mod="whisker" canny-var="canny.whiskerSample.returnDomNode">-->
