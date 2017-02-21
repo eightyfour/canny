@@ -507,7 +507,7 @@ canny.whisker.add(node, function (whiskerCb) {
 * async
   * improve error handling for async module add error listener event and call success in load phase
   
-**0.1.16**
+**0.2.0**
 * whisker
   * fix issues in tag attribute - it doesn't remember the initial value correctly
   * add function support for single properties (will be called with the create textElement instance or HTMLElement)
