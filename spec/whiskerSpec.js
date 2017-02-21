@@ -235,6 +235,50 @@ canny.add('whiskerSample', (function () {
             }
 
         }()),
+        rememberScopeCheckDefault : (function (fc) {
+            var whiskerFc;
+            return {
+                wkInit : function (fc) {
+                    whiskerFc = fc;
+                    whiskerFc({
+                        value : 'texts sample',
+                        data : '0987654',
+                        dataFunction : function () {
+                            return 'text'
+                        },
+                        wkBind : function (node) {
+                            node.className = 'foo';
+                        }
+                    })
+                },
+                update : function (obj) {
+                    whiskerFc(obj);
+                }
+            }
+
+        }()),
+        rememberScopeCheck : (function (fc) {
+            var whiskerFc;
+            return {
+                wkInit : function (fc) {
+                    whiskerFc = fc;
+                    whiskerFc('scope', {
+                        value : 'texts sample',
+                        data : '0987654',
+                        dataFunction : function () {
+                            return 'text'
+                        },
+                        wkBind : function (node) {
+                            node.className = 'foo';
+                        }
+                    })
+                },
+                update : function (obj) {
+                    whiskerFc(obj);
+                }
+            }
+
+        }()),
         // doesn't work because looks like jasmine doesn't support append dom operations
         // returnDomNode : function (fc) {
         //     var node = document.createElement('div');
@@ -644,7 +688,7 @@ describe('Check whisker', function() {
     });
 
     describe('that function properties are working', function () {
-        
+
         it('returns a string as expected for a text element', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[0];
             expect(data.innerHTML).toEqual("The text foo bar test.");
@@ -655,7 +699,7 @@ describe('Check whisker', function() {
             expect(data.className).toEqual("add fooClassName");
         });
 
-        it('returns a string as expected for a tag attribute', function () {
+        it('returns a string as expected for a src attribute', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[2];
             expect(data.getAttribute('src')).toEqual("http://someURL/ToImage.png");
         });
@@ -676,7 +720,7 @@ describe('Check whisker', function() {
                 expect(data.className).toEqual("add newClassName");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('returns a string as expected for a src attribute', function () {
                 var data = mainNode.querySelector('#functionReturnStatement').children[2];
                 expect(data.getAttribute('src')).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
             });
@@ -699,7 +743,7 @@ describe('Check whisker', function() {
                 expect(data.className).toEqual("add againNewClassName");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('returns a string as expected for a src attribute', function () {
                 var data = mainNode.querySelector('#functionReturnStatement').children[2];
                 expect(data.getAttribute('src')).toEqual("http://pic.png");
             });
@@ -710,29 +754,29 @@ describe('Check whisker', function() {
 
 
     describe('that default scope is working with', function () {
-        
+
         var node;
 
         beforeAll(function () {
             node = mainNode.querySelector('#defaultScope_check');
         })
 
-        it('returns a string as expected for a text element', function () {
+        it('a string from a function for a text element', function () {
             var data = node.children[0];
             expect(data.innerHTML).toEqual("The text foo bar test.");
         });
 
-        it('returns a string as expected for a class attribute', function () {
+        it('a string from a function for a class attribute', function () {
             var data = node.children[1];
             expect(data.className).toEqual("add fooClassName");
         });
 
-        it('returns a string as expected for a tag attribute', function () {
+        it('a string from a function for a src attribute', function () {
             var data = node.children[2];
             expect(data.getAttribute('src')).toEqual("http://someURL/ToImage.png");
         });
 
-        it('returns a string as expected for a tag attribute', function () {
+        it('a object', function () {
             var data = node.children[3];
             expect(data.getAttribute('data')).toEqual("test updateClass");
             expect(data.className).toEqual("update");
@@ -745,22 +789,22 @@ describe('Check whisker', function() {
                 canny.whiskerSample.defaultScope.triggerUpdate1();
             });
 
-            it('returns a string as expected for a text element', function () {
+            it('a string from a function for a text element', function () {
                 var data = node.children[0];
                 expect(data.innerHTML).toEqual("The text updated text test.");
             });
 
-            it('returns a string as expected for a class attribute', function () {
+            it('a string from a function for a class attribute', function () {
                 var data = node.children[1];
                 expect(data.className).toEqual("add newClassName");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('a string from a function for a src attribute', function () {
                 var data = node.children[2];
                 expect(data.getAttribute('src')).toEqual("http://someURLDifferentURL/ToAnotherImage.png");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('a object', function () {
                 var data = node.children[3];
                 expect(data.getAttribute('data')).toEqual("test updateClass1");
                 expect(data.className).toEqual("update1");
@@ -775,22 +819,22 @@ describe('Check whisker', function() {
                 canny.whiskerSample.defaultScope.triggerUpdate2();
             });
 
-            it('returns a string as expected for a text element', function () {
+            it('a string from a function for a text element', function () {
                 var data = node.children[0];
                 expect(data.innerHTML).toEqual("The text again updated text test.");
             });
 
-            it('returns a string as expected for a class attribute', function () {
+            it('a string from a function for a class attribute', function () {
                 var data = node.children[1];
                 expect(data.className).toEqual("add againNewClassName");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('a string from a function for a src attribute', function () {
                 var data = node.children[2];
                 expect(data.getAttribute('src')).toEqual("http://pic.png");
             });
 
-            it('returns a string as expected for a tag attribute', function () {
+            it('a object', function () {
                 var data = node.children[3];
                 expect(data.getAttribute('data')).toEqual("test updateClass2");
                 expect(data.className).toEqual("update2");
@@ -809,6 +853,89 @@ describe('Check whisker', function() {
     //         expect(data.className).toEqual('className');
     //     })
     // });
+     describe('that the remember of the scope is working with default scope', function () {
+
+         var node;
+
+         beforeAll(function () {
+             node = mainNode.querySelector('#rememberScopeCheckDefault');
+         });
+
+         it('returns a string as expected for a text element', function () {
+             var data = node.children[0];
+             expect(data.innerHTML).toEqual("Some text texts sample in here.");
+             expect(data.className).toEqual("foo");
+             expect(data.getAttribute('data')).toEqual("test 0987654");
+             expect(data.getAttribute('data-fc')).toEqual("text");
+         });
+
+         describe('also after trigger update', function () {
+
+             beforeAll(function () {
+                 canny.whiskerSample.rememberScopeCheckDefault.update({
+                     value : 'textUpdate',
+                     data : 'differentNumber',
+                     dataFunction : function () {
+                         return '123456789'
+                     },
+                     wkBind : function (node) {
+                         node.className = 'bar';
+                     }
+                 });
+             });
+
+             it('it should update the placeholder correctly', function () {
+                 var data = node.children[0];
+                 expect(data.innerHTML).toEqual("Some text textUpdate in here.");
+                 expect(data.className).toEqual("bar");
+                 expect(data.getAttribute('data')).toEqual("test differentNumber");
+                 expect(data.getAttribute('data-fc')).toEqual("123456789");
+             });
+
+         });
+     });
+
+    describe('that the remember of the scope is working with scope name scope', function () {
+
+        var node;
+
+        beforeAll(function () {
+            node = mainNode.querySelector('#rememberScopeCheck');
+        });
+
+        it('returns a string as expected for a text element', function () {
+            var data = node.children[0];
+            expect(data.innerHTML).toEqual("Some text texts sample in here.");
+            expect(data.className).toEqual("foo");
+            expect(data.getAttribute('data')).toEqual("test 0987654");
+            expect(data.getAttribute('data-fc')).toEqual("text");
+        });
+
+        describe('also after trigger update without using the scope name', function () {
+
+            beforeAll(function () {
+                canny.whiskerSample.rememberScopeCheck.update({
+                    value : 'textUpdate',
+                    data : 'differentNumber',
+                    dataFunction : function () {
+                        return '123456789'
+                    },
+                    wkBind : function (node) {
+                        node.className = 'bar';
+                    }
+                });
+            });
+
+            it('it should update the placeholder correctly', function () {
+                var data = node.children[0];
+                expect(data.innerHTML).toEqual("Some text textUpdate in here.");
+                expect(data.className).toEqual("bar");
+                expect(data.getAttribute('data')).toEqual("test differentNumber");
+                expect(data.getAttribute('data-fc')).toEqual("123456789");
+            });
+
+        });
+    });
 
     describe('that after update the HTML view', function () {
 

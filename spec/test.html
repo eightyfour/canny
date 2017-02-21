@@ -99,7 +99,7 @@
         },
         concatStringAttributes: function (fc) {
           concatStringAttributesFc = fc;
-          fc({
+          fc('scope', {
 //            value: "before",
             attribute : function (node) {
               console.log('test:attribute', node);
@@ -116,9 +116,6 @@
 //                            return false;
             }
           });
-          fc('otherScope', {
-            value: "tada"
-          })
         },
         add: function (node, attr) {
           if (attr === 'btn-1') {
@@ -178,7 +175,7 @@
 
 <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
   <!--<div class="test {{scope.value}}"></div>-->
-  <div class="foo {{item.attribute}}"></div>
+  <div class="foo {{scope.attribute}}"></div>
   <!--<div>deep {{scope.deep.inside}}</div>-->
   <!--<div>deepFC {{scope.deep.insideFc}}</div>-->
   <!--<div>ADN HERE THE MIX "{{scope.mix}}" :)</div>-->

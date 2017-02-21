@@ -484,16 +484,16 @@
                     data(function (scope, data) {
                         var renderScope;
                         if (data !== undefined) {
-                            renderScope  = scope || currentScope;
+                            renderScope = currentScope = scope || currentScope;
                         } else {
                             data = scope;
                             // otherwise use the scope from the initialisation
                             renderScope = currentScope;
                         }
-                        if (keyValueholder.hasOwnProperty(scope)) {
-                            updateData(keyValueholder[scope], renderScope, data);
+                        if (keyValueholder.hasOwnProperty(renderScope)) {
+                            updateData(keyValueholder[renderScope], renderScope, data);
                         } else {
-                            keyValueholder[scope] = fillData(node, renderScope, data);
+                            keyValueholder[renderScope] = fillData(node, renderScope, data);
                         }
                     });
                 } else {

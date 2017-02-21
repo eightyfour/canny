@@ -101,6 +101,15 @@
         <img src="{{item.functionPointerIMGName}}"/>
         <p wk-bind="item.wkBind" data="test {{item.data}}">Some text {{item.value}} in here.</p>
     </div>
+
+    <div id="rememberScopeCheckDefault" canny-mod="whisker" canny-var="canny.whiskerSample.rememberScopeCheckDefault.wkInit">
+        <p wk-bind="item.wkBind" data="test {{item.data}}" data-fc="{{item.dataFunction}}">Some text {{item.value}} in here.</p>
+        <p wk-bind="scope.wkBind" data="test {{scope.data}}" data-fc="{{scope.dataFunction}}">Some text {{scope.value}} in here.</p>
+    </div>
+
+    <div id="rememberScopeCheck" canny-mod="whisker" canny-var="canny.whiskerSample.rememberScopeCheck.wkInit">
+        <p wk-bind="scope.wkBind" data="test {{scope.data}}" data-fc="{{scope.dataFunction}}">Some text {{scope.value}} in here.</p>
+    </div>
     <!-- doesn't work because looks like jasmine doesn't support append dom operations -->
     <!--<div id="returnDomNode" canny-mod="whisker" canny-var="canny.whiskerSample.returnDomNode">-->
         <!--<p>The text {{item.domNode}} test.</p>-->
