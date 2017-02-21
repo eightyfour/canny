@@ -581,21 +581,16 @@ describe('Check whisker', function() {
         
         it('returns a string as expected for a text element', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[0];
-            console.log('whiskerSpec:data', data);
-
             expect(data.innerHTML).toEqual("The text foo bar test.");
         });
 
         it('returns a string as expected for a class attribute', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[1];
-            console.log('whiskerSpec:data', data);
-
             expect(data.className).toEqual("add fooClassName");
         });
 
         it('returns a string as expected for a tag attribute', function () {
             var data = mainNode.querySelector('#functionReturnStatement').children[2];
-            console.log('whiskerSpec:data', data);
             expect(data.getAttribute('src')).toEqual("http://someURL/ToImage.png");
         });
 
@@ -640,7 +635,6 @@ describe('Check whisker', function() {
 
             it('returns a string as expected for a tag attribute', function () {
                 var data = mainNode.querySelector('#functionReturnStatement').children[2];
-                console.log('whiskerSpec:data', data);
                 expect(data.getAttribute('src')).toEqual("http://pic.png");
             });
 
@@ -652,7 +646,6 @@ describe('Check whisker', function() {
     // describe('that domNode properties are working', function () {
     //     it('returns a string as expected for a text element', function () {
     //         var data = mainNode.querySelector('#returnDomNode').children[0];
-    //         console.log('whiskerSpec:', mainNode.querySelector('#returnDomNode'));
     //         expect(data.innerHTML).toEqual('foo bar');
     //         expect(data.className).toEqual('className');
     //     })
