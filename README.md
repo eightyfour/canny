@@ -520,3 +520,7 @@ canny.whisker.add(node, function (whiskerCb) {
   * repeat function pointer can be called without any scope (default scope is item)
   * remove on-click attribute from README
   * mark object {for:..., in:...} as "legacy" and force to use string instead
+
+**0.2.1**
+ * whisker
+   * fix issue in initial DOM node rendering

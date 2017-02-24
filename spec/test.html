@@ -99,56 +99,23 @@
         },
         concatStringAttributes: function (fc) {
           concatStringAttributesFc = fc;
+          var div = document.createElement('span');
+          div.innerHTML = 'Initial node';
+          div.className = 'bold';
           fc('scope', {
 //            value: "before",
-            attribute : function (node) {
-              console.log('test:attribute', node);
-              return 'HelloAttribute'
-            },
-            bind: function (node) {
-//                            node.innerHTML = fcCallIndex;
-//                            if (node.getAttribute('data') === '1')
-//                            return false;
-            },
-            innerBind: function (node) {
-//                            node.innerHTML = fcCallIndex;
-//                            if (node.getAttribute('data') === '1')
-//                            return false;
-            }
+            attribute : div,
           });
         },
         add: function (node, attr) {
           if (attr === 'btn-1') {
             node.addEventListener('click', function () {
               fcCallIndex++;
+                var div = document.createElement('span');
+                div.innerHTML = 'mix node' + fcCallIndex;
+                div.className = 'bold';
               concatStringAttributesFc({
-                attribute : function (node) {
-                  console.log('test:attribute1', node);
-                   return 'newClassName' + fcCallIndex;
-                }
-//                value: "HALLO ",
-//                mix: function (node) {
-//                  console.log('test:mix', node.parentNode);
-//                  return fcCallIndex % 2 ? 'foo buhhh yahooo' : (function () {
-//                    var div = document.createElement('strong');
-//                    div.innerHTML = 'mix node' + fcCallIndex;
-//                    div.className = 'bold';
-//                    return div;
-//                  }())
-//                },
-//                deep : {
-//                  inside : 'hu hu hu',
-//                  insideFc : function (node) {
-//                    console.log('test:insideFc', node);
-//                    return 'function blob'
-//                  }
-//                },
-//                tagSample : (function () {
-//                  var div = document.createElement('strong');
-//                  div.innerHTML = '99999' + fcCallIndex;
-//                  div.className = 'bold';
-//                  return div;
-//                }())
+                attribute : div
               })
             })
           } else if (attr === 'btn-2') {
@@ -175,7 +142,7 @@
 
 <div id="concatStringAttributes" canny-mod="whisker" canny-var="canny.whiskerSample.concatStringAttributes">
   <!--<div class="test {{scope.value}}"></div>-->
-  <div class="foo {{scope.attribute}}"></div>
+  <div class="foo">{{scope.attribute}}</div>
   <!--<div>deep {{scope.deep.inside}}</div>-->
   <!--<div>deepFC {{scope.deep.insideFc}}</div>-->
   <!--<div>ADN HERE THE MIX "{{scope.mix}}" :)</div>-->

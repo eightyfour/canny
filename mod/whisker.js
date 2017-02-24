@@ -75,7 +75,7 @@
             function compileTextNode(node, dataObj, itemName) {
                 var tokens = parse(node.nodeValue),
                     obj = dataObj,
-                    el, token, i, l, tmp, tokenObjectProperty, val;
+                    el, token, i, l, tmp, tokenObjectProperty, val, valUnknown;
                 if (!tokens || obj === undefined || typeof obj === 'string') {return; }
 
                 for (i = 0, l = tokens.length; i < l; i++) {
@@ -86,22 +86,29 @@
                         if (tmp.length > 0 && tmp[0] === itemName) {
                             tokenObjectProperty = tmp.slice(1).join('.');
                             if (typeof obj === 'object') {
-                                val = getGlobalCall(tokenObjectProperty, obj);
+                                valUnknown = getGlobalCall(tokenObjectProperty, obj);
                             } else {
-                                val = obj;
+                                valUnknown = obj;
                             }
                         } else {
                             // just a string?
-                            val = obj;
+                            valUnknown = obj;
                         }
+
+                        if (typeof valUnknown === 'function') {
+                            val = valUnknown(node);
+                        } else {
+                            val = valUnknown;
+                        }
+
                         if (typeof val === 'string' || typeof val === 'number') {
                             el = document.createTextNode(val);
                             node.parentNode.insertBefore(el, node);
                         } else if (typeof val === 'boolean') {
                             el = document.createTextNode(val.toString());
                             node.parentNode.insertBefore(el, node);
-                        } else if (typeof val === 'function') {
-                            el = document.createTextNode(val(node.parentNode));
+                        } else if (val instanceof HTMLElement) {
+                            el = val;
                             node.parentNode.insertBefore(el, node);
                         } else if (tmp[0] === itemName) {
                             // property is not exists but it is the same scope
