@@ -350,6 +350,10 @@ whiskerCallback('item', {node: div});
 ```
 
 ### scope
+There are several ways to define the scope name:
+
+**direct in HTML**:
+
 If you don't want to tell whisker the scope every time you can configure it in the HTML:
 ```html
 <div canny-mod="whisker" canny-var="{'bind':'image','to':'method'}">
@@ -362,6 +366,33 @@ var method = function (whiskerCallback) {
   whiskerCallback({src: 'img.png', alt: 'a image'});
 }
 ```
+**only in whisker callback**:
+```html
+<div canny-mod="whisker" canny-var="method">
+  <img src="{{image.src}}" alt="{{image.alt}}"/>
+</div>
+```
+Define the scope name in the callback
+```javascript
+var method = function (whiskerCallback) {
+  whiskerCallback('image',{src: 'img.png', alt: 'a image'});
+}
+```
+
+**default**:
+Or you use the default scope **item**. Because if you don't tell whisker a scope name then whiskers fallback scope is **item**.
+```html
+<div canny-mod="whisker" canny-var="method">
+  <img src="{{item.src}}" alt="{{item.alt}}"/>
+</div>
+```
+Define the scope name in the callback
+```javascript
+var method = function (whiskerCallback) {
+  whiskerCallback({src: 'img.png', alt: 'a image'});
+}
+```
+
 ### multiple scopes:
 Whisker support multiple scopes but this has also disadvantages for example you can do the following:
 ```html
@@ -457,6 +488,17 @@ and the HTML will look like:
     <div wk-bind="functionPointer2" style="color:green">I'm green</div>
 </div>
 ```
+
+### private API
+If you don't want a public API you can initialize whisker directly from you JS:
+```
+canny.whisker.add(domNode, function (whiskerCallback) {
+   // continue ...
+});
+```
+ * the first argument is the dom node in which scope whisker searches for whisker expression
+ * the second accepts the same object structure as the canny-var DOM attribute + function pointer
+
 ___
 async
 =====
