@@ -1,3 +1,8 @@
+/*
+ *  Copyright (c) 2003-2019 GameDuell GmbH, All Rights Reserved
+ *  This document is strictly confidential and sole property of GameDuell GmbH, Berlin, Germany
+ */
+
 /*global canny */
 /*jslint browser: true*/
 
@@ -49,6 +54,7 @@
             }
             node.type = "text/javascript";
             node.async = true;
+            node.setAttribute('crossorigin', 'anonymous');
             node.setAttribute('src', src);
             node.addEventListener('load', cb, false);
             node.addEventListener('error', cb, true);
