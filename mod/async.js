@@ -49,6 +49,7 @@
             }
             node.type = "text/javascript";
             node.async = true;
+            node.setAttribute('crossorigin', 'anonymous');
             node.setAttribute('src', src);
             node.addEventListener('load', cb, false);
             node.addEventListener('error', cb, true);
